@@ -1,0 +1,4 @@
+# This account is restricted by sshd to the fixed receiver script. The root
+# helper validates every candidate path before atomically switching the release
+# and restarting the staging service.
+greenmarket-deploy ALL=(root) NOPASSWD: /usr/local/libexec/greenmarket-staging-activate

@@ -1,0 +1,116 @@
+name: Deploy staging
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: staging-deploy
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: verify release
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Require the main branch
+        run: |
+          test "$GITHUB_REF" = "refs/heads/main" || {
+            echo "Run this workflow from the main branch only." >&2
+            exit 1
+          }
+
+      - name: Check out source
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Check formatting-sensitive files
+        run: git diff-tree --check --no-commit-id -r "$GITHUB_SHA"
+
+      - name: Run application checks
+        run: npm run check
+
+      - name: Audit dependencies
+        run: npm audit --audit-level=high --engine-strict
+
+      - name: Scan committed history for secrets
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy:
+    name: deploy to staging
+    needs: verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment:
+      name: staging
+      url: https://stage.greenmarket96.ru
+
+    steps:
+      - name: Check out the verified source
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+
+      - name: Configure restricted SSH access
+        shell: bash
+        env:
+          STAGING_DEPLOY_KEY: ${{ secrets.STAGING_DEPLOY_KEY }}
+          STAGING_SSH_KNOWN_HOSTS: ${{ vars.STAGING_SSH_KNOWN_HOSTS }}
+        run: |
+          set -Eeuo pipefail
+          umask 077
+          test -n "$STAGING_DEPLOY_KEY"
+          test -n "$STAGING_SSH_KNOWN_HOSTS"
+          printf '%s\n' "$STAGING_DEPLOY_KEY" > "$RUNNER_TEMP/staging-deploy-key"
+          printf '%s\n' "$STAGING_SSH_KNOWN_HOSTS" > "$RUNNER_TEMP/staging-known-hosts"
+
+      - name: Send release archive and activate it
+        shell: bash
+        env:
+          STAGING_SSH_HOST: ${{ vars.STAGING_SSH_HOST }}
+          STAGING_SSH_USER: ${{ vars.STAGING_SSH_USER }}
+        run: |
+          set -Eeuo pipefail
+          test -n "$STAGING_SSH_HOST"
+          test -n "$STAGING_SSH_USER"
+
+          git archive --format=tar.gz "$GITHUB_SHA" \
+            | ssh \
+              -i "$RUNNER_TEMP/staging-deploy-key" \
+              -o BatchMode=yes \
+              -o IdentitiesOnly=yes \
+              -o StrictHostKeyChecking=yes \
+              -o UserKnownHostsFile="$RUNNER_TEMP/staging-known-hosts" \
+              "$STAGING_SSH_USER@$STAGING_SSH_HOST"
+
+      - name: Verify public staging health
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          for attempt in $(seq 1 10); do
+            if response="$(curl --fail --silent --show-error --max-time 15 https://stage.greenmarket96.ru/api/health)" \
+              && test "$response" = '{"status":"ok"}'; then
+              exit 0
+            fi
+
+            if test "$attempt" = 10; then
+              exit 1
+            fi
+
+            sleep 3
+          done
