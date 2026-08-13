@@ -6,7 +6,7 @@ validateProductionEnvironment(process.env)
 
 const nextCliPath = fileURLToPath(new URL('../node_modules/next/dist/bin/next', import.meta.url))
 
-const child = spawn(process.execPath, [nextCliPath, 'start'], {
+const child = spawn(process.execPath, [nextCliPath, 'start', '--hostname', '127.0.0.1'], {
   env: process.env,
   stdio: 'inherit',
 })
