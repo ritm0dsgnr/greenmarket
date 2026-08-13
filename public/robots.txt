@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Host: greenmarket96.ru
+Sitemap: https://greenmarket96.ru/sitemap.xml

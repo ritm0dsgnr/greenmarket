@@ -1,0 +1,7 @@
+RewriteEngine On
+
+RewriteCond %{HTTP_HOST} ^www\.greenmarket96\.ru$ [NC]
+RewriteRule ^ https://greenmarket96.ru%{REQUEST_URI} [R=301,L]
+
+RewriteCond %{SERVER_PORT} !^443$
+RewriteRule ^ https://greenmarket96.ru%{REQUEST_URI} [R=301,L]
