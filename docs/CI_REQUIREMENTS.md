@@ -2,9 +2,15 @@
 
 ## Текущий статус
 
-В рабочей папке на момент передачи нет Git-репозитория и не выбран CI provider.
-Поэтому этот документ задаёт обязательный minimum до первой прикладной функции
-и любого deployment.
+Репозиторий находится в GitHub: `ritm0dsgnr/greenmarket`. Обязательные
+проверки запускает GitHub Actions workflow
+`.github/workflows/ci.yml`. Выпуск на staging запускается вручную через
+`.github/workflows/deploy-staging.yml` только из ветки `main`.
+
+Workflow deploy не выполняет миграции базы данных. Миграции требуют отдельной
+задачи, backup, проверки rollback и явного решения о порядке развёртывания.
+Production deploy намеренно не автоматизирован, пока не подготовлен отдельный
+production-контур и не получено явное одобрение владельца.
 
 ## Git policy
 
@@ -54,6 +60,9 @@ imports, auth или integrations добавляются отдельные:
 - Package создаётся повторяемо из lockfile.
 - Версия Node.js в CI, staging и production совпадает с `.node-version`.
 - Сначала deploy и smoke test staging, затем production.
+- Staging deploy запускается вручную после успешной CI-проверки. У workflow
+  нет произвольного удалённого shell-доступа: он передаёт архив через отдельную
+  ограниченную SSH-учётную запись с фиксированной серверной командой.
 - Database migration и application rollout имеют documented order.
 - Release без прошедших checks невозможен.
 - Emergency change не отменяет security, backup, audit и post-release checks.

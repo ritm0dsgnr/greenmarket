@@ -13,7 +13,7 @@
   "scripts": {
     "predev": "tsx scripts/check-runtime.ts && tsx scripts/build-sprite.ts",
     "prebuild": "tsx scripts/check-runtime.ts && tsx scripts/build-sprite.ts",
-    "prestart": "tsx scripts/check-runtime.ts && tsx scripts/build-sprite.ts",
+    "prestart": "tsx scripts/check-runtime.ts",
     "prelint": "tsx scripts/check-runtime.ts",
     "pretypecheck": "tsx scripts/check-runtime.ts",
     "pretest": "tsx scripts/check-runtime.ts",

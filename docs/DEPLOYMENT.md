@@ -75,3 +75,25 @@ Node.js напрямую в интернет или заменять этот re
 
 Нельзя выкладывать локальную папку `dist` или архив старой статической сборки
 как production-приложение Next.js.
+
+## Staging deploy через GitHub Actions
+
+Staging deploy запускается вручную из GitHub Actions workflow `Deploy staging`
+и только из ветки `main`. Он повторно выполняет обязательные проверки, передаёт
+исходный архив на staging через отдельную ограниченную SSH-учётную запись,
+собирает release под непривилегированным пользователем и проверяет
+`https://stage.greenmarket96.ru/api/health`.
+
+В GitHub Environment `staging` хранятся: secret `STAGING_DEPLOY_KEY` и
+нечувствительные variables `STAGING_SSH_HOST`, `STAGING_SSH_USER`,
+`STAGING_SSH_KNOWN_HOSTS`. Реальные значения не хранятся в Git, workflow
+логах или документации. SSH host key фиксируется в `STAGING_SSH_KNOWN_HOSTS`,
+поэтому workflow не принимает новый ключ сервера автоматически.
+
+У deploy-учётной записи нет интерактивной shell-сессии и широких sudo-прав.
+Она может только передать архив в root-owned receiver script и перезапустить
+конкретный staging service. Доступ к production-серверу, production-секретам и
+production-базе этот workflow не получает.
+
+Миграции не включаются в автоматический staging deploy. Любая миграция требует
+отдельного проверенного шага с backup и планом rollback.

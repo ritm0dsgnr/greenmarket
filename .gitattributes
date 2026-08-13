@@ -1,0 +1,9 @@
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+.deploy export-ignore
+.env.example export-ignore
+.github export-ignore
+dist export-ignore
+ops export-ignore
