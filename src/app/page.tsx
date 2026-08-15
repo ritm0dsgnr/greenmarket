@@ -1,10 +1,13 @@
-import { Logo } from '@/components/Logo'
+import { HomeCatalog } from '@/components/HomeCatalog'
+import { HomeHero } from '@/components/HomeHero'
+import { HomeNovelties } from '@/components/HomeNovelties'
 
 export default function HomePage() {
   return (
     <main className="page">
-      <h1 className="visually-hidden">Green Market</h1>
-      <Logo className="page__logo" />
+      <HomeHero />
+      <HomeNovelties />
+      <HomeCatalog />
     </main>
   )
 }

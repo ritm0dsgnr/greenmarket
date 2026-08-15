@@ -1,0 +1,43 @@
+@use "../assets/vars" as *
+@use "../assets/mixin" as *
+
+.footer
+  margin-top: 20rem
+  padding: 3.2rem 0
+  border-top: 0.3rem solid $forest
+  color: $forest
+  &__inner
+    display: flex
+    align-items: flex-start
+    justify-content: space-between
+    flex-wrap: wrap
+    gap: 2.4rem
+  &__logo
+    display: flex
+    width: 16.8rem
+    color: inherit
+    flex-shrink: 0
+    &:hover,
+    &:focus-visible
+      .logo
+        transform: scale(1.06)
+    .logo
+      width: 100%
+      transform-origin: center
+      @include anim(transform)
+  &__legal
+    @include font-text
+    display: flex
+    flex-direction: column
+    gap: 0.4rem
+    font-size: 1.4rem
+    line-height: 1.4
+  &__link
+    @include anim(color)
+    &:hover,
+    &:focus-visible
+      color: $leaf
+  &__copy
+    @include font-text
+    font-size: 1.4rem
+    line-height: 1.2

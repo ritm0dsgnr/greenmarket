@@ -1,0 +1,535 @@
+@use "../assets/vars" as *
+@use "../assets/mixin" as *
+
+.product
+  color: $forest
+  &__layout
+    display: grid
+    grid-template-columns: 65.5rem minmax(0, 1fr)
+    align-items: start
+    column-gap: 4rem
+  &__gallery
+    display: flex
+    flex-direction: column
+    gap: 3rem
+    width: 65.5rem
+    flex-shrink: 0
+    grid-column: 1
+    grid-row: 1
+  &__slider
+    position: relative
+    padding: 0.4rem
+  &__viewport
+    position: relative
+    overflow: hidden
+    aspect-ratio: 1
+    background: $cream-muted
+    border-radius: 2.2rem
+    box-shadow: 0 0 0 0.3rem $forest
+    cursor: zoom-in
+    touch-action: pan-y
+    &.is-dragging
+      cursor: grabbing
+  &__track
+    display: flex
+    height: 100%
+    @include anim(transform)
+    &.is-dragging
+      transition: none
+  &__slide
+    flex: 0 0 100%
+    height: 100%
+    background: $cream
+    img
+      width: 100%
+      height: 100%
+      object-fit: cover
+      pointer-events: none
+      user-select: none
+      -webkit-user-drag: none
+      -webkit-touch-callout: none
+  &__thumbs
+    overflow: visible
+    width: 100%
+    &-scroller
+      overflow-x: auto
+      overflow-y: hidden
+      width: 100%
+      scroll-padding-inline: 0.6rem
+      cursor: grab
+      touch-action: pan-x
+      overscroll-behavior-x: contain
+      scrollbar-width: none
+      &::-webkit-scrollbar
+        display: none
+      &.is-dragging
+        cursor: grabbing
+        user-select: none
+        scroll-behavior: auto
+    &-track
+      display: flex
+      gap: 1.8rem
+      width: max-content
+      padding: 0.6rem
+      > li
+        flex: 0 0 calc((65.5rem - 6.6rem) / 4)
+        border-radius: 1rem
+        box-shadow: 0 0 0 0.3rem transparent
+        @include anim(box-shadow)
+        &:has(.is-active)
+          box-shadow: 0 0 0 0.3rem $forest
+  &__thumb
+    display: block
+    width: 100%
+    overflow: hidden
+    aspect-ratio: 1
+    background: $cream-muted
+    border-radius: 1rem
+    cursor: pointer
+    img
+      width: 100%
+      height: 100%
+      object-fit: cover
+      pointer-events: none
+      user-select: none
+      -webkit-user-drag: none
+      -webkit-touch-callout: none
+  &__lightbox
+    position: fixed
+    inset: 0
+    z-index: 30
+    display: flex
+    align-items: center
+    justify-content: center
+    padding: 8rem $gutter
+    background: transparent
+    &::before
+      content: ""
+      position: absolute
+      inset: 0
+      z-index: 0
+      background: rgb(0 0 0 / 0.72)
+      backdrop-filter: blur(1.6rem)
+      -webkit-backdrop-filter: blur(1.6rem)
+      opacity: 0
+      transition: opacity $anim-duration $anim-ease
+      @media (prefers-reduced-motion: reduce)
+        transition: none
+    &.is-open::before
+      opacity: 1
+    &.is-open .product__lightbox-frame
+      opacity: 1
+      transform: none
+      transition-delay: 0.08s
+      @media (prefers-reduced-motion: reduce)
+        transition-delay: 0s
+    &.is-open .product__lightbox-close
+      opacity: 1
+      pointer-events: auto
+      transition-delay: 0.08s
+      @media (prefers-reduced-motion: reduce)
+        transition-delay: 0s
+    &-close
+      position: absolute
+      top: $gutter
+      right: $gutter
+      z-index: 2
+      display: flex
+      align-items: center
+      justify-content: center
+      width: 4rem
+      height: auto
+      aspect-ratio: 1
+      border: 0.3rem solid $forest
+      border-radius: 50%
+      color: $forest
+      background: $cream
+      opacity: 0
+      pointer-events: none
+      transition: opacity $anim-duration $anim-ease, background-color $anim-duration $anim-ease
+      @media (prefers-reduced-motion: reduce)
+        transition: none
+      .icon
+        width: 2.4rem
+        height: 2.4rem
+      &:hover,
+      &:focus-visible
+        background: $leaf
+        color: $forest
+    &-frame
+      position: relative
+      z-index: 1
+      width: min(96rem, calc(100vw - #{$gutter} * 4), calc(100vh - 16rem))
+      opacity: 0
+      transform: translateY($anim-shift) scale($anim-scale)
+      transition: opacity $anim-duration $anim-ease, transform $anim-duration $anim-ease
+      @media (prefers-reduced-motion: reduce)
+        transform: none
+        transition: none
+    &-viewport
+      position: relative
+      aspect-ratio: 1
+      overflow: hidden
+      background: $cream-muted
+      border-radius: 2.2rem
+      cursor: grab
+      touch-action: pan-y
+      &.is-dragging
+        cursor: grabbing
+    &-track
+      display: flex
+      height: 100%
+      @include anim(transform)
+      &.is-dragging
+        transition: none
+    &-slide
+      flex: 0 0 100%
+      height: 100%
+      background: $cream
+      img
+        width: 100%
+        height: 100%
+        object-fit: cover
+        pointer-events: none
+        user-select: none
+        -webkit-user-drag: none
+        -webkit-touch-callout: none
+    &-controls
+      position: absolute
+      right: 1.6rem
+      bottom: 1.6rem
+      z-index: 2
+      display: flex
+      gap: 0.4rem
+    &-control
+      display: flex
+      align-items: center
+      justify-content: center
+      width: 4rem
+      height: auto
+      aspect-ratio: 1
+      border: 0.3rem solid $forest
+      border-radius: 50%
+      color: $forest
+      background: $cream
+      .icon
+        @include icon-arrow
+      &--prev
+        .icon
+          transform: scaleX(-1)
+      &:hover,
+      &:focus-visible
+        background: $leaf
+        color: $forest
+  &__info
+    display: flex
+    flex-direction: column
+    gap: 2.4rem
+    min-width: 0
+    flex: 1
+    padding-top: 0.4rem
+    grid-column: 2
+    grid-row: 1
+  &__tags
+    display: flex
+    flex-wrap: wrap
+    align-items: center
+    gap: 0.8rem
+  &__tag
+    @include font-display
+    padding: 0.1rem 1rem 0.2rem 1rem
+    font-size: 1.6rem
+    text-transform: lowercase
+    border-radius: 1.2rem 0.2rem 1.2rem 0.2rem
+    color: $cream
+    &--sale
+      background: $blush
+    &--new
+      background: $forest
+    &--hit
+      background: $leaf
+      color: $white
+    &--group
+      padding: 0.7rem 0.8rem
+      font-size: 1.4rem
+      line-height: 1
+      border-radius: 0.4rem
+      color: $forest
+      background: $cream-muted
+  &__names
+    display: flex
+    flex-direction: column
+  &__name
+    @include font-display
+    font-size: 3.2rem
+    line-height: 1.1
+  &__latin
+    @include font-text
+    font-size: 1.6rem
+    font-style: italic
+  &__offer
+    display: flex
+    flex-wrap: wrap
+    align-items: flex-end
+    justify-content: space-between
+    gap: 1.6rem
+    width: 100%
+  &__choose
+    display: flex
+    flex-wrap: wrap
+    align-items: center
+    gap: 1.6rem 2.4rem
+  &__label
+    @include font-display
+    font-size: 1.4rem
+    line-height: 1.2
+    text-transform: uppercase
+  &__sizes
+    display: flex
+    flex-wrap: wrap
+    align-items: stretch
+    gap: 1rem
+  &__size
+    position: relative
+    display: flex
+    color: $forest
+    background: $cream-muted
+    border-radius: 1.2rem
+    @include anim(background-color)
+    &:hover,
+    &:focus-within
+      z-index: 4
+    &.is-active
+      color: $white
+      background: $leaf
+      .product__size-help
+        background: $white
+        color: $leaf
+    &-pick
+      display: flex
+      flex-direction: column
+      align-items: center
+      justify-content: center
+      gap: 1rem
+      min-width: 11.2rem
+      height: 100%
+      padding: 1.8rem 2.4rem 1.6rem
+      color: inherit
+      cursor: pointer
+      text-align: center
+    &-name
+      @include font-display
+      font-size: 2.2rem
+      line-height: 1
+      text-transform: uppercase
+    &-price
+      display: flex
+      flex-direction: column
+      align-items: center
+      gap: 0.2rem
+      @include font-display
+      font-size: 1.4rem
+      line-height: 1.2
+      .product__price-old
+        @include font-text
+        font-size: 1.2rem
+        color: $forest
+    &-help
+      @include font-display
+      display: flex
+      align-items: center
+      justify-content: center
+      width: 1.8rem
+      height: 1.8rem
+      font-size: 1.2rem
+      line-height: 1
+      color: $cream
+      background: $forest
+      border-radius: 50%
+      cursor: help
+    &-tip
+      position: absolute
+      top: 0.6rem
+      right: 0.6rem
+      z-index: 2
+      &::before
+        content: ""
+        position: absolute
+        inset: -1.6rem
+      &:hover .product__hint,
+      &:focus-within .product__hint
+        @include reveal-shown
+  &__hint
+    @include reveal
+    position: absolute
+    top: 0
+    left: calc(100% + 0.8rem)
+    z-index: 5
+    width: 48rem
+    padding: 1.6rem 1.8rem 1.4rem
+    color: $forest
+    background: $cream
+    border-radius: 1.2rem
+    box-shadow: 0.4rem 0.4rem 0 rgba(10,51,35,0.8)
+    text-align: left
+    text-transform: none
+    cursor: default
+    &::before
+      content: ""
+      position: absolute
+      top: 0
+      bottom: 0
+      right: 100%
+      width: 0.8rem
+    &-title
+      @include font-display
+      margin-bottom: 1.8rem
+      font-size: 1.4rem
+      line-height: 1.2
+      text-transform: uppercase
+    &-list
+      display: grid
+      grid-template-columns: max-content minmax(0, 1fr)
+      column-gap: 1.6rem
+      row-gap: 1.2rem
+      align-items: baseline
+    &-item
+      display: contents
+    &-mark
+      @include font-display
+      font-size: 1.4rem
+      line-height: 1.3
+    &-text
+      @include font-text
+      font-size: 1.4rem
+      line-height: 1.3
+  &__qty
+    display: inline-flex
+    align-items: center
+    flex-shrink: 0
+    gap: 0.2rem
+    padding: 0.2rem 0.8rem
+    border: 0.3rem solid $forest
+    border-radius: 10rem
+    &-button
+      @include font-display
+      display: flex
+      align-items: center
+      justify-content: center
+      width: 2.8rem
+      height: 2.8rem
+      font-size: 1.8rem
+      line-height: 1
+      color: $forest
+      background: transparent
+      border: 0
+      border-radius: 50%
+      cursor: pointer
+      transition: background-color $anim-duration $anim-ease
+      @media (prefers-reduced-motion: reduce)
+        transition: none
+      &:disabled
+        opacity: 0.35
+        cursor: default
+      &:not(:disabled):hover,
+      &:not(:disabled):focus-visible
+        background: $leaf
+    &-value
+      @include font-display
+      min-width: 2.2rem
+      font-size: 1.6rem
+      line-height: 1
+      text-align: center
+  &__checkout
+    display: flex
+    align-items: flex-end
+    flex-shrink: 0
+    gap: 2.4rem
+    margin-left: auto
+  &__total
+    display: flex
+    flex-direction: column
+    gap: 0.2rem
+    &-label
+      @include font-display
+      font-size: 1.4rem
+      line-height: 1.2
+      text-transform: uppercase
+    &-value
+      @include font-display
+      font-size: 2.4rem
+      line-height: 1
+  &__price-old
+    @include font-text
+    font-size: 1.4rem
+    line-height: 1.2
+    color: $forest
+    text-decoration: line-through
+  &__price-current
+    font-size: inherit
+    line-height: inherit
+  &__buy
+    @include font-display
+    display: flex
+    align-items: center
+    justify-content: center
+    flex-shrink: 0
+    position: relative
+    padding: 0.8rem 1.8rem
+    font-size: 1.4rem
+    line-height: 1.2
+    white-space: nowrap
+    text-transform: uppercase
+    color: $forest
+    background: $leaf
+    border-radius: 10rem
+    cursor: pointer
+    box-shadow: 0.4rem 0.4rem 0 rgba(10,51,35,0.8)
+    transition: box-shadow $anim-duration $anim-ease, transform $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    &::before
+      content: ""
+      position: absolute
+      inset: -1.2rem -1.6rem
+    &:hover,
+    &:focus-visible
+      box-shadow: 0 0 0 rgba(10,51,35,0.8)
+      transform: translate(0.4rem, 0.4rem)
+  &__copy
+    display: flex
+    flex-direction: column
+    gap: 2.4rem
+    margin-top: 2.4rem
+  &__description
+    display: flex
+    flex-direction: column
+    gap: 1.2rem
+    font-size: 1.6rem
+    line-height: 1.5
+  &__specs
+    display: flex
+    flex-direction: column
+    overflow: hidden
+    border-radius: 0.4rem
+  &__spec
+    display: flex
+    align-items: baseline
+    justify-content: space-between
+    gap: 2.4rem
+    padding: 0.8rem 2.4rem
+    &:nth-child(odd)
+      background: $cream-muted
+    &:nth-child(even)
+      background: $cream
+    &-label
+      @include font-display
+      min-width: 0
+      font-size: 1.6rem
+      line-height: 1.3
+    &-value
+      @include font-text
+      flex-shrink: 0
+      font-size: 1.6rem
+      line-height: 1.3
+      text-align: right

@@ -10,7 +10,9 @@
     box-sizing: border-box
 
 html
-  font-size: 62.5%
+  font-size: calc(100vw / #{$rem-scale})
+  @media (min-width: #{$layout-width}px)
+    font-size: #{$rem-base}px
 
 body
   @include font-text
@@ -78,8 +80,4 @@ h6
 
 .container
   width: 100%
-  max-width: $container-max
-  margin: 0 auto
   padding: 0 $gutter
-  @include below($bp-mobile)
-    padding: 0 $gutter-mobile

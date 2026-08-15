@@ -1,0 +1,34 @@
+@use "../assets/vars" as *
+@use "../assets/mixin" as *
+
+.breadcrumbs
+  margin-bottom: 2.4rem
+  @include font-display
+  text-transform: uppercase
+  &__list
+    display: flex
+    flex-wrap: wrap
+    align-items: center
+    gap: 0
+  &__item
+    display: flex
+    align-items: center
+    gap: 0
+    font-size: 1.4rem
+    line-height: 1.2
+  &__sep
+    width: 2.8rem
+    height: auto
+    aspect-ratio: 1/1
+    flex-shrink: 0
+    color: $forest
+    opacity: 0.35
+    transform: rotate(-90deg)
+  &__link
+    @include anim(color)
+    &:hover,
+    &:focus-visible
+      color: $leaf
+  &__current
+    color: $forest
+    opacity: 0.45

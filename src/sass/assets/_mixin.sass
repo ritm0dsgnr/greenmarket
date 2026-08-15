@@ -13,3 +13,66 @@
   font-family: $font-text
   font-weight: 400
   font-style: normal
+
+@mixin anim($properties)
+  transition: $properties $anim-duration $anim-ease
+  @media (prefers-reduced-motion: reduce)
+    transition: none
+
+@mixin icon-arrow
+  width: $arrow-size
+  height: auto
+  aspect-ratio: 1/1
+  flex-shrink: 0
+
+@mixin reveal
+  opacity: 0
+  visibility: hidden
+  pointer-events: none
+  transform-origin: 2rem 0
+  transform: translateY(-#{$anim-shift}) scale($anim-scale)
+  transition: opacity 0.35s $anim-ease, transform $anim-duration $anim-ease, visibility 0s linear $anim-duration
+  @media (prefers-reduced-motion: reduce)
+    transform: none
+    transition: none
+
+@mixin reveal-shown
+  opacity: 1
+  visibility: visible
+  pointer-events: auto
+  transform: translateY(0) scale(1)
+  transition: opacity 0.45s $anim-ease, transform $anim-duration $anim-ease, visibility 0s linear 0s
+  @media (prefers-reduced-motion: reduce)
+    transition: none
+
+@mixin reveal-items
+  > *
+    opacity: 0
+    transform: translateY(0.8rem)
+    transition: opacity 0.45s $anim-ease, transform $anim-duration $anim-ease
+    transition-delay: 0s
+  @media (prefers-reduced-motion: reduce)
+    > *
+      opacity: 1
+      transform: none
+      transition: none
+
+@mixin reveal-items-shown($count: 8)
+  > *
+    opacity: 1
+    transform: none
+    @for $i from 1 through $count
+      &:nth-child(#{$i})
+        transition-delay: #{0.12 + ($i - 1) * 0.06}s
+  @media (prefers-reduced-motion: reduce)
+    > *
+      transition: none
+      transition-delay: 0s
+
+@mixin turn
+  transition: transform $anim-duration-turn $anim-ease-turn
+  @media (prefers-reduced-motion: reduce)
+    transition: none
+
+@mixin turn-open
+  transform: rotate(180deg)

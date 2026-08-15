@@ -1,17 +1,21 @@
 export const spriteIconNames = [
+  'arrow-corner',
   'arrow-right',
   'cart',
   'check',
   'chevron-down',
   'clock',
   'close',
+  'document',
   'filter',
   'heart',
   'leaf',
   'location',
   'menu',
+  'phone',
   'search',
   'telegram',
+  'trash',
   'vk',
 ] as const
 
@@ -25,7 +29,7 @@ interface IconProps {
 export function Icon({ name, className = '' }: IconProps) {
   return (
     <svg className={['icon', className].filter(Boolean).join(' ')} aria-hidden="true" focusable="false">
-      <use href={`/img/sprite.svg#${name}`} />
+      <use href={`#${name}`} />
     </svg>
   )
 }
