@@ -32,10 +32,12 @@
 3. [IMPLEMENTATION_ROADMAP.md](IMPLEMENTATION_ROADMAP.md), последовательность этапов и gates.
 4. [UI_MIGRATION_PLAN.md](UI_MIGRATION_PLAN.md), миграция вёрстки.
 5. [CATALOG_RFC.md](CATALOG_RFC.md), модель каталога до первой миграции.
-6. [EXCEL_IMPORT_SPEC.md](EXCEL_IMPORT_SPEC.md) и [import/GREENMARKET_PRICE_V1_PROFILE.md](import/GREENMARKET_PRICE_V1_PROFILE.md), правила первого импорта.
-7. [SECURITY_AND_QA_CHECKLIST.md](SECURITY_AND_QA_CHECKLIST.md), критерии проверки.
-8. [OPEN_DECISIONS.md](OPEN_DECISIONS.md), решения владельца, без которых нельзя переходить к указанным этапам.
-9. [DEPLOYMENT.md](DEPLOYMENT.md) и [CI_REQUIREMENTS.md](CI_REQUIREMENTS.md), условия staging и release.
+6. [LOYALTY_MVP_RFC.md](LOYALTY_MVP_RFC.md), граница бонусного MVP и Telegram-кабинета.
+7. [LOYALTY_TECHNICAL_SPEC.md](LOYALTY_TECHNICAL_SPEC.md), ТЗ для разработки бонусного контура.
+8. [EXCEL_IMPORT_SPEC.md](EXCEL_IMPORT_SPEC.md) и [import/GREENMARKET_PRICE_V1_PROFILE.md](import/GREENMARKET_PRICE_V1_PROFILE.md), правила первого импорта.
+9. [SECURITY_AND_QA_CHECKLIST.md](SECURITY_AND_QA_CHECKLIST.md), критерии проверки.
+10. [OPEN_DECISIONS.md](OPEN_DECISIONS.md), решения владельца, без которых нельзя переходить к указанным этапам.
+11. [DEPLOYMENT.md](DEPLOYMENT.md) и [CI_REQUIREMENTS.md](CI_REQUIREMENTS.md), условия staging и release.
 
 ## Целевая граница системы
 
