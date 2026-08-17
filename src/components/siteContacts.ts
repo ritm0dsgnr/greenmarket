@@ -18,6 +18,7 @@ export const siteAddress = `${siteCity}, ${siteStreet}`
 export const siteAddressShort = 'Свердловская область, г. Березовский, ул. Рассветная 1а'
 
 export const siteVkHref = 'https://vk.ru/green_market66'
+export const siteTelegramHref = 'https://t.me/+79221456085'
 
 export const siteMapsPoint = {
   latitude: 56.90565,

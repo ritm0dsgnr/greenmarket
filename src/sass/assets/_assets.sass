@@ -10,9 +10,7 @@
     box-sizing: border-box
 
 html
-  font-size: calc(100vw / #{$rem-scale})
-  @media (min-width: #{$layout-width}px)
-    font-size: #{$rem-base}px
+  font-size: clamp(8px, calc(100vw / #{$rem-scale}), #{$rem-base}px)
 
 body
   @include font-text

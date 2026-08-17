@@ -12,24 +12,30 @@
   &__main
     display: flex
     flex-direction: column
+    gap: 5.6rem
     min-width: 0
+    min-height: 100%
   &__head
-    margin-bottom: 4.8rem
+    display: flex
+    flex-direction: column
+    gap: 1.2rem
   &__title
     @include font-display
     font-size: 3.2rem
     line-height: 1.1
     text-transform: uppercase
-    margin-bottom: 1.2rem
   &__lead
     @include font-text
     font-size: 1.6rem
     line-height: 1.4
+  &__reach
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+    gap: 1.2rem
   &__phone
     @include font-display
     display: inline-block
-    align-self: start
-    margin-bottom: 1.2rem
     font-size: 4rem
     line-height: 1.1
     letter-spacing: -0.03em
@@ -42,7 +48,6 @@
     display: flex
     align-items: center
     gap: 0.6rem
-    margin-bottom: 4rem
     font-size: 1.6rem
     line-height: 1.3
     &-icon
@@ -52,7 +57,6 @@
     display: flex
     align-items: flex-start
     gap: 0.8rem
-    margin-bottom: 4rem
     @include anim(color)
     &:hover,
     &:focus-visible
@@ -75,11 +79,15 @@
       line-height: 1.4
   &__actions
     display: flex
-    flex-wrap: wrap
+    flex-direction: column
+    align-items: flex-start
+    flex: 1
+    gap: 2rem
+  &__buttons
+    display: flex
+    flex-wrap: nowrap
     align-items: center
     gap: 1.6rem
-    margin-bottom: auto
-    padding-bottom: 4.8rem
   &__action
     @include font-display
     display: inline-flex
@@ -112,20 +120,35 @@
         border-color: $leaf
         box-shadow: none
         transform: none
-    &-icon
-      width: 2.4rem
-      height: 2.4rem
-  &__legal
-    @include font-text
+  &__socials
     display: flex
     flex-direction: column
-    gap: 0.6rem
-    padding-top: 4.8rem
-    font-size: 1.4rem
-    line-height: 1.4
-    opacity: 0.62
-    &-dot
-      margin: 0 0.6rem
+    align-items: flex-start
+    margin-top: auto
+    gap: 1.2rem
+    &-title
+      @include font-display
+      font-size: 1.6rem
+      line-height: 1.2
+      text-transform: uppercase
+    &-list
+      display: flex
+      align-items: center
+      gap: 1.6rem
+  &__social
+    display: flex
+    align-items: center
+    justify-content: center
+    line-height: 0
+    color: inherit
+    @include anim(color)
+    &:hover,
+    &:focus-visible
+      color: $leaf
+    &-icon
+      display: block
+      width: 4.8rem
+      height: 4.8rem
   &__map
     min-width: 0
     overflow: hidden
@@ -133,7 +156,7 @@
     border-radius: 1.8rem
     &-view
       position: relative
-      min-height: 56rem
+      min-height: 72rem
       height: 100%
     &-frame
       position: absolute

@@ -23,7 +23,7 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="ru">
+    <html lang="ru" id="top">
       <body>
         <LayoutCartProvider>
           <IconSprite />

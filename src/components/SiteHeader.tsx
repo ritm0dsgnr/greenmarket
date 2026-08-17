@@ -6,7 +6,7 @@ import { Icon } from '@/components/Icon'
 import { useLayoutCart } from '@/components/LayoutCartProvider'
 import { Logo } from '@/components/Logo'
 import { catalogGroups } from '@/components/catalogCategories'
-import { sitePhoneDisplay, sitePhoneHref, siteVkHref } from '@/components/siteContacts'
+import { sitePhoneDisplay, sitePhoneHref, siteTelegramHref, siteVkHref } from '@/components/siteContacts'
 
 const dropdownNav = [
   {
@@ -22,6 +22,7 @@ const dropdownNav = [
         items: [
           { href: '/', label: 'Доставка' },
           { href: '/', label: 'Сертификаты' },
+          { href: '/bonus-program', label: 'Бонусная программа' },
           { href: '/', label: 'Прайс' },
           { href: '/', label: 'Отзывы' },
         ],
@@ -147,15 +148,26 @@ export function SiteHeader() {
               <a href={sitePhoneHref} className="header__wrapper-phone">
                 {sitePhoneDisplay}
               </a>
-              <a
-                className="header__wrapper-vk"
-                href={siteVkHref}
-                target="_blank"
-                rel="noreferrer"
-                aria-label="ВКонтакте"
-              >
-                <Icon name="vk" />
-              </a>
+              <div className="header__wrapper-socials">
+                <a
+                  className="header__wrapper-social"
+                  href={siteVkHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="ВКонтакте"
+                >
+                  <Icon name="vk" />
+                </a>
+                <a
+                  className="header__wrapper-social"
+                  href={siteTelegramHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Telegram"
+                >
+                  <Icon name="telegram" />
+                </a>
+              </div>
             </div>
             <div className="header__wrapper-actions">
               <button className="header__wrapper-action header__wrapper-action--search" type="button" aria-label="Поиск">
