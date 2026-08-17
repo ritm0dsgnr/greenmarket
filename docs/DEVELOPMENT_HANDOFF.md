@@ -23,7 +23,9 @@
 
 Это не готовый магазин. В репозитории нет базы данных с каталогом,
 авторизации, админки, Excel-импорта, WordPress, загрузки товарных фото,
-корзины, заявок, бонусов, 1С или production-развёртывания.
+корзины, заявок, production-бонусов, 1С или production-развёртывания. Слой
+L0 содержит только чистые расчёты и unit-тесты без базы, HTTP, Telegram и
+персональных данных.
 
 ## Читать в таком порядке
 
@@ -32,10 +34,15 @@
 3. [IMPLEMENTATION_ROADMAP.md](IMPLEMENTATION_ROADMAP.md), последовательность этапов и gates.
 4. [UI_MIGRATION_PLAN.md](UI_MIGRATION_PLAN.md), миграция вёрстки.
 5. [CATALOG_RFC.md](CATALOG_RFC.md), модель каталога до первой миграции.
-6. [EXCEL_IMPORT_SPEC.md](EXCEL_IMPORT_SPEC.md) и [import/GREENMARKET_PRICE_V1_PROFILE.md](import/GREENMARKET_PRICE_V1_PROFILE.md), правила первого импорта.
-7. [SECURITY_AND_QA_CHECKLIST.md](SECURITY_AND_QA_CHECKLIST.md), критерии проверки.
-8. [OPEN_DECISIONS.md](OPEN_DECISIONS.md), решения владельца, без которых нельзя переходить к указанным этапам.
-9. [DEPLOYMENT.md](DEPLOYMENT.md) и [CI_REQUIREMENTS.md](CI_REQUIREMENTS.md), условия staging и release.
+6. [LOYALTY_MVP_RFC.md](LOYALTY_MVP_RFC.md), граница бонусного MVP и Telegram-кабинета.
+7. [LOYALTY_TECHNICAL_SPEC.md](LOYALTY_TECHNICAL_SPEC.md), ТЗ для разработки бонусного контура.
+8. [adr/0002-loyalty-circuit-l0.md](adr/0002-loyalty-circuit-l0.md) и
+   [loyalty/MIGRATION_DESIGN.md](loyalty/MIGRATION_DESIGN.md), граница L0 и
+   схема для review до первой миграции.
+9. [EXCEL_IMPORT_SPEC.md](EXCEL_IMPORT_SPEC.md) и [import/GREENMARKET_PRICE_V1_PROFILE.md](import/GREENMARKET_PRICE_V1_PROFILE.md), правила первого импорта.
+10. [SECURITY_AND_QA_CHECKLIST.md](SECURITY_AND_QA_CHECKLIST.md), критерии проверки.
+11. [OPEN_DECISIONS.md](OPEN_DECISIONS.md), решения владельца, без которых нельзя переходить к указанным этапам.
+12. [DEPLOYMENT.md](DEPLOYMENT.md) и [CI_REQUIREMENTS.md](CI_REQUIREMENTS.md), условия staging и release.
 
 ## Целевая граница системы
 
@@ -69,7 +76,9 @@ Excel и будущая 1С являются источниками для им�
   отсутствующие позиции.
 - Не передавать товарные фото через Excel или WordPress.
 - Не делать схему PostgreSQL, пока не завершено согласование
-  [CATALOG_RFC.md](CATALOG_RFC.md).
+  [CATALOG_RFC.md](CATALOG_RFC.md). Схема бонусов отдельно не создаётся, пока
+  не завершён review [loyalty/MIGRATION_DESIGN.md](loyalty/MIGRATION_DESIGN.md)
+  и не закрыты решения раздела 12 ТЗ бонусов.
 - Не подключаться к указанному хостингу и не выполнять deployment без
   отдельной задачи на проверку платформы или релиз.
 
