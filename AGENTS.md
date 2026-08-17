@@ -52,6 +52,27 @@ Foundation задаёт серверную границу, строгую тип
 серверной валидации, миграции, тестов, наблюдаемости и отката. Наличие
 foundation не оправдывает перенос бизнес-логики в браузер.
 
+### 1.3. Визуальные fixtures до появления бизнес-функций
+
+По явному решению владельца в локальном контуре и на staging для приёмки
+вёрстки разрешены искусственные демонстрационные карточки, цены, состояния
+интерфейса и интерактивные сценарии. Это только материал для визуальной
+проверки, а не каталог, корзина, заявка или источник истины.
+
+- Fixtures не содержат реальных персональных, платёжных, складских или
+  коммерчески значимых данных и не подключаются к Excel, 1С, CMS, базе,
+  почте, Telegram, аналитике или другим внешним сервисам.
+- Значения, введённые в демонстрационную форму, не отправляются, не
+  сохраняются и не логируются. Макет результата обязан явно сообщать, что
+  это демонстрация и заявка не создана.
+- Fixtures запрещено представлять как готовую production-функцию или
+  использовать для production-выпуска. При реализации соответствующего
+  серверного этапа они заменяются проверенными данными и серверной логикой
+  в той же задаче.
+- Это исключение не разрешает ослаблять авторизацию, валидацию, CSRF, CORS,
+  rate limiting, TLS, заголовки безопасности, правила секретов или границы
+  доступа к данным.
+
 ## 2. Общие правила работы
 
 - Перед изменениями изучить существующую архитектуру, конфигурацию, зависимости и соглашения проекта.
@@ -516,3 +537,13 @@ interface CatalogProductInput {
 - миграции и конфигурация документированы;
 - предусмотрены обработка ошибок и наблюдаемость;
 - результат можно безопасно поддерживать и развивать без скрытого технического долга.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

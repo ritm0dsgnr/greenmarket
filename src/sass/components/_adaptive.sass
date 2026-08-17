@@ -1,0 +1,230 @@
+@use "../assets/vars" as *
+@use "../assets/mixin" as *
+
+// Temporary site-wide layout overrides until a proper adaptive pass.
+body
+  overflow-x: clip
+
+@include below($bp-tablet)
+  .container
+    padding: 0 2.4rem
+
+  .page
+    gap: 8rem
+    padding-top: 14rem
+
+  .related-feeds
+    gap: 8rem
+
+  .header
+    top: 0.8rem
+    &__wrapper
+      gap: 0.8rem
+      padding: 1.2rem 1.6rem
+      &-phone
+        display: none
+      &-logo
+        width: 13rem
+      &-nav
+        gap: 1rem
+      &-link
+        font-size: 1.4rem
+      &-dropdown
+        min-width: min(41rem, calc(100vw - 4.8rem))
+        &--sm
+          min-width: min(23rem, calc(100vw - 4.8rem))
+
+  .footer
+    margin-top: 8rem
+    padding-bottom: 2.4rem
+    &__panel
+      padding: 4rem 2.4rem 2.4rem
+      &--bar
+        flex-wrap: wrap
+        padding: 2rem 2.4rem
+    &__grid
+      grid-template-columns: repeat(2, minmax(0, 1fr))
+      gap: 3.2rem 2.4rem
+    &__aside
+      gap: 1.6rem
+    &__bar
+      flex-wrap: wrap
+      gap: 1.6rem
+      margin-top: 3.2rem
+
+  .contacts
+    padding-top: 2.4rem
+    &__layout
+      grid-template-columns: 1fr
+      gap: 3.2rem
+    &__map-view
+      min-height: 36rem
+    &__phone
+      font-size: 3.2rem
+
+  .not-found
+    &__code
+      font-size: 10rem
+
+  .hero
+    height: auto
+    min-height: calc(100vh - 14rem)
+    &__wrapper
+      flex-direction: column
+      gap: 2.4rem
+    &__content
+      width: 100%
+      min-height: 42rem
+    &__slider
+      width: 100%
+      min-height: 36rem
+      height: 42rem
+
+  .catalog
+    &__grid
+      grid-template-columns: repeat(3, minmax(0, 1fr))
+    &__head
+      grid-template-columns: 1fr
+      justify-items: center
+      gap: 1.6rem
+      .catalog__more
+        grid-column: 1
+        justify-self: center
+
+  .products
+    &__layout
+      flex-direction: column
+    &__filters
+      flex: none
+      width: 100%
+      position: static
+    &__grid
+      grid-template-columns: repeat(2, minmax(0, 1fr))
+    &__lead
+      max-width: none
+    &__apply
+      left: auto
+      right: 0
+      transform: translateY(0.8rem)
+      &.is-visible
+        transform: translateY(0.8rem)
+      &:hover,
+      &:focus-visible
+        transform: translate(0.4rem, 1.2rem)
+
+  .product
+    &__layout
+      grid-template-columns: 1fr
+    &__gallery
+      width: 100%
+
+  .product-card
+    &__overlay
+      padding: 2.4rem
+    &__popup
+      grid-template-columns: 1fr
+      width: min(96rem, 100%)
+
+  .novelties,
+  .related
+    &__slider
+      width: 100%
+      gap: 1.2rem
+    &__viewport
+      flex: 1 1 auto
+      width: auto
+      min-width: 0
+      max-width: 142.8rem
+
+  .cart
+    &__layout
+      grid-template-columns: 1fr
+      grid-template-areas: "clear" "list" "summary"
+    &__item
+      grid-template-columns: 12rem minmax(0, 1fr)
+    &__aside
+      grid-column: 2
+      align-items: flex-start
+    &__field-row
+      grid-template-columns: 1fr
+
+@include below($bp-mobile)
+  .container
+    padding: 0 1.6rem
+
+  .page
+    gap: 5.6rem
+    padding-top: 18rem
+
+  .header
+    &__wrapper
+      flex-wrap: wrap
+      border-radius: 2.4rem
+      &-logo
+        position: static
+        transform: none
+        width: 12rem
+        order: -1
+      &-nav
+        order: 3
+        width: 100%
+        overflow-x: auto
+        padding-bottom: 0.4rem
+      &-contacts
+        display: none
+      &-dropdown
+        position: static
+        min-width: 0
+        width: 100%
+        box-shadow: none
+
+  .footer
+    &__grid
+      grid-template-columns: 1fr
+    &__panel--bar
+      align-items: flex-start
+    &__aside
+      width: 100%
+      justify-content: space-between
+    &__logo
+      width: 12rem
+    &__phone
+      font-size: 2rem
+
+  .catalog
+    &__grid
+      grid-template-columns: repeat(2, minmax(0, 1fr))
+    &__group + &__group
+      margin-top: 4.8rem
+
+  .products
+    &__grid
+      grid-template-columns: 1fr
+    &__toolbar
+      flex-direction: column
+
+  .cart
+    &__item
+      grid-template-columns: 1fr
+    &__aside
+      grid-column: 1
+
+  .not-found
+    &__code
+      font-size: 8rem
+
+  .hero
+    &__content
+      min-height: 36rem
+      border-radius: 2.4rem
+    &__title
+      width: min(49rem, calc(100% - 4rem))
+      left: 2rem
+      top: 6rem
+    &__caption
+      left: 2rem
+      white-space: normal
+      max-width: calc(100% - 4rem)
+    &__slider
+      height: 32rem
+      min-height: 32rem

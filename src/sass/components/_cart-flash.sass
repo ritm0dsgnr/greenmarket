@@ -1,0 +1,73 @@
+@use "../assets/vars" as *
+@use "../assets/mixin" as *
+
+.cart-flash
+  position: fixed
+  inset: 0
+  z-index: 40
+  display: flex
+  align-items: center
+  justify-content: center
+  pointer-events: none
+  animation: cart-flash-hold 0.7s linear both
+  &__wave
+    position: absolute
+    top: 50%
+    left: 50%
+    border-radius: 50%
+    background: radial-gradient(circle, rgb(from $leaf r g b / 0.45) 0 52%, rgb(from $leaf r g b / 0) 78%)
+    transform: translate(-50%, -50%) scale(0.4)
+    animation: cart-flash-wave 0.7s ease-out both
+    &--sm
+      width: 28rem
+      height: 28rem
+    &--lg
+      width: 52rem
+      height: 52rem
+  .icon
+    position: relative
+    z-index: 1
+    width: 8rem
+    height: 8rem
+    color: $forest
+    overflow: visible
+    stroke-width: 0.4rem
+    animation: cart-flash-check 0.7s $anim-ease both
+  @media (prefers-reduced-motion: reduce)
+    animation-duration: 0.2s
+    &__wave,
+    .icon
+      animation: none
+      opacity: 0
+
+@keyframes cart-flash-hold
+  0%,
+  100%
+    visibility: visible
+
+@keyframes cart-flash-wave
+  0%
+    opacity: 1
+    transform: translate(-50%, -50%) scale(0.4)
+  62%
+    opacity: 1
+    transform: translate(-50%, -50%) scale(1.12)
+  100%
+    opacity: 0
+    transform: translate(-50%, -50%) scale(1.35)
+
+@keyframes cart-flash-check
+  0%
+    opacity: 0
+    transform: scale(0.7)
+  18%
+    opacity: 1
+    transform: scale(1.08)
+  36%
+    transform: scale(1)
+  58%
+    opacity: 1
+    transform: scale(1)
+  100%
+    opacity: 0
+    transform: scale(0.94)

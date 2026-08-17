@@ -10,7 +10,7 @@ export function Logo({ className = '' }: LogoProps) {
       aria-hidden="true"
       focusable="false"
     >
-      <use href="/img/sprite.svg#logo" />
+      <use href="#logo" />
     </svg>
   )
 }

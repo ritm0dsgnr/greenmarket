@@ -1,0 +1,205 @@
+@use "../assets/vars" as *
+@use "../assets/mixin" as *
+
+.header
+  position: fixed
+  top: 1.6rem
+  z-index: 20
+  width: 100%
+  background: $cream
+  color: $forest
+  &__wrapper
+    position: relative
+    border: 0.4rem solid $forest
+    border-radius: 10rem
+    display: flex
+    align-items: center
+    justify-content: space-between
+    gap: 1rem
+    padding: 1.6rem 2.2rem 1.6rem 3.4rem
+    &-nav
+      display: flex
+      align-items: center
+      gap: 1.6rem
+      > a
+        @include anim(color)
+        &:hover,
+        &:focus-visible
+          color: $leaf
+    &-item
+      position: relative
+      &:hover,
+      &:focus-within,
+      &.is-open
+        .header__wrapper-dropdown
+          @include reveal-shown
+        .header__wrapper-arrow
+          @include turn-open
+    &-link
+      display: inline-flex
+      align-items: center
+      gap: 0.2rem
+      font-family: $font-display
+      text-transform: uppercase
+      font-size: 1.6rem
+      color: $forest
+    &-arrow
+      @include icon-arrow
+      @include turn
+    &-dropdown
+      @include reveal
+      position: absolute
+      top: calc(100% + 1.2rem)
+      left: 0
+      min-width: 41rem
+      padding: 3.2rem 0 0.8rem
+      display: flex
+      flex-direction: column
+      gap: 2.6rem
+      background: $cream
+      border-radius: 0.8rem
+      box-shadow: 0 4px 4px rgba(0,0,0,0.16)
+      z-index: 2
+      &--sm
+        min-width: 23rem
+      &::before
+        content: ""
+        position: absolute
+        left: 0
+        right: 0
+        bottom: 100%
+        height: 1.6rem
+      &-group
+        display: flex
+        flex-direction: column
+        gap: 1.2rem
+      &-title
+        font-family: $font-display
+        font-size: 1.6rem
+        padding: 0 1.6rem
+      &-list
+        li
+          &:nth-child(odd)
+            background: $cream
+          &:nth-child(even)
+            background: $cream-muted
+      &-link
+        display: flex
+        align-items: center
+        justify-content: space-between
+        gap: 0.8rem
+        padding: 0.6rem 1.8rem
+        font-size: 1.6rem
+        color: $forest
+        &:hover,
+        &:focus-visible
+          .header__wrapper-dropdown-arrow
+            opacity: 1
+      &-arrow
+        @include icon-arrow
+        color: $forest
+        opacity: 0
+        transition: opacity $anim-duration-turn $anim-ease
+        @media (prefers-reduced-motion: reduce)
+          transition: none
+    &-aside
+      display: flex
+      align-items: center
+      gap: 1.6rem
+    &-contacts
+      display: flex
+      align-items: center
+      gap: 1.6rem
+    &-phone,
+    &-social
+      @include anim(color)
+      &:hover,
+      &:focus-visible
+        color: $leaf
+    &-phone
+      font-family: $font-display
+      font-size: 1.6rem
+    &-socials
+      display: flex
+      align-items: center
+      gap: 0.6rem
+    &-social
+      display: flex
+      color: inherit
+    &-actions
+      display: flex
+      align-items: center
+      gap: 0.4rem
+    &-action
+      position: relative
+      display: flex
+      align-items: center
+      justify-content: center
+      width: 4rem
+      height: auto
+      aspect-ratio: 1/1
+      border: 0.3rem solid transparent
+      border-radius: 50%
+      flex-shrink: 0
+      transition: background-color $anim-duration $anim-ease, color $anim-duration $anim-ease, border-color $anim-duration $anim-ease
+      @media (prefers-reduced-motion: reduce)
+        transition: none
+      &--search
+        background: $forest
+        border-color: $forest
+        color: $white
+      &--cart
+        border-color: $forest
+        color: $forest
+      &:hover,
+      &:focus-visible
+        background: $leaf
+        border-color: $forest
+        color: $forest
+      .icon
+        overflow: visible
+        stroke-width: 0.2rem
+      &-count
+        @include font-display
+        position: absolute
+        top: -0.5rem
+        right: -0.5rem
+        z-index: 1
+        min-width: 2rem
+        height: 2rem
+        padding: 0 0.4rem
+        display: flex
+        align-items: center
+        justify-content: center
+        font-size: 1.2rem
+        line-height: 1
+        color: $blush
+        background: $cream
+        border: 0.15rem solid $forest
+        border-radius: 10rem
+        pointer-events: none
+        animation: header-count-in 0.35s $anim-ease
+        @media (prefers-reduced-motion: reduce)
+          animation: none
+    &-logo
+      position: absolute
+      left: 50%
+      transform: translateX(-50%)
+      display: flex
+      width: 16.8rem
+      color: inherit
+      z-index: 1
+      &:hover,
+      &:focus-visible
+        .logo
+          transform: scale(1.06)
+      .logo
+        width: 100%
+        transform-origin: center
+        @include anim(transform)
+
+@keyframes header-count-in
+  0%
+    transform: scale(0.7)
+  100%
+    transform: scale(1)

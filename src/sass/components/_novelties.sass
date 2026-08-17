@@ -1,0 +1,96 @@
+@use "../assets/vars" as *
+@use "../assets/mixin" as *
+
+.novelties
+  color: $forest
+  &__head
+    display: flex
+    justify-content: center
+    margin-bottom: 4rem
+  &__title
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    gap: 1.6rem
+    @include font-display
+    font-size: 3.2rem
+    line-height: 1.1
+    text-transform: uppercase
+  &__mark
+    width: 2.4rem
+    height: 2.9rem
+    color: $leaf
+    flex-shrink: 0
+    &--mirror
+      transform: scaleX(-1)
+  &__slider
+    display: flex
+    align-items: center
+    justify-content: center
+    gap: 6rem
+  &__control
+    display: flex
+    align-items: center
+    justify-content: center
+    flex-shrink: 0
+    width: 4rem
+    height: auto
+    aspect-ratio: 1/1
+    border: 0
+    border-radius: 50%
+    color: $forest
+    background: $cream-muted
+    transition: background-color $anim-duration $anim-ease, transform $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    .icon
+      @include icon-arrow
+    &--prev
+      .icon
+        transform: rotate(90deg)
+    &--next
+      .icon
+        transform: rotate(-90deg)
+    &:hover,
+    &:focus-visible
+      background: $leaf
+      color: $forest
+      transform: scale(1.06)
+  &__viewport
+    flex: 0 0 142.8rem
+    width: 142.8rem
+    overflow: hidden
+  &__track
+    display: flex
+    gap: 1.6rem
+    @include anim(transform)
+    &.is-instant
+      transition: none
+  &__item
+    flex: 0 0 34.5rem
+  &__pages
+    display: flex
+    align-items: center
+    justify-content: center
+    gap: 0.8rem
+    margin-top: 3.2rem
+  &__page
+    display: flex
+    align-items: center
+    justify-content: center
+    padding: 0.4rem
+    color: $forest
+    opacity: 0.28
+    transition: opacity $anim-duration $anim-ease, color $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    .icon
+      width: 1.8rem
+      height: 2.2rem
+    &:hover,
+    &:focus-visible
+      opacity: 1
+      color: $leaf
+    &.is-active
+      opacity: 1
+      color: $leaf

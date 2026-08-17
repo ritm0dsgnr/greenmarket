@@ -1,0 +1,77 @@
+@use "../assets/vars" as *
+@use "../assets/mixin" as *
+
+.page--not-found
+  min-height: 100vh
+  display: flex
+  flex-direction: column
+  justify-content: center
+  gap: 0
+  .container
+    display: flex
+    flex: 1
+    align-items: center
+    justify-content: center
+
+.not-found
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  color: $forest
+  text-align: center
+  &__code
+    @include font-display
+    font-size: 16rem
+    line-height: 0.85
+    letter-spacing: -0.04em
+    margin-bottom: 2.4rem
+  &__title
+    @include font-display
+    font-size: 3.2rem
+    line-height: 1.1
+    text-transform: uppercase
+    margin-bottom: 1.2rem
+  &__lead
+    @include font-text
+    max-width: 48rem
+    margin-bottom: 4rem
+    font-size: 1.6rem
+    line-height: 1.4
+  &__actions
+    display: flex
+    flex-wrap: wrap
+    align-items: center
+    justify-content: center
+    gap: 1.6rem
+  &__action
+    @include font-display
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    padding: 1rem 2rem
+    font-size: 1.4rem
+    line-height: 1.2
+    text-transform: uppercase
+    color: $forest
+    background: $leaf
+    border: 0.3rem solid $leaf
+    border-radius: 10rem
+    box-shadow: 0.4rem 0.4rem 0 rgba(10, 51, 35, 0.8)
+    transition: box-shadow $anim-duration $anim-ease, transform $anim-duration $anim-ease, background-color $anim-duration $anim-ease, border-color $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    &:hover,
+    &:focus-visible
+      box-shadow: 0 0 0 rgba(10, 51, 35, 0.8)
+      transform: translate(0.4rem, 0.4rem)
+    &--line
+      background: transparent
+      border-color: $forest
+      box-shadow: none
+      &:hover,
+      &:focus-visible
+        color: $leaf
+        border-color: $leaf
+        box-shadow: none
+        transform: none

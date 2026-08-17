@@ -1,0 +1,50 @@
+@use "../assets/vars" as *
+@use "../assets/mixin" as *
+
+@media (hover: hover) and (pointer: fine)
+  html
+    cursor: url("/img/cursor.svg") 16 16, auto
+  html.has-site-cursor
+    cursor: none
+    *
+      cursor: none
+
+.site-cursor
+  position: fixed
+  inset: 0
+  z-index: 100
+  pointer-events: none
+  &__bg,
+  &__icon
+    position: fixed
+    top: 0
+    left: 0
+    z-index: 100
+    opacity: 0
+    visibility: hidden
+    will-change: transform
+    transition: opacity 0.18s $anim-ease, visibility 0s linear 0.18s
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+  &__bg
+    width: 5.2rem
+    height: 5.2rem
+    border: 0.2rem solid $forest
+    border-radius: 50%
+    background: none
+  &__icon
+    display: flex
+    align-items: center
+    justify-content: center
+    width: 4rem
+    height: 4rem
+    color: $forest
+    .icon
+      width: 2rem
+      height: 2.25rem
+  &.is-visible
+    .site-cursor__bg,
+    .site-cursor__icon
+      opacity: 1
+      visibility: visible
+      transition: opacity 0.18s $anim-ease, visibility 0s linear 0s

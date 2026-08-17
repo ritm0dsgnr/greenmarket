@@ -1,0 +1,278 @@
+@use "../assets/vars" as *
+@use "../assets/mixin" as *
+
+.products
+  color: $forest
+  &__layout
+    display: flex
+    align-items: flex-start
+    gap: 4rem
+  &__main
+    min-width: 0
+    flex: 1
+  &__head
+    margin-bottom: 4.8rem
+  &__title
+    @include font-display
+    font-size: 3.2rem
+    line-height: 1.1
+    text-transform: uppercase
+    margin-bottom: 1.2rem
+  &__lead
+    max-width: 70%
+    font-size: 1.6rem
+    line-height: 1.5
+  &__toolbar
+    display: flex
+    align-items: flex-start
+    justify-content: space-between
+    gap: 1.6rem
+    margin-bottom: 2.4rem
+  &__tags
+    display: flex
+    flex-wrap: wrap
+    align-items: center
+    gap: 0.8rem
+  &__tag
+    @include font-display
+    display: inline-flex
+    align-items: center
+    gap: 0
+    padding: 0.7rem 0.8rem
+    font-size: 1.4rem
+    text-transform: lowercase
+    border-radius: 0.4rem
+    color: $cream
+    cursor: pointer
+    height: 2.9rem
+    transition: padding $anim-duration $anim-ease, gap $anim-duration $anim-ease, opacity $anim-duration $anim-ease, box-shadow $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    &:hover:not(:has(input:checked)),
+    &:focus-visible:not(:has(input:checked))
+      opacity: 0.55
+    &:has(input:checked)
+      gap: 0.4rem
+      padding: 0.7rem 0.2rem 0.7rem 0.8rem
+      box-shadow: 0 0 0 0.15rem $forest
+      .products__tag-close
+        width: $arrow-size
+        opacity: 1
+    &-close
+      display: flex
+      align-items: center
+      justify-content: center
+      width: 0
+      height: $arrow-size
+      flex-shrink: 0
+      opacity: 0
+      overflow: hidden
+      transition: width $anim-duration $anim-ease, opacity $anim-duration $anim-ease
+      @media (prefers-reduced-motion: reduce)
+        transition: none
+      .icon
+        width: $arrow-size
+        height: $arrow-size
+        flex-shrink: 0
+    &--sale
+      background: $blush
+    &--new
+      background: $forest
+    &--hit
+      background: $leaf
+      color: $white
+    &--group
+      color: $forest
+      background: $cream-muted
+  &__sort
+    position: relative
+    flex-shrink: 0
+    margin-left: auto
+    &-button
+      display: inline-grid
+      grid-template-columns: max-content auto
+      align-items: center
+      column-gap: 0.2rem
+      padding: 0.8rem 1.2rem 0.8rem 1.6rem
+      background: $cream
+      border: 0.3rem solid $forest
+      border-radius: 10rem
+      color: $forest
+      cursor: pointer
+    &-sizer
+      @include font-display
+      display: grid
+      grid-area: 1 / 1
+      font-size: 1.4rem
+      line-height: 1.2
+      text-transform: uppercase
+      visibility: hidden
+      pointer-events: none
+      span
+        grid-area: 1 / 1
+        white-space: nowrap
+    &-value
+      @include font-display
+      grid-area: 1 / 1
+      justify-self: start
+      font-size: 1.4rem
+      line-height: 1.2
+      text-transform: uppercase
+      white-space: nowrap
+    &-arrow
+      @include icon-arrow
+      @include turn
+      grid-area: 1 / 2
+    &-list
+      @include reveal
+      position: absolute
+      top: calc(100% + 0.8rem)
+      right: 0
+      z-index: 2
+      width: max-content
+      min-width: 100%
+      padding: 0.6rem 0
+      background: $cream
+      border: 0.3rem solid $forest
+      border-radius: 1.2rem
+    &-option
+      @include font-display
+      display: block
+      width: 100%
+      padding: 0.8rem 1.6rem
+      font-size: 1.4rem
+      line-height: 1.2
+      text-align: left
+      text-transform: uppercase
+      white-space: nowrap
+      color: $forest
+      background: transparent
+      border: 0
+      cursor: pointer
+      &:hover,
+      &:focus-visible,
+      &.is-active
+        background: $cream-muted
+    &.is-open
+      .products__sort-arrow
+        @include turn-open
+      .products__sort-list
+        @include reveal-shown
+  &__filters
+    display: flex
+    flex-direction: column
+    flex: 0 0 35.2rem
+    width: 35.2rem
+    gap: 2.8rem
+    padding: 2.2rem
+    background: $cream-muted
+    border-radius: 1.8rem
+    position: sticky
+    top: calc(#{$header-stack} + 2rem)
+    overflow: visible
+    z-index: 5
+  &__group
+    display: flex
+    flex-direction: column
+    gap: 1rem
+    &-title
+      @include font-display
+      font-size: 1.4rem
+      line-height: 1.2
+      text-transform: uppercase
+  &__option-row
+    display: flex
+    align-items: center
+    width: 100%
+  &__apply
+    @include font-display
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    position: absolute
+    left: calc(100% + 0.8rem)
+    z-index: 6
+    padding: 0.8rem 1.8rem
+    font-size: 1.4rem
+    line-height: 1.2
+    text-transform: uppercase
+    white-space: nowrap
+    color: $forest
+    background: $leaf
+    border: 0
+    border-radius: 10rem
+    cursor: pointer
+    box-shadow: 0.4rem 0.4rem 0 rgba(10,51,35,0.8)
+    opacity: 0
+    pointer-events: none
+    transform: translateY(-50%)
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    &::before
+      content: ""
+      position: absolute
+      left: -0.4rem
+      top: 50%
+      width: 1.2rem
+      height: 1.2rem
+      background: $leaf
+      transform: translateY(-50%) rotate(45deg)
+      pointer-events: none
+    &.is-ready
+      transition: top $anim-duration $anim-ease, opacity $anim-duration $anim-ease, box-shadow $anim-duration $anim-ease, transform $anim-duration $anim-ease
+      @media (prefers-reduced-motion: reduce)
+        transition: none
+    &.is-visible
+      opacity: 1
+      pointer-events: auto
+    &:hover,
+    &:focus-visible
+      box-shadow: 0 0 0 rgba(10,51,35,0.8)
+      transform: translate(0.4rem, calc(-50% + 0.4rem))
+  &__option
+    display: flex
+    align-items: center
+    gap: 1rem
+    @include font-text
+    font-size: 1.6rem
+    line-height: 1.2
+    cursor: pointer
+    &:hover .products__check,
+    &:focus-within .products__check
+      border-color: $leaf
+      background: rgb(from $leaf r g b / 0.22)
+    input:checked + .products__check
+      background: $leaf
+      border-color: $forest
+      .icon
+        opacity: 1
+        transform: scale(1)
+  &__check
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    flex-shrink: 0
+    width: 2.2rem
+    height: 2.2rem
+    border: 0.15rem solid $forest
+    border-radius: 0.4rem
+    background: $cream
+    color: $forest
+    transition: border-color $anim-duration $anim-ease, background-color $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    .icon
+      width: 1.4rem
+      height: 1.4rem
+      opacity: 0
+      transform: scale(0.6)
+      transition: opacity $anim-duration $anim-ease, transform $anim-duration $anim-ease
+      @media (prefers-reduced-motion: reduce)
+        transition: none
+        transform: none
+  &__grid
+    display: grid
+    grid-template-columns: repeat(4, minmax(0, 1fr))
+    gap: 3.2rem 1.6rem
+  &__item
+    min-width: 0

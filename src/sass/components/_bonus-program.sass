@@ -1,0 +1,247 @@
+@use "../assets/vars" as *
+@use "../assets/mixin" as *
+
+.bonus-program
+  display: flex
+  flex-direction: column
+  gap: 10rem
+  padding-top: 4rem
+  padding-bottom: 10rem
+  color: $forest
+  &__hero
+    display: grid
+    grid-template-columns: minmax(0, 1fr) minmax(28rem, 38rem)
+    gap: 4rem
+    align-items: end
+    padding: 5.6rem
+    background: $cream
+    border-radius: 2.4rem
+  &__intro
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+    max-width: 78rem
+  &__eyebrow
+    @include font-display
+    margin-bottom: 1.6rem
+    font-size: 1.4rem
+    line-height: 1.2
+    text-transform: uppercase
+    color: $leaf
+  &__title,
+  &__section-title
+    @include font-display
+    text-transform: uppercase
+  &__title
+    max-width: 76rem
+    font-size: clamp(4.6rem, 7vw, 10rem)
+    line-height: 0.96
+    letter-spacing: -0.045em
+  &__lead
+    @include font-text
+    max-width: 54rem
+    margin-top: 2.4rem
+    font-size: 2rem
+    line-height: 1.4
+  &__rate
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+    gap: 0.8rem
+    padding: 3.2rem
+    color: $white
+    background: $forest
+    border-radius: 1.8rem
+  &__rate-value
+    @include font-display
+    font-size: clamp(4.2rem, 5vw, 6.8rem)
+    line-height: 0.95
+    letter-spacing: -0.05em
+  &__rate-text
+    @include font-text
+    max-width: 20rem
+    font-size: 1.5rem
+    line-height: 1.35
+  &__section
+    display: flex
+    flex-direction: column
+    gap: 4rem
+  &__section-head
+    max-width: 72rem
+  &__section-title
+    font-size: clamp(3.2rem, 4vw, 5.6rem)
+    line-height: 1
+    letter-spacing: -0.035em
+  &__tiers
+    display: grid
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+    gap: 2rem
+    list-style: none
+  &__tier
+    display: grid
+    grid-template-columns: auto minmax(0, 1fr)
+    gap: 2.4rem
+    align-items: start
+    padding: 3.2rem
+    background: $cream-muted
+    border-radius: 1.8rem
+    &:last-child
+      color: $white
+      background: $forest
+  &__tier-value
+    @include font-display
+    font-size: 5.6rem
+    line-height: 0.9
+    letter-spacing: -0.05em
+    color: $leaf
+  &__tier-title
+    @include font-display
+    margin-bottom: 1.2rem
+    font-size: 2rem
+    line-height: 1.1
+    text-transform: uppercase
+  &__tier-text,
+  &__term-text,
+  &__join-copy
+    @include font-text
+    font-size: 1.6rem
+    line-height: 1.45
+  &__note
+    @include font-text
+    max-width: 76rem
+    padding-left: 2.4rem
+    font-size: 1.6rem
+    line-height: 1.45
+    border-left: 0.3rem solid $leaf
+  &__terms
+    display: grid
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+    gap: 2rem
+    list-style: none
+  &__term
+    display: flex
+    gap: 2rem
+    padding: 2.8rem
+    border: 0.1rem solid rgba(10, 51, 35, 0.24)
+    border-radius: 1.8rem
+  &__term-icon
+    width: 3.2rem
+    height: 3.2rem
+    flex: 0 0 auto
+    color: $leaf
+  &__term-title
+    @include font-display
+    margin-bottom: 1rem
+    font-size: 1.8rem
+    line-height: 1.1
+    text-transform: uppercase
+  &__section--join
+    padding: 4rem
+    color: $white
+    background: $forest
+    border-radius: 2.4rem
+    .bonus-program__eyebrow
+      color: $leaf
+  &__join
+    display: grid
+    grid-template-columns: minmax(0, 1fr) minmax(28rem, 43rem)
+    gap: 4rem
+    align-items: end
+  &__join-copy
+    display: flex
+    flex-direction: column
+    gap: 1.2rem
+  &__partners
+    display: grid
+    grid-template-columns: minmax(0, 1fr) minmax(34rem, 0.9fr)
+    gap: 6rem
+    padding: 5.6rem
+    background: $cream-muted
+    border-radius: 2.4rem
+  &__partners-head
+    max-width: 64rem
+  &__partners-content
+    display: flex
+    flex-direction: column
+    gap: 4rem
+  &__partners-list
+    display: flex
+    flex-direction: column
+    gap: 1.6rem
+    list-style: none
+  &__partners-item
+    @include font-text
+    display: flex
+    align-items: flex-start
+    gap: 1.2rem
+    font-size: 1.8rem
+    line-height: 1.35
+  &__partners-icon
+    width: 2.4rem
+    height: 2.4rem
+    flex: 0 0 auto
+    margin-top: 0.1rem
+    color: $leaf
+  &__partners-contact
+    @include font-text
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+    gap: 2rem
+    font-size: 1.6rem
+    line-height: 1.45
+  &__partners-link
+    @include font-display
+    display: inline-flex
+    align-items: center
+    gap: 1rem
+    font-size: 1.5rem
+    line-height: 1.2
+    text-transform: uppercase
+    @include anim(color)
+    &:hover,
+    &:focus-visible
+      color: $leaf
+  &__partners-link-icon
+    width: 2.4rem
+    height: 2.4rem
+
+@media (max-width: $bp-tablet)
+  .bonus-program
+    gap: 7rem
+    &__hero,
+    &__join,
+    &__partners
+      grid-template-columns: 1fr
+    &__hero
+      padding: 4rem
+    &__rate
+      max-width: 38rem
+
+@media (max-width: $bp-mobile)
+  .bonus-program
+    gap: 5.6rem
+    padding-top: 2rem
+    padding-bottom: 6rem
+    &__hero,
+    &__section--join,
+    &__partners
+      padding: 2.4rem
+      border-radius: 1.8rem
+    &__lead
+      font-size: 1.8rem
+    &__tiers,
+    &__terms
+      grid-template-columns: 1fr
+    &__tier
+      grid-template-columns: 1fr
+      gap: 1.6rem
+      padding: 2.4rem
+    &__term
+      padding: 2.4rem
+    &__rate
+      width: 100%
+      max-width: none
+      padding: 2.4rem
+    &__join
+      gap: 2.4rem
