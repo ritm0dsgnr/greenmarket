@@ -1,0 +1,19 @@
+export const LOYALTY_POLICY_VERSION = 'loyalty-policy-v1'
+
+export const LOYALTY_TIME_ZONE = 'Asia/Yekaterinburg'
+
+export const KOPECKS_PER_RUBLE = 100
+export const POINTS_PER_RUBLE = 1
+
+export const ACCRUAL_RATE_PERCENT_BELOW_THRESHOLD = 5
+export const ACCRUAL_RATE_PERCENT_AT_OR_ABOVE_THRESHOLD = 10
+export const THRESHOLD_PLANT_AMOUNT_MINOR = 150_000 * KOPECKS_PER_RUBLE
+export const REDEMPTION_LIMIT_PERCENT = 50
+
+export const BIRTHDAY_GRANT_POINTS = 500
+export const BIRTHDAY_GRANT_DAYS_BEFORE = 7
+export const BIRTHDAY_VALID_DAYS = 14
+
+export const PURCHASE_LOT_EXPIRES_AFTER_YEARS = 1
+
+export const BONUS_PROGRAM_PATH = '/bonus-program'
