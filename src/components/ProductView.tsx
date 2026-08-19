@@ -575,8 +575,8 @@ export function ProductView() {
                             >
                               ?
                             </button>
-                            <SizeLegend />
                           </div>
+                          <SizeLegend />
                         </div>
                       )
                     })}

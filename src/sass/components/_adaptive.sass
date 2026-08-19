@@ -185,11 +185,64 @@ html
 
   .product
     &__layout
-      grid-template-columns: 1fr
-    &__gallery
+      grid-template-columns: minmax(0, 1fr)
+      row-gap: 3.2rem
+    &__gallery,
+    &__info
+      grid-column: 1
       width: 100%
-    &__thumbs-track > li
-      flex: 0 0 calc((100% - 5.4rem) / 4)
+      min-width: 0
+    &__gallery
+      grid-row: 1
+      gap: 1.6rem
+    &__info
+      grid-row: 2
+      padding-top: 0
+    &__thumbs-track
+      gap: 1.2rem
+      > li
+        flex: 0 0 clamp(6.4rem, 22vw, 12rem)
+    &__name
+      font-size: 2.8rem
+    &__offer,
+    &__choose,
+    &__sizes,
+    &__checkout
+      width: 100%
+    &__offer
+      flex-direction: column
+      align-items: stretch
+      gap: 2rem
+    &__choose
+      gap: 1.2rem
+    &__size-pick
+      min-width: 9.6rem
+      padding: 1.4rem 1.6rem 1.2rem
+    &__hint
+      top: calc(100% + 0.8rem)
+      left: 0
+      right: auto
+      width: min(48rem, calc(100vw - 4.8rem))
+      max-width: 100%
+      &::before
+        display: none
+    &__checkout
+      flex-wrap: wrap
+      align-items: center
+      justify-content: space-between
+      gap: 1.6rem
+      margin-left: 0
+    &__buy
+      width: 100%
+    &__spec
+      gap: 1.2rem
+    &__lightbox
+      padding: 6.4rem 2.4rem 2.4rem
+      &-close
+        top: 1.6rem
+        right: 1.6rem
+      &-frame
+        width: min(96rem, calc(100vw - 4.8rem), calc(100vh - 12rem))
 
   .product-card
     &__overlay
@@ -290,6 +343,31 @@ html
       grid-template-columns: 1fr
     &__aside
       grid-column: 1
+
+  .product
+    &__name
+      font-size: 2.4rem
+    &__size
+      flex: 1 1 calc(50% - 0.5rem)
+    &__size-pick
+      min-width: 0
+      width: 100%
+    &__checkout
+      flex-direction: column
+      align-items: stretch
+    &__qty
+      align-self: flex-start
+    &__spec
+      flex-direction: column
+      align-items: flex-start
+      gap: 0.4rem
+      padding: 1rem 1.4rem
+    &__spec-value
+      text-align: left
+    &__lightbox
+      padding: 5.6rem 1.6rem 1.6rem
+      &-frame
+        width: min(96rem, calc(100vw - 3.2rem), calc(100vh - 10rem))
 
   .not-found
     &__code
