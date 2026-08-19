@@ -26,15 +26,38 @@
         &:hover,
         &:focus-visible
           color: $leaf
+    &-burger
+      display: none
+      align-items: center
+      justify-content: center
+      width: 4rem
+      height: auto
+      aspect-ratio: 1/1
+      flex-shrink: 0
+      border: 0.3rem solid $forest
+      border-radius: 50%
+      color: $forest
+      position: relative
+      z-index: 22
+      transition: background-color $anim-duration $anim-ease, color $anim-duration $anim-ease
+      @media (prefers-reduced-motion: reduce)
+        transition: none
+      &:hover,
+      &:focus-visible
+        background: $leaf
     &-item
       position: relative
-      &:hover,
-      &:focus-within,
       &.is-open
         .header__wrapper-dropdown
           @include reveal-shown
         .header__wrapper-arrow
           @include turn-open
+      @media (hover: hover) and (pointer: fine)
+        &:hover
+          .header__wrapper-dropdown
+            @include reveal-shown
+          .header__wrapper-arrow
+            @include turn-open
     &-link
       display: inline-flex
       align-items: center
@@ -102,10 +125,13 @@
         transition: opacity $anim-duration-turn $anim-ease
         @media (prefers-reduced-motion: reduce)
           transition: none
+    &-nav-contacts
+      display: none
     &-aside
       display: flex
       align-items: center
       gap: 1.6rem
+      z-index: 22
     &-contacts
       display: flex
       align-items: center
@@ -188,7 +214,7 @@
       display: flex
       width: 16.8rem
       color: inherit
-      z-index: 1
+      z-index: 22
       &:hover,
       &:focus-visible
         .logo
@@ -197,6 +223,10 @@
         width: 100%
         transform-origin: center
         @include anim(transform)
+
+html:has(body.is-nav-open),
+body.is-nav-open
+  overflow: hidden
 
 @keyframes header-count-in
   0%
