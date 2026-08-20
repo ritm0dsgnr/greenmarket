@@ -82,10 +82,17 @@
     position: relative
     overflow: hidden
     height: 100%
+    touch-action: pan-y
+    user-select: none
+    &.is-dragging
+      touch-action: none
+      cursor: grabbing
   &__track
     display: flex
     height: 100%
     @include anim(transform)
+    &.is-dragging
+      transition: none
   &__slide
     flex: 0 0 100%
     height: 100%

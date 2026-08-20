@@ -62,17 +62,26 @@
       color: $forest
       transform: scale(1.06)
   &__viewport
-    flex: 0 0 142.8rem
-    width: 142.8rem
+    flex: 1 1 auto
+    width: auto
+    min-width: 0
+    max-width: 142.8rem
     overflow: hidden
+    touch-action: pan-y
+    user-select: none
+    &.is-dragging
+      touch-action: none
+      cursor: grabbing
   &__track
     display: flex
     gap: 1.6rem
     @include anim(transform)
-    &.is-instant
+    &.is-instant,
+    &.is-dragging
       transition: none
   &__item
-    flex: 0 0 34.5rem
+    flex: 0 0 var(--slide-span, 34.5rem)
+    min-width: 0
   &__pages
     display: flex
     align-items: center

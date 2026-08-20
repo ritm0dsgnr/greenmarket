@@ -9,6 +9,7 @@ import { bindHangingWords } from '@/components/bindHangingWords'
 import { formatLayoutPrice, layoutSaleOldPrice } from '@/components/productCardSizes'
 import type { ProductCardTag } from '@/components/ProductCard'
 import type { ProductSpec } from '@/components/productSpecs'
+import { useSwipePager } from '@/components/useSwipePager'
 
 const tagLabels = {
   sale: 'Sale',
@@ -54,105 +55,6 @@ function wrapSlideIndex(index: number) {
   }
 
   return index
-}
-
-function useSwipePager(onSwipe: (direction: -1 | 1) => void, onTap?: () => void) {
-  const [shift, setShift] = useState(0)
-  const [dragging, setDragging] = useState(false)
-  const session = useRef({
-    pointerId: -1,
-    startX: 0,
-    startY: 0,
-    dx: 0,
-    locked: false as false | 'x' | 'y',
-  })
-
-  function onPointerDown(event: PointerEvent<HTMLElement>) {
-    if (event.button !== 0) {
-      return
-    }
-
-    session.current = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-      dx: 0,
-      locked: false,
-    }
-    event.currentTarget.setPointerCapture(event.pointerId)
-  }
-
-  function onPointerMove(event: PointerEvent<HTMLElement>) {
-    const current = session.current
-    if (current.pointerId !== event.pointerId) {
-      return
-    }
-
-    const dx = event.clientX - current.startX
-    const dy = event.clientY - current.startY
-
-    if (!current.locked) {
-      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) {
-        return
-      }
-
-      current.locked = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y'
-      if (current.locked === 'x') {
-        setDragging(true)
-      }
-    }
-
-    if (current.locked !== 'x') {
-      return
-    }
-
-    current.dx = dx
-    setShift(dx)
-  }
-
-  function endPointer(event: PointerEvent<HTMLElement>) {
-    const current = session.current
-    if (current.pointerId !== event.pointerId) {
-      return
-    }
-
-    const dx = current.dx
-    const axis = current.locked
-    current.pointerId = -1
-    current.dx = 0
-    current.locked = false
-    setShift(0)
-    setDragging(false)
-
-    if (axis === 'x') {
-      const threshold = Math.min(72, event.currentTarget.clientWidth * 0.18)
-      if (dx <= -threshold) {
-        onSwipe(1)
-        return
-      }
-
-      if (dx >= threshold) {
-        onSwipe(-1)
-      }
-
-      return
-    }
-
-    if (axis === false) {
-      onTap?.()
-    }
-  }
-
-  return {
-    shift,
-    dragging,
-    bind: {
-      onPointerDown,
-      onPointerMove,
-      onPointerUp: endPointer,
-      onPointerCancel: endPointer,
-    },
-  }
 }
 
 function ProductThumbs({
@@ -382,7 +284,7 @@ export function ProductView() {
   const swipeSlide = (direction: -1 | 1) => {
     setSlideIndex((current) => wrapSlideIndex(current + direction))
   }
-  const pageSwipe = useSwipePager(swipeSlide, () => setLightboxOpen(true))
+  const pageSwipe = useSwipePager(swipeSlide, { onTap: () => setLightboxOpen(true) })
   const lightboxSwipe = useSwipePager(swipeSlide)
 
   lightboxShownRef.current = lightboxShown

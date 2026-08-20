@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Icon } from '@/components/Icon'
+import { useSwipePager } from '@/components/useSwipePager'
 
 const slides = [{ id: '1' }, { id: '2' }, { id: '3' }] as const
 
@@ -23,12 +24,17 @@ export function HeroSlider() {
     setIndex(nextIndex)
   }
 
+  const swipe = useSwipePager((direction) => goTo(index + direction))
+
   return (
     <div className="hero__slider">
-      <div className="hero__viewport">
+      <div
+        className={['hero__viewport', swipe.dragging ? 'is-dragging' : ''].filter(Boolean).join(' ')}
+        {...swipe.bind}
+      >
         <ul
-          className="hero__track"
-          style={{ transform: `translateX(-${index * 100}%)` }}
+          className={['hero__track', swipe.dragging ? 'is-dragging' : ''].filter(Boolean).join(' ')}
+          style={{ transform: `translate3d(calc(-${index * 100}% + ${swipe.shift}px), 0, 0)` }}
         >
           {slides.map((slide, slideIndex) => (
             <li
