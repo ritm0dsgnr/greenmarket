@@ -30,6 +30,7 @@
     touch-action: pan-y
     &.is-dragging
       cursor: grabbing
+      touch-action: none
   &__track
     display: flex
     height: 100%
@@ -176,6 +177,7 @@
       touch-action: pan-y
       &.is-dragging
         cursor: grabbing
+        touch-action: none
     &-track
       display: flex
       height: 100%
@@ -230,6 +232,7 @@
     padding-top: 0.4rem
     grid-column: 2
     grid-row: 1
+    overflow: visible
   &__tags
     display: flex
     flex-wrap: wrap
@@ -356,8 +359,8 @@
         content: ""
         position: absolute
         inset: -1.6rem
-      &:hover .product__hint,
-      &:focus-within .product__hint
+      &:hover + .product__hint,
+      &:focus-within + .product__hint
         @include reveal-shown
   &__hint
     @include reveal
