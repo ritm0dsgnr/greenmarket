@@ -1,10 +1,11 @@
 type ForestAmbience = {
+  preload: () => Promise<void>
   setEnabled: (enabled: boolean) => Promise<void>
   dispose: () => void
 }
 
 const AUDIO_URL = '/audio/main-birds.mp3'
-const MASTER_GAIN = 0.36
+const MASTER_GAIN = 0.12
 const FADE_IN = 1.2
 const FADE_OUT = 0.8
 const LOOP_OVERLAP = 0.6
@@ -30,6 +31,47 @@ export function createForestAmbience(): ForestAmbience {
   let voices: Voice[] = []
   let disposed = false
   let enabled = false
+  let stateListener: (() => void) | null = null
+
+  function clearStateListener() {
+    if (context && stateListener) {
+      context.removeEventListener('statechange', stateListener)
+    }
+    stateListener = null
+  }
+
+  function beginPlayback() {
+    if (!enabled || !context || !master || !buffer) {
+      return false
+    }
+
+    if (context.state !== 'running') {
+      return false
+    }
+
+    fadeGain(master, MASTER_GAIN, context.currentTime, FADE_IN)
+
+    if (voices.length === 0) {
+      nextStart = context.currentTime
+      scheduleVoice()
+    }
+
+    return true
+  }
+
+  function waitForRunningContext() {
+    if (!context || beginPlayback()) {
+      return
+    }
+
+    clearStateListener()
+    stateListener = () => {
+      if (beginPlayback()) {
+        clearStateListener()
+      }
+    }
+    context.addEventListener('statechange', stateListener)
+  }
 
   function clearTimer() {
     window.clearTimeout(scheduleTimer)
@@ -128,6 +170,13 @@ export function createForestAmbience(): ForestAmbience {
   }
 
   return {
+    async preload() {
+      if (disposed) {
+        return
+      }
+
+      await ensure()
+    },
     async setEnabled(nextEnabled) {
       if (disposed) {
         return
@@ -136,6 +185,7 @@ export function createForestAmbience(): ForestAmbience {
       enabled = nextEnabled
 
       if (!nextEnabled) {
+        clearStateListener()
         stopLoop()
         if (context && master) {
           fadeGain(master, 0.0001, context.currentTime, FADE_OUT)
@@ -150,16 +200,14 @@ export function createForestAmbience(): ForestAmbience {
       }
 
       await context.resume()
-      fadeGain(master, MASTER_GAIN, context.currentTime, FADE_IN)
-
-      if (voices.length === 0) {
-        nextStart = context.currentTime
-        scheduleVoice()
+      if (!beginPlayback()) {
+        waitForRunningContext()
       }
     },
     dispose() {
       disposed = true
       enabled = false
+      clearStateListener()
       stopLoop()
       load = null
       buffer = null

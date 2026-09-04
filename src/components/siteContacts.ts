@@ -1,4 +1,4 @@
-export const siteBrand = 'Green Market'
+export const siteBrand = 'Грин Маркет'
 export const siteBrandCaps = 'ГРИН МАРКЕТ'
 export const siteGardenName = 'Садовый центр "Грин Маркет"'
 

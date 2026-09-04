@@ -1,20 +1,26 @@
 'use client'
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useRouter } from 'next/navigation'
 import { Icon } from '@/components/Icon'
-import { ProductCard, type ProductCardData } from '@/components/ProductCard'
+import { ProductCard, type ProductCardData, type ProductCardTag } from '@/components/ProductCard'
 import {
   collectNameGroupTags,
   collectSpecFilters,
   filterLayoutProducts,
+  filterProductsByTags,
   layoutFiltersEqual,
   layoutSortOptions,
   layoutTagFilters,
   sortLayoutProducts,
-  type LayoutSortId,
 } from '@/components/productListingLayout'
-
-type LayoutSpecFilter = { label: string; value: string }
+import type { ListingPromoTag } from '@/catalog/name-tag-url'
+import {
+  replaceListingUrl,
+  withListingQuery,
+  type ListingSortId,
+  type ListingSpecFilter,
+} from '@/catalog/listing-filters-url'
 
 function specKey(label: string, value: string) {
   return `${label}\t${value}`
@@ -22,41 +28,117 @@ function specKey(label: string, value: string) {
 
 export function ProductsCatalog({
   products,
-  categoryLabel,
   children,
+  showFilters = true,
+  listingPath,
+  activeNameTags = [],
+  activePromoTags = [],
+  initialSpecFilters = [],
+  initialSort = 'featured',
 }: {
   products: ProductCardData[]
-  categoryLabel: string
   children: ReactNode
+  showFilters?: boolean
+  listingPath: string
+  activeNameTags?: string[]
+  activePromoTags?: ListingPromoTag[]
+  initialSpecFilters?: ListingSpecFilter[]
+  initialSort?: ListingSortId
 }) {
-  const [sort, setSort] = useState<LayoutSortId>('featured')
+  const router = useRouter()
+  const [sort, setSort] = useState<ListingSortId>(initialSort)
   const [sortOpen, setSortOpen] = useState(false)
-  const [draftFilters, setDraftFilters] = useState<LayoutSpecFilter[]>([])
-  const [appliedFilters, setAppliedFilters] = useState<LayoutSpecFilter[]>([])
+  const [draftFilters, setDraftFilters] = useState<ListingSpecFilter[]>(initialSpecFilters)
+  const [appliedFilters, setAppliedFilters] = useState<ListingSpecFilter[]>(initialSpecFilters)
+  const selectedPromoTags = activePromoTags
+  const selectedNameTags = activeNameTags
   const [activeFilterKey, setActiveFilterKey] = useState<string | null>(null)
   const [applyTop, setApplyTop] = useState(0)
   const [applyReady, setApplyReady] = useState(false)
   const sortRef = useRef<HTMLDivElement>(null)
   const filtersRef = useRef<HTMLElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [rail, setRail] = useState({ show: false, thumbHeight: 0, thumbTop: 0 })
+  const listingSyncKey = [
+    listingPath,
+    initialSort,
+    activePromoTags.join(','),
+    activeNameTags.join(','),
+    initialSpecFilters
+      .map((item) => `${item.label}:${item.value}`)
+      .sort()
+      .join('|'),
+  ].join('::')
+  const [activeListingKey, setActiveListingKey] = useState(listingSyncKey)
+
+  if (listingSyncKey !== activeListingKey) {
+    setActiveListingKey(listingSyncKey)
+    setDraftFilters(initialSpecFilters)
+    setAppliedFilters(initialSpecFilters)
+    setSort(initialSort)
+  }
   const specFilters = useMemo(
     () => collectSpecFilters(products.map((product) => ({ specs: product.specs ?? [] }))),
     [products],
   )
   const matchCount = useMemo(
-    () => filterLayoutProducts(products, draftFilters).length,
-    [products, draftFilters],
+    () =>
+      filterProductsByTags(
+        filterLayoutProducts(products, draftFilters),
+        selectedPromoTags,
+        selectedNameTags,
+      ).length,
+    [products, draftFilters, selectedPromoTags, selectedNameTags],
   )
   const visibleProducts = useMemo(
-    () => sortLayoutProducts(filterLayoutProducts(products, appliedFilters), sort),
-    [products, appliedFilters, sort],
+    () =>
+      sortLayoutProducts(
+        filterProductsByTags(
+          filterLayoutProducts(products, appliedFilters),
+          selectedPromoTags,
+          selectedNameTags,
+        ),
+        sort,
+      ),
+    [products, appliedFilters, selectedPromoTags, selectedNameTags, sort],
   )
   const showApply = Boolean(activeFilterKey) && !layoutFiltersEqual(draftFilters, appliedFilters)
-  const nameGroups = useMemo(
-    () => collectNameGroupTags(products, categoryLabel),
-    [products, categoryLabel],
+  const nameGroups = useMemo(() => {
+    const scoped = filterProductsByTags(products, selectedPromoTags, [])
+    return collectNameGroupTags(scoped)
+  }, [products, selectedPromoTags])
+  const promoTags = useMemo(
+    () =>
+      layoutTagFilters.filter((tag) =>
+        products.some((product) => product.tag === tag.id),
+      ),
+    [products],
   )
   const currentSortLabel =
     layoutSortOptions.find((option) => option.id === sort)?.label ?? 'По умолчанию'
+
+  function listingUrl(next: {
+    nameTags?: readonly string[]
+    promoTags?: readonly ListingPromoTag[]
+    specFilters?: readonly ListingSpecFilter[]
+    sort?: ListingSortId
+  }) {
+    return withListingQuery(listingPath, {
+      nameTags: next.nameTags ?? selectedNameTags,
+      promoTags: next.promoTags ?? selectedPromoTags,
+      specFilters: next.specFilters ?? appliedFilters,
+      sort: next.sort ?? sort,
+    })
+  }
+
+  function syncListingUrl(next: {
+    nameTags?: readonly string[]
+    promoTags?: readonly ListingPromoTag[]
+    specFilters?: readonly ListingSpecFilter[]
+    sort?: ListingSortId
+  }) {
+    replaceListingUrl(listingUrl(next))
+  }
 
   useEffect(() => {
     if (!sortOpen) {
@@ -108,6 +190,43 @@ export function ProductsCatalog({
     }
   }, [showApply, activeFilterKey, applyReady])
 
+  useEffect(() => {
+    const scroller = scrollRef.current
+
+    if (!scroller) {
+      return
+    }
+
+    function updateRail() {
+      if (!scroller) {
+        return
+      }
+
+      const { clientHeight, scrollHeight, scrollTop } = scroller
+
+      if (scrollHeight <= clientHeight + 1) {
+        setRail({ show: false, thumbHeight: 0, thumbTop: 0 })
+        return
+      }
+
+      const thumbHeight = Math.max(40, (clientHeight / scrollHeight) * clientHeight)
+      const maxTop = clientHeight - thumbHeight
+      const thumbTop = (scrollTop / (scrollHeight - clientHeight)) * maxTop
+
+      setRail({ show: true, thumbHeight, thumbTop })
+    }
+
+    updateRail()
+    scroller.addEventListener('scroll', updateRail, { passive: true })
+    const observer = new ResizeObserver(updateRail)
+    observer.observe(scroller)
+
+    return () => {
+      scroller.removeEventListener('scroll', updateRail)
+      observer.disconnect()
+    }
+  }, [specFilters])
+
   function toggleFilter(label: string, value: string, checked: boolean) {
     setActiveFilterKey(specKey(label, value))
     setDraftFilters((current) => {
@@ -119,63 +238,138 @@ export function ProductsCatalog({
     })
   }
 
+  function applyFilters() {
+    setAppliedFilters(draftFilters)
+    setActiveFilterKey(null)
+    setApplyReady(false)
+    syncListingUrl({ specFilters: draftFilters })
+  }
+
+  function changeSort(next: ListingSortId) {
+    setSort(next)
+    setSortOpen(false)
+    syncListingUrl({ sort: next })
+  }
+
+  function togglePromoTag(tag: ProductCardTag, checked: boolean) {
+    const next = checked
+      ? selectedPromoTags.includes(tag)
+        ? selectedPromoTags
+        : [...selectedPromoTags, tag]
+      : selectedPromoTags.filter((item) => item !== tag)
+
+    router.push(
+      listingUrl({
+        promoTags: next,
+      }),
+    )
+  }
+
+  function toggleNameTag(tag: string, checked: boolean) {
+    const next = checked
+      ? selectedNameTags.includes(tag)
+        ? selectedNameTags
+        : [...selectedNameTags, tag]
+      : selectedNameTags.filter((item) => item !== tag)
+
+    router.push(
+      listingUrl({
+        nameTags: next,
+      }),
+    )
+  }
+
   return (
     <>
-      <aside className="products__filters" aria-label="Фильтры" ref={filtersRef}>
-        {specFilters.map((group) => (
-          <div className="products__group" role="group" aria-labelledby={`products-filter-${group.label}`} key={group.label}>
-            <h3 className="products__group-title" id={`products-filter-${group.label}`}>
-              {group.label}
-            </h3>
-            {group.values.map((value) => {
-              const key = specKey(group.label, value)
-              const checked = draftFilters.some((item) => item.label === group.label && item.value === value)
+      {showFilters ? (
+        <aside className="products__filters" aria-labelledby="products-filters-title" ref={filtersRef}>
+          <header className="products__filters-head">
+            <span className="products__filters-mark" aria-hidden="true">
+              <Icon name="filter" />
+            </span>
+            <h2 className="products__filters-title" id="products-filters-title">
+              Параметры
+            </h2>
+          </header>
+          <div className="products__filters-body">
+            <div className="products__filters-scroll" ref={scrollRef}>
+              {specFilters.map((group) => (
+                <div
+                  className="products__group"
+                  role="group"
+                  aria-labelledby={`products-filter-${group.label}`}
+                  key={group.label}
+                >
+                  <h3 className="products__group-title" id={`products-filter-${group.label}`}>
+                    {group.label}
+                  </h3>
+                  {group.values.map((value) => {
+                    const key = specKey(group.label, value)
+                    const checked = draftFilters.some(
+                      (item) => item.label === group.label && item.value === value,
+                    )
 
-              return (
-                <div className="products__option-row" data-filter-key={key} key={value}>
-                  <label className="products__option">
-                    <input
-                      className="visually-hidden"
-                      type="checkbox"
-                      name={group.label}
-                      value={value}
-                      checked={checked}
-                      onChange={(event) => toggleFilter(group.label, value, event.target.checked)}
-                    />
-                    <span className="products__check">
-                      <Icon name="check" />
-                    </span>
-                    <span>{value}</span>
-                  </label>
+                    return (
+                      <div className="products__option-row" data-filter-key={key} key={value}>
+                        <label className="products__option">
+                          <input
+                            className="visually-hidden"
+                            type="checkbox"
+                            name={group.label}
+                            value={value}
+                            checked={checked}
+                            onChange={(event) => toggleFilter(group.label, value, event.target.checked)}
+                          />
+                          <span className="products__check">
+                            <Icon name="check" />
+                          </span>
+                          <span>{value}</span>
+                        </label>
+                      </div>
+                    )
+                  })}
                 </div>
-              )
-            })}
+              ))}
+            </div>
+            {rail.show ? (
+              <div className="products__filters-rail" aria-hidden="true">
+                <div
+                  className="products__filters-thumb"
+                  style={{
+                    height: `${rail.thumbHeight}px`,
+                    transform: `translateY(${rail.thumbTop}px)`,
+                  }}
+                />
+              </div>
+            ) : null}
           </div>
-        ))}
-        {activeFilterKey ? (
-          <button
-            className={['products__apply', showApply ? 'is-visible' : '', applyReady ? 'is-ready' : '']
-              .filter(Boolean)
-              .join(' ')}
-            type="button"
-            style={{ top: `${applyTop}px` }}
-            onClick={() => setAppliedFilters(draftFilters)}
-          >
-            Применить&nbsp;({matchCount})
-          </button>
-        ) : null}
-      </aside>
+          {activeFilterKey ? (
+            <button
+              className={['products__apply', showApply ? 'is-visible' : '', applyReady ? 'is-ready' : '']
+                .filter(Boolean)
+                .join(' ')}
+              type="button"
+              style={{ top: `${applyTop}px` }}
+              onClick={applyFilters}
+            >
+              Применить&nbsp;({matchCount})
+            </button>
+          ) : null}
+        </aside>
+      ) : null}
       <div className="products__main">
         {children}
         <div className="products__toolbar">
           <div className="products__tags" role="group" aria-label="Теги">
-            {layoutTagFilters.map((tag) => (
+            {promoTags.map((tag) => (
               <label className={`products__tag products__tag--${tag.id}`} key={tag.id}>
                 <input
                   className="visually-hidden"
                   type="checkbox"
                   name="products-tag"
                   value={tag.id}
+                  checked={selectedPromoTags.includes(tag.id)}
+                  onChange={(event) => togglePromoTag(tag.id, event.target.checked)}
                 />
                 <span>{tag.label}</span>
                 <span className="products__tag-close">
@@ -190,6 +384,8 @@ export function ProductsCatalog({
                   type="checkbox"
                   name="products-group"
                   value={group.label}
+                  checked={selectedNameTags.includes(group.label)}
+                  onChange={(event) => toggleNameTag(group.label, event.target.checked)}
                 />
                 <span>
                   {group.label}&nbsp;({group.count})
@@ -230,10 +426,7 @@ export function ProductsCatalog({
                     type="button"
                     role="option"
                     aria-selected={option.id === sort}
-                    onClick={() => {
-                      setSort(option.id)
-                      setSortOpen(false)
-                    }}
+                    onClick={() => changeSort(option.id)}
                   >
                     {option.label}
                   </button>
@@ -245,7 +438,10 @@ export function ProductsCatalog({
         <ul className="products__grid">
           {visibleProducts.map((product) => (
             <li className="products__item" key={product.id}>
-              <ProductCard card={product} />
+              <ProductCard
+                card={product}
+                variant={showFilters ? 'full' : 'name-only'}
+              />
             </li>
           ))}
         </ul>

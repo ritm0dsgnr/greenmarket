@@ -417,6 +417,8 @@ interface CatalogProductInput {
 
 Эталоном структуры UI является проект `S:\rampa\otel`: отдельные компоненты, смысловые классы BEM-подобного вида и Sass-модуль на компонент. Агент переносит соглашение, а не копирует разметку, стили, брендовые значения или бизнес-логику другого проекта.
 
+- Публичное название садового центра в русскоязычном UI — **Грин Маркет** (`siteBrand` из `src/components/siteContacts.ts`), не «Green Market». Технические имена репозитория, пакетов, доменов и путей импорта не меняются.
+
 - Каждый самостоятельный компонент или секция имеет один именованный блок в kebab-case: `site-header`, `catalog-card`, `product-gallery`.
 - Внутренние части называются через `block__element`: `catalog-card__title`, `catalog-card__price`.
 - Варианты внешнего вида, размера или раскладки называются через `block--modifier` либо `block__element--modifier`: `catalog-card--compact`, `product-gallery__item--cover`.

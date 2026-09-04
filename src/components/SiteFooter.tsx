@@ -17,6 +17,7 @@ import {
   siteTelegramHref,
   siteVkHref,
 } from '@/components/siteContacts'
+import { siteBlogRoutes, siteInfoRoutes } from '@/components/siteNav'
 
 const buyerLinks = [
   { href: '/', label: 'Главная' },
@@ -26,18 +27,14 @@ const buyerLinks = [
 ] as const
 
 const infoLinks = [
-  { href: '/', label: 'Доставка' },
-  { href: '/', label: 'Сертификаты' },
-  { href: '/bonus-program', label: 'Бонусная программа' },
-  { href: '/', label: 'Прайс' },
-  { href: '/', label: 'Отзывы' },
+  { href: siteInfoRoutes.delivery, label: 'Доставка' },
+  { href: siteInfoRoutes.certificates, label: 'Сертификаты' },
+  { href: siteInfoRoutes.bonusProgram, label: 'Бонусная программа' },
+  { href: siteInfoRoutes.price, label: 'Прайс' },
+  { href: siteInfoRoutes.reviews, label: 'Отзывы' },
 ] as const
 
-const blogLinks = [
-  { href: '/', label: 'Мероприятия' },
-  { href: '/', label: 'Статьи' },
-  { href: '/', label: 'Новости' },
-] as const
+const blogLinks = [{ href: siteBlogRoutes.root, label: 'Журнал' }] as const
 
 export function SiteFooter() {
   return (

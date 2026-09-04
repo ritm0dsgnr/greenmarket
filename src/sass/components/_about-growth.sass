@@ -1,0 +1,311 @@
+@use "../assets/vars" as *
+@use "../assets/mixin" as *
+
+.about-growth
+  position: relative
+  color: $forest
+  &__inner
+    display: flex
+    flex-direction: column
+    align-items: center
+  &__head
+    display: flex
+    flex-direction: column
+    align-items: center
+    max-width: 64rem
+    margin: 0 auto 3.2rem
+    text-align: center
+  &__eyebrow
+    @include font-display
+    margin-bottom: 1.6rem
+    font-size: 1.4rem
+    line-height: 1.2
+    text-transform: uppercase
+    color: $leaf
+  &__title
+    @include font-display
+    display: flex
+    flex-direction: column
+    align-items: center
+    gap: 0.2rem
+    font-size: clamp(4.8rem, 8vw, 9.6rem)
+    line-height: 0.92
+    letter-spacing: -0.045em
+    text-transform: uppercase
+  &__title-line
+    display: block
+    &--accent
+      color: $leaf
+  &__lead
+    @include font-text
+    max-width: 64rem
+    margin-top: 1.6rem
+    font-size: 1.8rem
+    line-height: 1.45
+    color: rgba($forest, 0.82)
+  &__lead-line
+    display: block
+    & + &
+      margin-top: 0.2rem
+  &__years
+    position: sticky
+    top: calc(#{$header-stack} + 1.2rem)
+    z-index: 5
+    display: inline-flex
+    flex-wrap: wrap
+    justify-content: center
+    gap: 0.8rem
+    width: fit-content
+    max-width: calc(100% - 2.4rem)
+    margin: 0 auto 5.6rem
+    padding: 0.8rem
+    background: rgba($cream, 0.92)
+    border: 0.2rem solid rgba($forest, 0.08)
+    border-radius: 10rem
+    backdrop-filter: blur(0.8rem)
+    box-shadow: 0 0 2rem rgba(10, 51, 35, 0.1)
+  &__year-chip
+    @include font-display
+    min-width: 6.4rem
+    height: 3.2rem
+    padding: 0 1.2rem
+    font-size: 1.4rem
+    line-height: 1
+    color: $forest
+    background: $cream-muted
+    border: 0
+    border-radius: 10rem
+    cursor: pointer
+    transition: background-color $anim-duration $anim-ease, color $anim-duration $anim-ease, box-shadow $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    &:hover,
+    &:focus-visible
+      background: $leaf
+    &.is-active
+      color: $cream
+      background: $forest
+      box-shadow: 0.25rem 0.25rem 0 rgba(10, 51, 35, 0.25)
+  &__timeline
+    position: relative
+    width: min(100%, 112rem)
+    display: flex
+    flex-direction: column
+    gap: 7.2rem
+    margin: 0
+    padding: 0
+    list-style: none
+  &__stem
+    position: absolute
+    top: 1.2rem
+    bottom: 1.2rem
+    left: 50%
+    z-index: 0
+    width: 0.3rem
+    transform: translateX(-50%)
+    pointer-events: none
+    list-style: none
+    background: rgba($leaf, 0.18)
+    border-radius: 10rem
+    overflow: hidden
+  &__stem-fill
+    width: 100%
+    height: 100%
+    transform: scaleY(0)
+    transform-origin: top center
+    background: linear-gradient(180deg, rgba($leaf, 0.2), $leaf 14%, $leaf 86%, rgba($leaf, 0.2))
+  &__chapter
+    position: relative
+    z-index: 1
+    display: grid
+    grid-template-columns: minmax(0, 1fr) 6.4rem minmax(0, 1fr)
+    gap: 3.2rem
+    align-items: start
+    &--flip
+      .about-growth__copy
+        order: 3
+        justify-self: start
+      .about-growth__media
+        order: 1
+        justify-items: end
+      .about-growth__axis
+        order: 2
+  &__copy
+    position: relative
+    min-width: 0
+    padding-top: 0.4rem
+    justify-self: end
+    width: 100%
+    max-width: 42rem
+    will-change: transform, opacity
+  &__chapter:not(.about-growth__chapter--flip) &__copy
+    text-align: right
+    .about-growth__year
+      align-items: flex-end
+    .about-growth__text
+      margin-left: auto
+  &__year
+    position: relative
+    z-index: 1
+    display: flex
+    flex-direction: column
+    gap: 0.4rem
+    margin-bottom: 1.6rem
+  &__year-label
+    @include font-display
+    font-size: 1.2rem
+    line-height: 1
+    text-transform: uppercase
+    color: $blush
+  &__year-value
+    @include font-display
+    font-size: clamp(3.2rem, 4vw, 4.4rem)
+    line-height: 1
+    letter-spacing: -0.04em
+  &__text
+    @include font-text
+    position: relative
+    z-index: 1
+    max-width: 42rem
+    margin: 0 0 1.2rem
+    font-size: 1.6rem
+    line-height: 1.5
+    color: rgba($forest, 0.9)
+    &:last-child
+      margin-bottom: 0
+  &__axis
+    position: relative
+    display: flex
+    justify-content: center
+    padding-top: 1.2rem
+  &__bud
+    display: flex
+    align-items: center
+    justify-content: center
+    width: 4.4rem
+    height: 4.4rem
+    color: $forest
+    background: $cream
+    border: 0.3rem solid $leaf
+    border-radius: 50%
+    box-shadow: 0 0 0 0.8rem rgba($cream, 0.92)
+    cursor: pointer
+    will-change: transform
+  &__bud-icon
+    width: 2rem
+    height: 2.4rem
+    pointer-events: none
+  &__media
+    display: grid
+    gap: 1.6rem
+    min-width: 0
+    justify-items: start
+    width: 100%
+  &__frame
+    margin: 0
+    width: min(100%, 42rem)
+    will-change: transform, opacity
+  &__frame-surface
+    position: relative
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+    gap: 0.8rem
+    aspect-ratio: 4 / 5
+    overflow: hidden
+    color: rgba($forest, 0.55)
+    background: $cream-muted
+    border: 0.3rem dashed rgba($forest, 0.28)
+    border-radius: 1.8rem 0.4rem 1.8rem 0.4rem
+    transform-style: preserve-3d
+    will-change: transform
+    &--filled
+      border-style: solid
+      border-color: $forest
+      background: $white
+      img
+        position: absolute
+        inset: 0
+        display: block
+        width: 100%
+        height: 100%
+        object-fit: cover
+  &__frame-icon
+    width: 2.8rem
+    height: 3.4rem
+    color: $leaf
+  &__frame-hint
+    @include font-display
+    font-size: 1.3rem
+    line-height: 1
+    text-transform: uppercase
+    letter-spacing: 0.04em
+  &__frame-caption
+    @include font-text
+    margin-top: 0.8rem
+    font-size: 1.4rem
+    line-height: 1.35
+    color: rgba($forest, 0.7)
+    transform-style: preserve-3d
+    will-change: transform, opacity
+    transition: color $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+  &__frame:hover &__frame-caption,
+  &__frame:focus-within &__frame-caption
+    color: $forest
+
+@media (max-width: $bp-tablet)
+  .about-growth
+    &__head
+      margin-bottom: 2.4rem
+    &__years
+      top: calc(9.6rem + env(safe-area-inset-top, 0px))
+      margin-bottom: 4rem
+      padding: 0.8rem
+      border-radius: 2rem
+    &__timeline
+      width: 100%
+      gap: 5.6rem
+    &__stem
+      left: 2.2rem
+      transform: none
+    &__chapter,
+    &__chapter--flip
+      grid-template-columns: 4.4rem minmax(0, 1fr)
+      gap: 1.6rem 2rem
+      .about-growth__axis
+        order: 1
+        grid-row: 1 / span 2
+        padding-top: 0.6rem
+      .about-growth__copy
+        order: 2
+        justify-self: stretch
+        max-width: none
+        text-align: left
+      .about-growth__media
+        order: 3
+        justify-items: stretch
+    &__chapter:not(.about-growth__chapter--flip) &__copy
+      text-align: left
+      .about-growth__year
+        align-items: flex-start
+      .about-growth__text
+        margin-left: 0
+    &__frame
+      width: 100%
+
+@media (max-width: $bp-mobile)
+  .about-growth
+    &__title
+      font-size: clamp(4.2rem, 14vw, 6.4rem)
+    &__lead
+      font-size: 1.6rem
+    &__timeline
+      gap: 4.8rem
+    &__text
+      font-size: 1.5rem
+    &__frame-surface
+      aspect-ratio: 5 / 4
+      border-radius: 1.4rem 0.3rem

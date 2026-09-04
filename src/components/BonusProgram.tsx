@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Icon } from '@/components/Icon'
+import { siteBrand } from '@/components/siteContacts'
 
 const tierItems = [
   {
@@ -59,7 +60,7 @@ export function BonusProgram() {
     <section className="bonus-program" aria-labelledby="bonus-program-title">
       <header className="bonus-program__hero">
         <div className="bonus-program__intro">
-          <p className="bonus-program__eyebrow">Green Market</p>
+          <p className="bonus-program__eyebrow">{siteBrand}</p>
           <h1 className="bonus-program__title" id="bonus-program-title">
             Бонусная программа
           </h1>

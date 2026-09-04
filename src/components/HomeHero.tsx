@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { useEffect, useRef } from 'react'
 import { HeroSlider } from '@/components/HeroSlider'
+import { siteBrand } from '@/components/siteContacts'
 
 const marqueeItems = [
   'Новинки',
@@ -81,8 +82,9 @@ export function HomeHero() {
                 preload
               />
               <h1 className="hero__title">
-                <Image src="/img/hero/content/title.svg" alt="Green Market" width={496} height={217} />
+                <Image src="/img/hero/content/title.svg" alt={siteBrand} width={496} height={217} />
               </h1>
+              <p className="hero__motto">Садовый центр, где вас знают по имени</p>
               <p className="hero__caption">
                 Семейный садовый центр  •  Екатеринбург
               </p>

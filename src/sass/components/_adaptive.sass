@@ -144,7 +144,20 @@ html
       min-height: 36rem
       height: 42rem
       overflow: hidden
-      border-radius: 4rem
+    &__viewport
+      border-radius: 4rem 0.4rem 0.4rem 4rem
+    &__slide-panel
+      left: 2rem
+      right: 2rem
+      bottom: 7.2rem
+      max-width: none
+      gap: 1rem
+    &__slide-title
+      font-size: 2.4rem
+    &__rail
+      left: 2rem
+      right: 2rem
+      bottom: 1.6rem
 
   .catalog
     &__grid
@@ -169,6 +182,13 @@ html
       flex: none
       width: 100%
       position: static
+      max-height: none
+    &__filters-scroll
+      overflow: visible
+      max-height: none
+      padding-right: 0
+    &__filters-rail
+      display: none
     &__grid
       grid-template-columns: repeat(2, minmax(0, 1fr))
     &__lead
@@ -185,11 +205,74 @@ html
 
   .product
     &__layout
-      grid-template-columns: 1fr
-    &__gallery
+      grid-template-columns: minmax(0, 1fr)
+      row-gap: 1.6rem
+    &__gallery,
+    &__info,
+    &__thumbs
+      grid-column: 1
       width: 100%
-    &__thumbs-track > li
-      flex: 0 0 calc((100% - 5.4rem) / 4)
+      min-width: 0
+    &__gallery
+      grid-row: 1
+    &__thumbs
+      grid-row: 2
+    &__info
+      grid-row: 3
+      padding-top: 0
+      align-self: start
+    &__thumbs-track
+      gap: 1.2rem
+      > li
+        flex: 0 0 clamp(6.4rem, 22vw, 12rem)
+    &__name
+      font-size: 2.8rem
+    &__offer,
+    &__choose,
+    &__sizes
+      width: 100%
+    &__offer
+      flex-wrap: nowrap
+      align-items: flex-start
+      gap: 1.2rem
+    &__choose
+      flex: 1 1 auto
+      min-width: 0
+      gap: 1.2rem
+    &__size-pick
+      min-width: 9.6rem
+      padding: 1.4rem 1.6rem 1.2rem
+    &__hint
+      top: calc(100% + 0.8rem)
+      left: 0
+      right: auto
+      width: min(48rem, calc(100vw - 4.8rem))
+      max-width: 100%
+      &::before
+        display: none
+    &__checkout
+      flex: 0 0 auto
+      flex-wrap: nowrap
+      align-items: flex-start
+      gap: 1.2rem
+      margin-left: auto
+      padding: 1.2rem 1.4rem 1.2rem 1.6rem
+      &::before
+        top: 1.8rem
+        left: -0.8rem
+        border-width: 0.8rem 0.8rem 0.8rem 0
+    &__buy
+      width: auto
+      white-space: nowrap
+    &__spec
+      gap: 1.2rem
+    &__lightbox
+      padding: 6.4rem 2.4rem 2.4rem
+      &-close
+        top: 1.6rem
+        right: 1.6rem
+      &-frame
+        width: min(96rem, calc(100vw - 4.8rem), calc(100vh - 12rem))
 
   .product-card
     &__overlay
@@ -199,21 +282,22 @@ html
       width: min(96rem, 100%)
 
   .novelties,
-  .related
+  .related,
+  .home-journal
     &__title
       gap: 1rem
       font-size: 2.6rem
       text-align: center
+    &__title-link
+      gap: 1rem
     &__slider
       width: 100%
       gap: 1.2rem
-    &__viewport
-      flex: 1 1 auto
-      width: auto
-      min-width: 0
-      max-width: 142.8rem
-    &__item
-      flex: 0 0 min(34.5rem, 100%)
+
+  .home-journal
+    &__slider
+      grid-template-columns: 4rem minmax(0, 1fr) 4rem
+      column-gap: 1.2rem
 
   .cart
     &__layout
@@ -291,6 +375,34 @@ html
     &__aside
       grid-column: 1
 
+  .product
+    &__name
+      font-size: 2.4rem
+    &__size
+      flex: 0 1 auto
+      max-width: 100%
+    &__size-pick
+      min-width: 0
+    &__checkout
+      flex-direction: row
+      flex-wrap: wrap
+      align-items: flex-start
+      justify-content: flex-end
+      max-width: 100%
+    &__qty
+      align-self: flex-start
+    &__spec
+      flex-direction: column
+      align-items: flex-start
+      gap: 0.4rem
+      padding: 1rem 1.4rem
+    &__spec-value
+      text-align: left
+    &__lightbox
+      padding: 5.6rem 1.6rem 1.6rem
+      &-frame
+        width: min(96rem, calc(100vw - 3.2rem), calc(100vh - 10rem))
+
   .not-found
     &__code
       font-size: 8rem
@@ -304,25 +416,53 @@ html
       width: min(49rem, calc(100% - 4rem))
       left: 2rem
       top: 6rem
+    &__motto
+      left: 2rem
+      top: 18rem
+      max-width: calc(100% - 4rem)
+      font-size: 1.8rem
     &__caption
       left: 2rem
       white-space: normal
       max-width: calc(100% - 4rem)
     &__slider
-      height: 32rem
-      min-height: 32rem
-      border-radius: 2.4rem
+      height: 36rem
+      min-height: 36rem
       overflow: hidden
+    &__viewport
+      border-radius: 2.4rem 0.2rem 0.2rem 2.4rem
+    &__slide-panel
+      left: 1.6rem
+      right: 1.6rem
+      bottom: 6.4rem
+    &__slide-title
+      font-size: 2rem
+    &__slide-text
+      font-size: 1.4rem
+    &__rail
+      left: 1.6rem
+      right: 1.6rem
+      bottom: 1.2rem
+      gap: 1rem
+    &__index
+      display: none
     &__marquee
       border-radius: 0 0 2.4rem 2.4rem
 
   .novelties,
-  .related
+  .related,
+  .home-journal
     &__title
       font-size: 2.2rem
     &__control
       display: none
-    &__item
-      flex: 0 0 100%
     &__viewport
       width: 100%
+
+  .home-journal
+    &__slider
+      grid-template-columns: minmax(0, 1fr)
+      column-gap: 0
+    &__head,
+    &__viewport
+      grid-column: 1
