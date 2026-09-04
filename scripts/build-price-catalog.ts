@@ -1,11 +1,33 @@
 import fs from 'node:fs'
+import { createRequire } from 'node:module'
 import path from 'node:path'
-import XLSX from 'xlsx'
 import { buildSnapshot } from '../src/import/greenmarket-price/parse-workbook'
 
 const projectRoot = path.resolve(import.meta.dirname, '..')
 const importDir = path.join(projectRoot, 'data/import/greenmarket-price-v1')
 const outputFile = path.join(projectRoot, 'src/catalog/generated-price-catalog.ts')
+
+type SheetJs = {
+  readFile: (
+    filePath: string,
+    options?: { cellDates?: boolean },
+  ) => {
+    SheetNames: string[]
+    Sheets: Record<string, unknown>
+  }
+  utils: {
+    sheet_to_json: (sheet: unknown, options: object) => unknown[][]
+  }
+}
+
+function loadSheetJs(): SheetJs | null {
+  try {
+    const require = createRequire(import.meta.url)
+    return require('xlsx') as SheetJs
+  } catch {
+    return null
+  }
+}
 
 function resolveSourceFile() {
   if (!fs.existsSync(importDir)) {
@@ -31,10 +53,18 @@ function resolveSourceFile() {
   return path.join(importDir, files[0]!)
 }
 
+function keepExistingCatalog(reason: string) {
+  if (fs.existsSync(outputFile)) {
+    console.log(`${reason}, keeping ${path.relative(projectRoot, outputFile)}`)
+    return true
+  }
+
+  return false
+}
+
 function main() {
   if (!fs.existsSync(importDir)) {
-    if (fs.existsSync(outputFile)) {
-      console.log(`Import directory missing, keeping ${path.relative(projectRoot, outputFile)}`)
+    if (keepExistingCatalog('Import directory missing')) {
       return
     }
 
@@ -46,12 +76,27 @@ function main() {
     .filter((name) => name.toLowerCase().endsWith('.xlsx'))
 
   if (files.length === 0) {
-    if (fs.existsSync(outputFile)) {
-      console.log(`No .xlsx in ${importDir}, keeping existing generated catalog`)
+    if (keepExistingCatalog('No .xlsx in import directory')) {
       return
     }
 
     throw new Error(`No .xlsx files found in ${importDir}`)
+  }
+
+  const XLSX = loadSheetJs()
+
+  if (!XLSX) {
+    if (
+      keepExistingCatalog(
+        'SheetJS (xlsx) is not installed; regenerate locally with `npm i -D xlsx@0.18.5` then rerun',
+      )
+    ) {
+      return
+    }
+
+    throw new Error(
+      'SheetJS (xlsx) is required to generate the price catalog. Install locally: npm i -D xlsx@0.18.5',
+    )
   }
 
   const sourceFile = resolveSourceFile()
@@ -64,7 +109,7 @@ function main() {
       XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]!, {
         header: 1,
         defval: null,
-      }) as unknown[][],
+      }),
     )
   }
 

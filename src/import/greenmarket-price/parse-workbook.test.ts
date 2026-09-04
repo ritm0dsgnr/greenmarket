@@ -1,15 +1,44 @@
 import fs from 'node:fs'
+import { createRequire } from 'node:module'
 import path from 'node:path'
-import XLSX from 'xlsx'
 import { describe, expect, it } from 'vitest'
 import { buildSnapshot } from './parse-workbook'
 
 const importDir = path.join(process.cwd(), 'data/import/greenmarket-price-v1')
 
+type SheetJs = {
+  readFile: (
+    filePath: string,
+    options?: { cellDates?: boolean },
+  ) => {
+    SheetNames: string[]
+    Sheets: Record<string, unknown>
+  }
+  utils: {
+    sheet_to_json: (sheet: unknown, options: object) => unknown[][]
+  }
+}
+
+function loadSheetJs(): SheetJs | null {
+  try {
+    const require = createRequire(import.meta.url)
+    return require('xlsx') as SheetJs
+  } catch {
+    return null
+  }
+}
+
 describe('greenmarket price workbook', () => {
   it('parses sheets, subcategories and products from the current price file', () => {
     if (!fs.existsSync(importDir)) {
       // Local Excel source is gitignored; CI uses the generated catalog fixture instead.
+      return
+    }
+
+    const XLSX = loadSheetJs()
+
+    if (!XLSX) {
+      // SheetJS stays out of the locked tree (npm audit); regenerate catalog locally when needed.
       return
     }
 
@@ -26,7 +55,7 @@ describe('greenmarket price workbook', () => {
         XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]!, {
           header: 1,
           defval: null,
-        }) as unknown[][],
+        }),
       )
     }
 
