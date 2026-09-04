@@ -55,9 +55,9 @@ jobs:
         run: |
           set -Eeuo pipefail
 
-          for attempt in 1 2 3 4 5 6; do
+          for attempt in 1 2 3 4 5 6 7 8; do
             set +e
-            output="$(npm audit --audit-level=high --engine-strict 2>&1)"
+            output="$(npm audit --audit-level=high --engine-strict --fetch-retries=0 --fetch-timeout=20000 2>&1)"
             status=$?
             set -e
             printf '%s\n' "$output"
@@ -66,10 +66,10 @@ jobs:
               exit 0
             fi
 
-            if printf '%s\n' "$output" | grep -Eq 'audit endpoint returned an error|Service Unavailable|ECONNRESET|ETIMEDOUT|EAI_AGAIN'; then
-              if test "$attempt" -lt 6; then
-                echo "npm audit registry unavailable (attempt ${attempt}/6); retrying in 30s..." >&2
-                sleep 30
+            if printf '%s\n' "$output" | grep -Eq 'audit endpoint returned an error|Service Unavailable|ECONNRESET|ETIMEDOUT|EAI_AGAIN|socket hang up'; then
+              if test "$attempt" -lt 8; then
+                echo "npm audit registry unavailable (attempt ${attempt}/8); retrying in 20s..." >&2
+                sleep 20
                 continue
               fi
             fi
