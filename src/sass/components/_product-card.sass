@@ -19,6 +19,11 @@
     .product-card__more
       box-shadow: 0 0 0 rgba(10,51,35,0.8)
       transform: translate(0.4rem, 0.4rem)
+  &--name-only
+    .product-card__body
+      flex: 0 0 auto
+    .product-card__names
+      margin-top: 0
   &.is-unavailable
     .product-card__media img,
     .product-card__names,
@@ -26,6 +31,10 @@
       opacity: 0.3
     .product-card__footer
       justify-content: center
+    &.product-card--name-only
+      .product-card__media img,
+      .product-card__names
+        opacity: 0.3
   &__link
     color: inherit
     line-height: 1
@@ -79,15 +88,15 @@
     display: flex
     flex: 1
     flex-direction: column
-    gap: 1.8rem
+    gap: 1.4rem
   &__names
     display: flex
     flex-direction: column
     gap: 0
   &__name
     @include font-display
-    font-size: 2.2rem
-    line-height: 1
+    font-size: 2rem
+    line-height: 1.15
     @include anim(color)
   &__latin
     @include font-text
@@ -118,14 +127,14 @@
       font-size: 1.4rem
   &--simple
     .product-card__footer
-      padding-top: 1.8rem
+      padding-top: 1.2rem
   &__footer
     display: flex
     align-items: flex-end
     justify-content: space-between
     gap: 1.6rem
     margin-top: auto
-    padding-top: 3.4rem
+    padding-top: 2rem
   &__price
     display: flex
     flex-direction: column
@@ -181,10 +190,9 @@
     justify-content: center
     flex-shrink: 0
     pointer-events: none
-    padding: 0.8rem 1.4rem
-    font-size: 1.4rem
-    line-height: 1.2
+    @include button-padding
     text-transform: uppercase
+    border: 0.3rem solid $leaf
     border-radius: 10rem
     color: $forest
     background: $leaf
@@ -242,20 +250,8 @@
     border-radius: 1.8rem
     box-shadow: 0.4rem 0.4rem 0 rgba(10,51,35,0.8)
     &-close
-      position: absolute
-      top: 1.6rem
-      right: 1.6rem
-      z-index: 1
-      display: flex
-      align-items: center
-      justify-content: center
-      width: 3.6rem
-      height: 3.6rem
-      color: $forest
-      cursor: pointer
-      .icon
-        width: 3.6rem
-        height: 3.6rem
+      @include popup-close
+      background: $cream
     &-media
       position: relative
       min-height: 0
@@ -325,6 +321,8 @@
     color: $forest
     background: $cream
     border-radius: 1rem
+    &.is-unavailable
+      opacity: 0.72
     &-name
       flex: 1
       min-width: 0
@@ -336,6 +334,13 @@
       gap: 0.2rem
       .product-card__price-old
         font-size: 1.2rem
+    &-status
+      @include font-text
+      font-size: 1.1rem
+      line-height: 1.2
+      text-transform: none
+      letter-spacing: 0
+      opacity: 0.9
   &__qty
     display: inline-flex
     align-items: center
@@ -380,14 +385,12 @@
     justify-content: center
     flex-shrink: 0
     position: relative
-    padding: 0.8rem 1.8rem
-    font-size: 1.4rem
-    line-height: 1.2
+    @include button-padding
     white-space: nowrap
     text-transform: uppercase
     color: $forest
     background: $leaf
-    border: 0
+    border: 0.3rem solid $leaf
     border-radius: 10rem
     cursor: pointer
     box-shadow: 0.4rem 0.4rem 0 rgba(10,51,35,0.8)

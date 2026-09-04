@@ -1,0 +1,138 @@
+@use "../assets/vars" as *
+@use "../assets/mixin" as *
+
+.home-journal
+  color: $forest
+  &__main
+    display: contents
+  &__head
+    grid-column: 2
+    grid-row: 1
+    display: flex
+    align-items: center
+    justify-content: center
+    margin-bottom: 4rem
+  &__title
+    margin: 0
+    @include font-display
+    font-size: 3.2rem
+    line-height: 1.1
+    text-transform: uppercase
+  &__title-link
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    gap: 1.6rem
+    color: inherit
+    text-decoration: none
+    transition: color $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    &:hover,
+    &:focus-visible
+      color: $leaf
+  &__title-text
+    color: inherit
+  &__mark
+    width: 2.4rem
+    height: 2.9rem
+    color: $leaf
+    flex-shrink: 0
+    &--mirror
+      transform: scaleX(-1)
+  &__slider
+    display: grid
+    grid-template-columns: 4rem minmax(0, 1fr) 4rem
+    grid-template-rows: auto auto
+    column-gap: 6rem
+    align-items: center
+    max-width: 142.8rem
+    margin-inline: auto
+  &__control
+    display: flex
+    align-items: center
+    justify-content: center
+    grid-row: 2
+    align-self: center
+    flex-shrink: 0
+    width: 4rem
+    height: auto
+    aspect-ratio: 1/1
+    border: 0
+    border-radius: 50%
+    color: $forest
+    background: $cream-muted
+    transition: background-color $anim-duration $anim-ease, transform $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    .icon
+      @include icon-arrow
+    &--prev
+      grid-column: 1
+      .icon
+        transform: rotate(90deg)
+    &--next
+      grid-column: 3
+      .icon
+        transform: rotate(-90deg)
+    &:hover,
+    &:focus-visible
+      background: $leaf
+      color: $forest
+      transform: scale(1.06)
+  &__viewport
+    grid-column: 2
+    grid-row: 2
+    width: 100%
+    min-width: 0
+    overflow: hidden
+    touch-action: pan-y
+    user-select: none
+    // Until JS measures, keep a 2-up span so SSR/first paint matches desktop layout.
+    --slide-span: calc((100% - 1.6rem) / 2)
+    &.is-dragging
+      touch-action: none
+      cursor: grabbing
+  &__track
+    display: flex
+    gap: 1.6rem
+    @include anim(transform)
+    &.is-instant,
+    &.is-dragging
+      transition: none
+  &__item
+    flex: 0 0 var(--slide-span)
+    min-width: 0
+    .event-card
+      width: 100%
+  &__pages
+    display: flex
+    align-items: center
+    justify-content: center
+    gap: 0.8rem
+    margin-top: 3.2rem
+  &__page
+    display: flex
+    align-items: center
+    justify-content: center
+    padding: 0.4rem
+    color: $forest
+    opacity: 0.28
+    transition: opacity $anim-duration $anim-ease, color $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    .icon
+      width: 1.8rem
+      height: 2.2rem
+    &:hover,
+    &:focus-visible
+      opacity: 1
+      color: $forest
+    &.is-active
+      opacity: 1
+      color: $forest
+
+@media (max-width: $bp-mobile)
+  .home-journal
+    &__viewport
+      --slide-span: 100%

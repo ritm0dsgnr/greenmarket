@@ -7,11 +7,12 @@ import { SiteAmbience } from '@/components/SiteAmbience'
 import { SiteCursor } from '@/components/SiteCursor'
 import { SiteFooter } from '@/components/SiteFooter'
 import { SiteHeader } from '@/components/SiteHeader'
+import { siteBrand } from '@/components/siteContacts'
 import '../sass/style.sass'
 
 export const metadata: Metadata = {
-  title: 'Green Market',
-  description: 'Green Market, садовый центр.',
+  title: siteBrand,
+  description: `${siteBrand}, садовый центр.`,
   verification: {
     yandex: 'c06ed7d38e162ebf',
   },

@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { useEffect, useRef, useState, type PointerEvent, type TransitionEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@/components/Icon'
@@ -10,6 +11,10 @@ import { formatLayoutPrice, layoutSaleOldPrice } from '@/components/productCardS
 import type { ProductCardTag } from '@/components/ProductCard'
 import type { ProductSpec } from '@/components/productSpecs'
 import { useSwipePager } from '@/components/useSwipePager'
+import {
+  firstAvailableSizeId,
+  type ProductOfferSize,
+} from '@/import/greenmarket-price/offer-sizes'
 
 const tagLabels = {
   sale: 'Sale',
@@ -38,6 +43,20 @@ const sizeLegend = [
   { mark: 'Sol', text: 'взрослое крупное растение высокого качества, предназначенное для сольной посадки' },
   { mark: '12/14', text: 'обхват ствола в сантиметрах' },
 ] as const
+
+export type ProductViewModel = {
+  id: string
+  name: string
+  latin?: string
+  tag: ProductCardTag | null
+  tagHref?: string | null
+  groupTags: Array<{ label: string; href: string }>
+  available: boolean
+  priceRubles: number
+  sizes: ProductOfferSize[]
+  specs: ProductSpec[]
+  description: string[]
+}
 
 function preventPhotoCopy(event: { preventDefault: () => void }) {
   event.preventDefault()
@@ -238,45 +257,38 @@ function SizeLegend() {
   )
 }
 
-const productSizes = [
-  { id: 'C5', label: 'C5', priceRubles: 1200, hint: 'Контейнер 5 литров' },
-  { id: 'P9', label: 'P9', priceRubles: 1200, hint: 'Горшок 9 см' },
-  { id: 'WRB60', label: 'WRB60', priceRubles: 1200, hint: 'Ком с сеткой, 60 см' },
-] as const
-
-const product = {
-  name: 'Яблони компактная зеленая',
-  latin: 'Malus domestica',
-  tag: 'sale' as ProductCardTag,
-  groupTags: ['компактная'],
-  priceRubles: 1200,
-  sizes: productSizes,
-  specs: [
-    { label: 'Высота взрослого растения (h)', value: 'до 60 см' },
-    { label: 'Контейнер', value: 'C3' },
-    { label: 'Период цветения', value: 'май-июнь' },
-    { label: 'Цвет', value: 'белый' },
-    { label: 'Посадка', value: 'солнце' },
-  ] satisfies ProductSpec[],
-  description: [
-    'Компактная яблоня для сада и небольшого участка. Подходит для посадки в контейнере, хорошо держит форму кроны и даёт плоды при обычном уходе. Выбирайте солнечное место, регулярный полив в первый сезон и формировку по возрасту саженца.',
-    'Сорт держит умеренный рост, поэтому крону проще поддерживать в аккуратном размере без частой сильной обрезки. В плодоношение вступает рано, урожай дружный, яблоки плотные, с освежающей кислинкой. Для лучшего завязывания рядом полезен другой сорт яблони с близким сроком цветения.',
-    'Почва нужна рыхлая, плодородная, без застоя воды у корней. Мульча сохраняет влагу и защищает приствольный круг. Весной осмотрите растение, уберите сухие ветки и при необходимости подкормите. На зиму молодым саженцам достаточно укрытия прикорневой зоны и защиты штамба от грызунов.',
-  ],
-}
-
-export function ProductView() {
-  const sizes = product.sizes
-  const hasVariants = sizes.length > 1
+export function ProductView({ product }: { product: ProductViewModel }) {
+  const sizes =
+    product.sizes.length > 0
+      ? product.sizes
+      : [
+          {
+            id: 'default',
+            label: '1 шт',
+            priceRubles: product.priceRubles,
+            hint: 'Базовая позиция',
+            available: product.available,
+          },
+        ]
   const [slideIndex, setSlideIndex] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxShown, setLightboxShown] = useState(false)
   const lightboxShownRef = useRef(false)
   const lightboxClosingRef = useRef(false)
-  const [sizeId, setSizeId] = useState<(typeof productSizes)[number]['id']>(productSizes[0].id)
+  const [sizeId, setSizeId] = useState(firstAvailableSizeId(sizes) ?? 'default')
   const [quantity, setQuantity] = useState(1)
+  const [activeProductId, setActiveProductId] = useState(product.id)
   const { addItems } = useLayoutCart()
+
+  if (product.id !== activeProductId) {
+    setActiveProductId(product.id)
+    setSizeId(firstAvailableSizeId(sizes) ?? 'default')
+    setQuantity(1)
+    setSlideIndex(0)
+  }
+
   const selected = sizes.find((size) => size.id === sizeId) ?? sizes[0]
+  const selectedAvailable = selected?.available !== false
   const unitPrice = selected?.priceRubles ?? product.priceRubles
   const oldUnitPrice = layoutSaleOldPrice(unitPrice, product.tag)
   const total = unitPrice * quantity
@@ -367,21 +379,21 @@ export function ProductView() {
   }
 
   function buy() {
-    if (quantity <= 0) {
+    if (quantity <= 0 || !selected || !selectedAvailable) {
       return
     }
 
     addItems([
       {
-        id: `product:${selected.id}`,
-        productId: 'product',
+        id: `${product.id}:${selected.id}`,
+        productId: product.id,
         name: product.name,
         latin: product.latin,
         sizeLabel: selected.label,
         tag: product.tag,
         priceRubles: unitPrice,
         quantity,
-        href: '/product',
+        href: `/product/${product.id}`,
       },
     ])
   }
@@ -420,46 +432,74 @@ export function ProductView() {
               </ul>
             </div>
           </div>
-          <ProductThumbs current={slideIndex} onSelect={setSlideIndex} />
         </div>
         <div className="product__info">
           {product.tag || product.groupTags.length > 0 ? (
             <ul className="product__tags">
               {product.tag ? (
-                <li className={`product__tag product__tag--${product.tag}`}>
-                  {tagLabels[product.tag]}
+                <li>
+                  {product.tagHref ? (
+                    <Link
+                      className={`product__tag product__tag--${product.tag}`}
+                      href={product.tagHref}
+                    >
+                      {tagLabels[product.tag]}
+                    </Link>
+                  ) : (
+                    <span className={`product__tag product__tag--${product.tag}`}>
+                      {tagLabels[product.tag]}
+                    </span>
+                  )}
                 </li>
               ) : null}
               {product.groupTags.map((tag) => (
-                <li className="product__tag product__tag--group" key={tag}>
-                  {tag}
+                <li key={tag.label}>
+                  <Link className="product__tag product__tag--group" href={tag.href}>
+                    {tag.label}
+                  </Link>
                 </li>
               ))}
             </ul>
           ) : null}
           <div className="product__names">
             <h1 className="product__name">{bindHangingWords(product.name)}</h1>
-            <p className="product__latin">{product.latin}</p>
+            {product.latin ? <p className="product__latin">{product.latin}</p> : null}
           </div>
             <div className="product__offer">
-              {hasVariants ? (
-                <div className="product__choose">
+              <div className="product__choose">
                   <div className="product__sizes">
                     {sizes.map((size) => {
-                      const selectedSize = size.id === sizeId
+                      const sizeAvailable = size.available !== false
+                      const selectedSize = sizeAvailable && size.id === sizeId
                       const oldSizePrice = layoutSaleOldPrice(size.priceRubles, product.tag)
 
                       return (
                         <div
-                          className={['product__size', selectedSize ? 'is-active' : ''].filter(Boolean).join(' ')}
+                          className={[
+                            'product__size',
+                            selectedSize ? 'is-active' : '',
+                            sizeAvailable ? '' : 'is-unavailable',
+                          ]
+                            .filter(Boolean)
+                            .join(' ')}
                           key={size.id}
                         >
                           <button
                             className="product__size-pick"
                             type="button"
                             aria-pressed={selectedSize}
-                            aria-label={`${size.label}, ${formatLayoutPrice(size.priceRubles)}, ${size.hint}`}
-                            onClick={() => setSizeId(size.id)}
+                            aria-disabled={!sizeAvailable}
+                            disabled={!sizeAvailable}
+                            aria-label={`${size.label}, ${formatLayoutPrice(size.priceRubles)}, ${
+                              sizeAvailable ? size.hint : 'нет в наличии'
+                            }`}
+                            onClick={() => {
+                              if (!sizeAvailable) {
+                                return
+                              }
+
+                              setSizeId(size.id)
+                            }}
                           >
                             <span className="product__size-name">{size.label}</span>
                             <span className="product__size-price">
@@ -468,6 +508,9 @@ export function ProductView() {
                               ) : null}
                               <span className="product__price-current">{formatLayoutPrice(size.priceRubles)}</span>
                             </span>
+                            {!sizeAvailable && size.label.toLowerCase() !== 'нет в наличии' ? (
+                              <span className="product__size-status">Нет в наличии</span>
+                            ) : null}
                           </button>
                           <div className="product__size-tip">
                             <button
@@ -484,14 +527,13 @@ export function ProductView() {
                     })}
                   </div>
                 </div>
-              ) : null}
               <div className="product__checkout">
                 <div className="product__qty">
                   <button
                     className="product__qty-button"
                     type="button"
                     aria-label="Меньше"
-                    disabled={quantity <= 1}
+                    disabled={!selectedAvailable || quantity <= 1}
                     onClick={() => setQuantity((current) => Math.max(1, current - 1))}
                   >
                     −
@@ -501,6 +543,7 @@ export function ProductView() {
                     className="product__qty-button"
                     type="button"
                     aria-label="Больше"
+                    disabled={!selectedAvailable}
                     onClick={() => setQuantity((current) => current + 1)}
                   >
                     +
@@ -513,8 +556,13 @@ export function ProductView() {
                   ) : null}
                   <span className="product__total-value">{formatLayoutPrice(total)}</span>
                 </p>
-                <button className="product__buy" type="button" onClick={buy}>
-                  Добавить в корзину
+                <button
+                  className="product__buy"
+                  type="button"
+                  disabled={!selectedAvailable}
+                  onClick={buy}
+                >
+                  {selectedAvailable ? 'Добавить в корзину' : 'Нет в наличии'}
                 </button>
               </div>
             </div>
@@ -524,16 +572,24 @@ export function ProductView() {
                 <p key={paragraph}>{bindHangingWords(paragraph)}</p>
               ))}
             </div>
-            <ul className="product__specs">
-              {product.specs.map((spec) => (
-                <li className="product__spec" key={spec.label}>
-                  <span className="product__spec-label">{spec.label}</span>
-                  <span className="product__spec-value">{spec.value}</span>
-                </li>
-              ))}
-            </ul>
           </div>
+          {product.specs.length > 0 ? (
+            <section className="product__features" aria-labelledby="product-features-title">
+              <h2 className="product__features-title" id="product-features-title">
+                Характеристики
+              </h2>
+              <ul className="product__specs">
+                {product.specs.map((spec) => (
+                  <li className="product__spec" key={spec.label}>
+                    <span className="product__spec-label">{spec.label}</span>
+                    <span className="product__spec-value">{spec.value}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
         </div>
+        <ProductThumbs current={slideIndex} onSelect={setSlideIndex} />
       </div>
       {lightboxOpen
         ? createPortal(

@@ -61,12 +61,11 @@
       justify-content: center
       gap: 0.4rem
       @include font-display
-      padding: 0.8rem 0.8rem 0.8rem 1.8rem
-      font-size: 1.4rem
-      line-height: 1.2
+      @include button-padding-with-icon
       text-transform: uppercase
       color: $forest
       background: $leaf
+      border: 0.3rem solid $leaf
       border-radius: 10rem
       box-shadow: 0.4rem 0.4rem 0 rgba(10,51,35,0.8)
       transition: box-shadow $anim-duration $anim-ease, transform $anim-duration $anim-ease
@@ -515,11 +514,10 @@
     align-items: center
     justify-content: center
     width: 100%
-    padding: 1.2rem 1.8rem
-    font-size: 1.6rem
-    line-height: 1.2
+    @include button-padding
     text-transform: uppercase
     color: $forest
+    border: 0.3rem solid transparent
     border-radius: 10rem
     transition: box-shadow $anim-duration $anim-ease, transform $anim-duration $anim-ease
     @media (prefers-reduced-motion: reduce)
@@ -530,9 +528,11 @@
       transform: translate(0.4rem, 0.4rem)
   &__checkout
     background: $leaf
+    border-color: $leaf
     box-shadow: 0.4rem 0.4rem 0 rgba(10,51,35,0.8)
   &__export
     background: $cream
+    border-color: $cream
     box-shadow: 0.4rem 0.4rem 0 rgba(10,51,35,0.8)
   &__overlay
     position: fixed
@@ -581,18 +581,8 @@
     border-radius: 1.8rem
     box-shadow: 0.4rem 0.4rem 0 rgba(10,51,35,0.8)
     &-close
-      position: absolute
-      top: 1.6rem
-      right: 1.6rem
-      display: flex
-      align-items: center
-      justify-content: center
-      width: 3.6rem
-      height: 3.6rem
-      color: $forest
-      .icon
-        width: 3.6rem
-        height: 3.6rem
+      @include popup-close
+      background: $cream
     &-title
       @include font-display
       font-size: 3.2rem

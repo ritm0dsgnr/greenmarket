@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
 import { SiteNotFound } from '@/components/SiteNotFound'
+import { siteBrand } from '@/components/siteContacts'
 
 export const metadata: Metadata = {
-  title: 'Страница не найдена — Green Market',
+  title: `Страница не найдена — ${siteBrand}`,
   robots: {
     index: false,
     follow: true,

@@ -3,12 +3,21 @@ import { notFound } from 'next/navigation'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { bindHangingWords } from '@/components/bindHangingWords'
 import { CatalogCard } from '@/components/CatalogCard'
+import { SubcategoryProducts } from '@/components/SubcategoryProducts'
+import { collectSpecFilters } from '@/components/productListingLayout'
 import {
   catalogCategories,
+  categoryListingPath,
   getCategoryBySlug,
-} from '@/components/catalogCategories'
-
-const layoutCounts = [12, 4, 27, 8, 1, 15, 3, 42, 9, 6] as const
+  getProductCardsForCategory,
+  isFlatCatalogCategory,
+  listCategoryNameTags,
+  parseListingSort,
+  parseListingSpecFilters,
+  parseNameTagQuery,
+  parsePromoTagQuery,
+} from '@/catalog'
+import { siteBrand } from '@/components/siteContacts'
 
 export function generateStaticParams() {
   return catalogCategories.map((category) => ({ category: category.slug }))
@@ -23,25 +32,61 @@ export async function generateMetadata({
   const category = getCategoryBySlug(categorySlug)
 
   if (!category) {
-    return { title: 'Каталог — Green Market' }
+    return { title: `Каталог — ${siteBrand}` }
   }
 
   return {
-    title: `${category.label} — Green Market`,
-    description: `${category.label} садового центра Green Market.`,
+    title: `${category.label} — ${siteBrand}`,
+    description: `${category.label} садового центра ${siteBrand}.`,
   }
 }
 
 export default async function CategoryPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ category: string }>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
   const { category: categorySlug } = await params
+  const query = await searchParams
   const category = getCategoryBySlug(categorySlug)
 
   if (!category) {
     notFound()
+  }
+
+  if (isFlatCatalogCategory(category)) {
+    const listingPath = categoryListingPath(category.slug)
+    const products = getProductCardsForCategory(category.slug)
+    const activeNameTags = parseNameTagQuery(listCategoryNameTags(category.slug), query.tag)
+    const activePromoTags = parsePromoTagQuery(query.promo)
+    const specGroups = collectSpecFilters(products.map((product) => ({ specs: product.specs ?? [] })))
+    const initialSpecFilters = parseListingSpecFilters(specGroups, query)
+    const initialSort = parseListingSort(query.sort)
+
+    return (
+      <main className="page">
+        <div className="container">
+          <Breadcrumbs
+            items={[
+              { href: '/', label: 'Главная' },
+              { href: '/catalog', label: 'Каталог' },
+              { label: category.label },
+            ]}
+          />
+          <SubcategoryProducts
+            title={category.label}
+            products={products}
+            listingPath={listingPath}
+            activeNameTags={activeNameTags}
+            activePromoTags={activePromoTags}
+            initialSpecFilters={initialSpecFilters}
+            initialSort={initialSort}
+          />
+        </div>
+      </main>
+    )
   }
 
   return (
@@ -59,24 +104,16 @@ export default async function CategoryPage({
             {bindHangingWords(category.label)}
           </h1>
           <ul className="catalog__grid">
-            {Array.from({ length: 10 }, (_, index) => {
-              const subcategory = category.subcategories[index % category.subcategories.length]
-
-              if (!subcategory) {
-                return null
-              }
-
-              return (
-                <li className="catalog__item" key={`${subcategory.slug}-${index}`}>
-                  <CatalogCard
-                    href={`/catalog/${category.slug}/${subcategory.slug}`}
-                    title={subcategory.label}
-                    variant="sub"
-                    count={layoutCounts[index] ?? 0}
-                  />
-                </li>
-              )
-            })}
+            {category.subcategories.map((subcategory) => (
+              <li className="catalog__item" key={subcategory.slug}>
+                <CatalogCard
+                  href={`/catalog/${category.slug}/${subcategory.slug}`}
+                  title={subcategory.label}
+                  variant="sub"
+                  count={subcategory.products.length}
+                />
+              </li>
+            ))}
           </ul>
         </div>
       </section>

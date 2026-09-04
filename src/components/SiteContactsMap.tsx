@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import {
+  siteBrand,
   siteGardenName,
   siteMapsEmbedHref,
   siteMapsHref,
@@ -151,7 +152,7 @@ export function SiteContactsMap() {
       <iframe
         className="contacts__map-frame"
         src={siteMapsEmbedHref}
-        title="Садовый центр Green Market на карте"
+        title={`Садовый центр ${siteBrand} на карте`}
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
         allowFullScreen
@@ -164,7 +165,7 @@ export function SiteContactsMap() {
       className="contacts__map-frame"
       ref={rootRef}
       role="application"
-      aria-label="Карта проезда к Green Market"
+      aria-label={`Карта проезда к ${siteBrand}`}
     />
   )
 }

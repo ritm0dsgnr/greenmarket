@@ -6,12 +6,11 @@
   &__layout
     display: grid
     grid-template-columns: 65.5rem minmax(0, 1fr)
+    grid-template-rows: auto auto
     align-items: start
     column-gap: 4rem
+    row-gap: 3rem
   &__gallery
-    display: flex
-    flex-direction: column
-    gap: 3rem
     width: 65.5rem
     flex-shrink: 0
     grid-column: 1
@@ -50,6 +49,8 @@
       -webkit-user-drag: none
       -webkit-touch-callout: none
   &__thumbs
+    grid-column: 1
+    grid-row: 2
     overflow: visible
     width: 100%
     &-scroller
@@ -131,32 +132,15 @@
       @media (prefers-reduced-motion: reduce)
         transition-delay: 0s
     &-close
-      position: absolute
+      @include popup-close
+      z-index: 2
       top: $gutter
       right: $gutter
-      z-index: 2
-      display: flex
-      align-items: center
-      justify-content: center
-      width: 4rem
-      height: auto
-      aspect-ratio: 1
-      border: 0.3rem solid $forest
-      border-radius: 50%
-      color: $forest
-      background: $cream
       opacity: 0
       pointer-events: none
       transition: opacity $anim-duration $anim-ease, background-color $anim-duration $anim-ease
       @media (prefers-reduced-motion: reduce)
         transition: none
-      .icon
-        width: 2.4rem
-        height: 2.4rem
-      &:hover,
-      &:focus-visible
-        background: $leaf
-        color: $forest
     &-frame
       position: relative
       z-index: 1
@@ -229,6 +213,7 @@
     gap: 2.4rem
     min-width: 0
     flex: 1
+    align-self: stretch
     padding-top: 0.4rem
     grid-column: 2
     grid-row: 1
@@ -238,13 +223,23 @@
     flex-wrap: wrap
     align-items: center
     gap: 0.8rem
+    margin-bottom: -1.8rem
   &__tag
     @include font-display
+    display: inline-flex
+    align-items: center
     padding: 0.1rem 1rem 0.2rem 1rem
     font-size: 1.6rem
     text-transform: lowercase
+    text-decoration: none
     border-radius: 1.2rem 0.2rem 1.2rem 0.2rem
     color: $cream
+    transition: opacity $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    &:hover,
+    &:focus-visible
+      opacity: 0.7
     &--sale
       background: $blush
     &--new
@@ -262,6 +257,7 @@
   &__names
     display: flex
     flex-direction: column
+    margin-bottom: 1.6rem
   &__name
     @include font-display
     font-size: 3.2rem
@@ -270,17 +266,19 @@
     @include font-text
     font-size: 1.6rem
     font-style: italic
+    margin-top: 0.4rem
   &__offer
     display: flex
-    flex-wrap: wrap
-    align-items: flex-end
-    justify-content: space-between
+    flex-wrap: nowrap
+    align-items: flex-start
     gap: 1.6rem
     width: 100%
   &__choose
     display: flex
+    flex: 1 1 auto
     flex-wrap: wrap
-    align-items: center
+    align-items: flex-start
+    min-width: 0
     gap: 1.6rem 2.4rem
   &__label
     @include font-display
@@ -295,6 +293,7 @@
   &__size
     position: relative
     display: flex
+    flex: 0 0 auto
     color: $forest
     background: $cream-muted
     border-radius: 1.2rem
@@ -308,21 +307,39 @@
       .product__size-help
         background: $white
         color: $leaf
+      .product__size-status
+        color: $white
+    &.is-unavailable
+      color: rgba($forest, 0.45)
+      background: rgba($cream-muted, 0.7)
+      opacity: 1
+      pointer-events: none
+      .product__size-tip
+        pointer-events: auto
+      .product__size-pick
+        cursor: default
+      .product__size-help
+        background: rgba($forest, 0.45)
+        color: $cream
     &-pick
       display: flex
       flex-direction: column
       align-items: center
       justify-content: center
-      gap: 1rem
+      gap: 0.6rem
       min-width: 11.2rem
       height: 100%
       padding: 1.8rem 2.4rem 1.6rem
       color: inherit
       cursor: pointer
       text-align: center
+      &:disabled
+        cursor: default
+        color: inherit
+        opacity: 1
     &-name
       @include font-display
-      font-size: 2.2rem
+      font-size: 1.9rem
       line-height: 1
       text-transform: uppercase
     &-price
@@ -337,14 +354,21 @@
         @include font-text
         font-size: 1.2rem
         color: $forest
+    &-status
+      @include font-text
+      font-size: 1.1rem
+      line-height: 1.2
+      text-transform: none
+      letter-spacing: 0
+      opacity: 0.9
     &-help
       @include font-display
       display: flex
       align-items: center
       justify-content: center
-      width: 1.8rem
-      height: 1.8rem
-      font-size: 1.2rem
+      width: 1.4rem
+      height: 1.4rem
+      font-size: 0.95rem
       line-height: 1
       color: $cream
       background: $forest
@@ -352,8 +376,8 @@
       cursor: help
     &-tip
       position: absolute
-      top: 0.6rem
-      right: 0.6rem
+      top: 0.5rem
+      right: 0.5rem
       z-index: 2
       &::before
         content: ""
@@ -373,7 +397,7 @@
     color: $forest
     background: $cream
     border-radius: 1.2rem
-    box-shadow: 0.4rem 0.4rem 0 rgba(10,51,35,0.8)
+    box-shadow: 0 0.4rem 1.6rem rgba(10, 51, 35, 0.22), 0 0 0 0.1rem rgba(10, 51, 35, 0.08)
     text-align: left
     text-transform: none
     cursor: default
@@ -444,15 +468,32 @@
       line-height: 1
       text-align: center
   &__checkout
+    position: relative
     display: flex
-    align-items: flex-end
-    flex-shrink: 0
-    gap: 2.4rem
+    align-items: flex-start
+    flex: 0 0 auto
+    gap: 2rem
     margin-left: auto
+    padding: 1.4rem 1.8rem 1.4rem 2rem
+    background: $cream-muted
+    border-radius: 1.2rem
+    &::before
+      content: ""
+      position: absolute
+      top: 2.2rem
+      left: -1rem
+      width: 0
+      height: 0
+      border-style: solid
+      border-width: 0.9rem 1rem 0.9rem 0
+      border-color: transparent $cream-muted transparent transparent
   &__total
     display: flex
     flex-direction: column
+    flex: 0 0 auto
+    align-items: flex-start
     gap: 0.2rem
+    min-width: 12ch
     &-label
       @include font-display
       font-size: 1.4rem
@@ -462,6 +503,14 @@
       @include font-display
       font-size: 2.4rem
       line-height: 1
+      font-variant-numeric: tabular-nums
+      white-space: nowrap
+      text-align: left
+    .product__price-old
+      display: block
+      font-variant-numeric: tabular-nums
+      white-space: nowrap
+      text-align: left
   &__price-old
     @include font-text
     font-size: 1.4rem
@@ -477,14 +526,14 @@
     align-items: center
     justify-content: center
     flex-shrink: 0
+    align-self: flex-start
     position: relative
-    padding: 0.8rem 1.8rem
-    font-size: 1.4rem
-    line-height: 1.2
+    @include button-padding
     white-space: nowrap
     text-transform: uppercase
     color: $forest
     background: $leaf
+    border: 0.3rem solid $leaf
     border-radius: 10rem
     cursor: pointer
     box-shadow: 0.4rem 0.4rem 0 rgba(10,51,35,0.8)
@@ -499,17 +548,31 @@
     &:focus-visible
       box-shadow: 0 0 0 rgba(10,51,35,0.8)
       transform: translate(0.4rem, 0.4rem)
+    &:disabled
+      opacity: 0.55
+      cursor: default
+      box-shadow: none
+      transform: none
   &__copy
     display: flex
     flex-direction: column
-    gap: 2.4rem
-    margin-top: 2.4rem
+    gap: 1.2rem
   &__description
     display: flex
     flex-direction: column
     gap: 1.2rem
     font-size: 1.6rem
     line-height: 1.5
+  &__features
+    display: flex
+    flex-direction: column
+    gap: 1.2rem
+    margin-top: auto
+  &__features-title
+    @include font-display
+    font-size: 1.8rem
+    line-height: 1.2
+    text-transform: uppercase
   &__specs
     display: flex
     flex-direction: column
@@ -532,7 +595,9 @@
       line-height: 1.3
     &-value
       @include font-text
-      flex-shrink: 0
+      flex: 1
+      min-width: 0
       font-size: 1.6rem
       line-height: 1.3
       text-align: right
+      overflow-wrap: anywhere

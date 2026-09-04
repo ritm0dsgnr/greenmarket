@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { SiteCart } from '@/components/SiteCart'
+import { siteBrand } from '@/components/siteContacts'
 
 export const metadata: Metadata = {
-  title: 'Корзина — Green Market',
-  description: 'Корзина садового центра Green Market.',
+  title: `Корзина — ${siteBrand}`,
+  description: `Корзина садового центра ${siteBrand}.`,
 }
 
 export default function CartPage() {

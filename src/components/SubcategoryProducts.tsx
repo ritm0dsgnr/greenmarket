@@ -1,25 +1,50 @@
 import { bindHangingWords } from '@/components/bindHangingWords'
 import { ProductsCatalog } from '@/components/ProductsCatalog'
-import type { ProductCardData } from '@/components/ProductCard'
+import type { ProductCardData, ProductCardTag } from '@/components/ProductCard'
+import type { ListingSortId, ListingSpecFilter } from '@/catalog/listing-filters-url'
+import { siteBrand } from '@/components/siteContacts'
 
 export function SubcategoryProducts({
   title,
   products,
+  listingPath,
+  activeNameTags = [],
+  activePromoTags = [],
+  initialSpecFilters = [],
+  initialSort = 'featured',
+  showFilters = true,
 }: {
   title: string
   products: ProductCardData[]
+  listingPath: string
+  activeNameTags?: string[]
+  activePromoTags?: ProductCardTag[]
+  initialSpecFilters?: ListingSpecFilter[]
+  initialSort?: ListingSortId
+  showFilters?: boolean
 }) {
   return (
-    <section className="products" aria-labelledby="products-title">
+    <section
+      className={['products', showFilters ? '' : 'products--no-filters'].filter(Boolean).join(' ')}
+      aria-labelledby="products-title"
+    >
       <div className="products__layout">
-        <ProductsCatalog products={products} categoryLabel={title}>
+        <ProductsCatalog
+          products={products}
+          showFilters={showFilters}
+          listingPath={listingPath}
+          activeNameTags={activeNameTags}
+          activePromoTags={activePromoTags}
+          initialSpecFilters={initialSpecFilters}
+          initialSort={initialSort}
+        >
           <div className="products__head">
             <h1 className="products__title" id="products-title">
               {bindHangingWords(title)}
             </h1>
             <p className="products__lead">
               {bindHangingWords(
-                `${title} садового центра Green Market. Саженцы для посадки в сад и на участок: районированные сорта, разные формы кроны, контейнеры и возраста. Поможем выбрать растение под размер участка, почву, освещение и желаемый срок плодоношения. Посадка, полив и формировка зависят от сорта и сезона, поэтому к каждому саженцу даём понятные рекомендации по уходу.`,
+                `${title} садового центра ${siteBrand}. Параметры и цены показаны из прайса для приёмки вёрстки. Перед заказом менеджер подтвердит наличие и стоимость.`,
               )}
             </p>
           </div>

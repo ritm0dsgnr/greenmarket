@@ -1,4 +1,5 @@
 import type { ProductSpec } from './productSpecs'
+import { normalizeSpecFilterValue } from '../import/greenmarket-price/normalize-container'
 
 type LayoutProductTag = 'new' | 'sale' | 'hit'
 
@@ -297,11 +298,35 @@ export function filterLayoutProducts<T extends { specs?: ProductSpec[] }>(
     const specs = product.specs ?? []
 
     for (const [label, values] of groups) {
-      const matchesGroup = specs.some((spec) => spec.label === label && values.includes(spec.value))
+      const selected = values.map((value) => normalizeSpecFilterValue(label, value))
+      const matchesGroup = specs.some(
+        (spec) =>
+          spec.label === label &&
+          selected.includes(normalizeSpecFilterValue(spec.label, spec.value)),
+      )
 
       if (!matchesGroup) {
         return false
       }
+    }
+
+    return true
+  })
+}
+
+export function filterProductsByTags<
+  T extends {
+    tag: LayoutProductTag | null
+    nameTag?: string
+  },
+>(products: T[], promoTags: readonly LayoutProductTag[], nameTags: readonly string[]) {
+  return products.filter((product) => {
+    if (promoTags.length > 0 && (!product.tag || !promoTags.includes(product.tag))) {
+      return false
+    }
+
+    if (nameTags.length > 0 && (!product.nameTag || !nameTags.includes(product.nameTag))) {
+      return false
     }
 
     return true
@@ -321,35 +346,121 @@ export function layoutFiltersEqual(
   return serialize(left) === serialize(right)
 }
 
+function toCentimeters(amount: number, unit: string | undefined) {
+  if (unit?.startsWith('м')) {
+    return amount * 100
+  }
+
+  return amount
+}
+
+function measureInCm(normalized: string, axis: 'h' | 'd') {
+  const match = normalized.match(
+    new RegExp(`${axis}\\s*(?:до\\s*)?(\\d+(?:\\.\\d+)?)(?:\\s*-\\s*(\\d+(?:\\.\\d+)?))?\\s*(см|м)?`),
+  )
+
+  if (!match?.[1]) {
+    return null
+  }
+
+  const unit = match[3]
+  const first = parseFloat(match[1])
+  const second = match[2] ? parseFloat(match[2]) : first
+
+  return toCentimeters(Math.max(first, second), unit)
+}
+
+function specFilterSortKey(value: string) {
+  const normalized = value.replace(/,/g, '.').trim().toLowerCase()
+
+  const containerMatch = normalized.match(/^[cс](\d+(?:\.\d+)?)$/)
+  if (containerMatch?.[1]) {
+    return parseFloat(containerMatch[1])
+  }
+
+  const heightCm = measureInCm(normalized, 'h')
+  if (heightCm !== null) {
+    return heightCm
+  }
+
+  const diameterCm = measureInCm(normalized, 'd')
+  if (diameterCm !== null) {
+    return diameterCm
+  }
+
+  const embeddedRange = normalized.match(/(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)/)
+  if (embeddedRange?.[1] && embeddedRange[2]) {
+    return Math.max(parseFloat(embeddedRange[1]), parseFloat(embeddedRange[2]))
+  }
+
+  const rangeMatch = normalized.match(/^(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)$/)
+  if (rangeMatch?.[1] && rangeMatch[2]) {
+    return Math.max(parseFloat(rangeMatch[1]), parseFloat(rangeMatch[2]))
+  }
+
+  const singleMatch = normalized.match(/^(\d+(?:\.\d+)?)$/)
+  if (singleMatch?.[1]) {
+    return parseFloat(singleMatch[1])
+  }
+
+  return null
+}
+
+export function compareSpecFilterValues(left: string, right: string) {
+  const leftKey = specFilterSortKey(left)
+  const rightKey = specFilterSortKey(right)
+
+  if (leftKey !== null && rightKey !== null) {
+    if (leftKey !== rightKey) {
+      return leftKey - rightKey
+    }
+
+    return left.localeCompare(right, 'ru')
+  }
+
+  if (leftKey !== null) {
+    return -1
+  }
+
+  if (rightKey !== null) {
+    return 1
+  }
+
+  return left.localeCompare(right, 'ru')
+}
+
 export function collectSpecFilters(products: Array<{ specs: ProductSpec[] }>) {
   const groups = new Map<string, string[]>()
+  const excludedLabels = new Set(['Листья', 'Посадка', 'Размер'])
 
   for (const product of products) {
     for (const spec of product.specs) {
+      if (excludedLabels.has(spec.label)) {
+        continue
+      }
+
+      const value = normalizeSpecFilterValue(spec.label, spec.value)
       const values = groups.get(spec.label) ?? []
 
-      if (!values.includes(spec.value)) {
-        values.push(spec.value)
+      if (!values.includes(value)) {
+        values.push(value)
       }
 
       groups.set(spec.label, values)
     }
   }
 
-  return [...groups].map(([label, values]) => ({ label, values }))
+  return [...groups].map(([label, values]) => ({
+    label,
+    values: [...values].sort(compareSpecFilterValues),
+  }))
 }
 
-export function collectNameGroupTags(
-  products: Array<{ name: string }>,
-  categoryLabel: string,
-) {
+export function collectNameGroupTags(products: Array<{ name: string; nameTag?: string }>) {
   const counts = new Map<string, number>()
 
   for (const product of products) {
-    const rest = product.name.startsWith(categoryLabel)
-      ? product.name.slice(categoryLabel.length).trim()
-      : product.name.trim()
-    const group = rest.split(/\s+/)[0]
+    const group = product.nameTag?.trim()
 
     if (!group) {
       continue
@@ -359,7 +470,6 @@ export function collectNameGroupTags(
   }
 
   return [...counts]
-    .filter(([, count]) => count > 1)
     .sort(([left], [right]) => left.localeCompare(right, 'ru'))
     .map(([label, count]) => ({ label, count }))
 }

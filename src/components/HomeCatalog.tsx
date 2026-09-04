@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { CatalogCard } from '@/components/CatalogCard'
 import { Icon } from '@/components/Icon'
-import { homeCatalogCategories } from '@/components/catalogCategories'
+import { homeCatalogCategories } from '@/catalog'
 
 export function HomeCatalog() {
   return (

@@ -1,9 +1,24 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { SubcategoryProducts } from '@/components/SubcategoryProducts'
-import { catalogCategories, getSubcategory } from '@/components/catalogCategories'
-import { buildLayoutProducts } from '@/components/productListingLayout'
+import { collectSpecFilters } from '@/components/productListingLayout'
+import {
+  catalogCategories,
+  categoryListingPath,
+  getProductCardsForSubcategory,
+  getSubcategory,
+  isFlatCatalogCategory,
+  listSubcategoryNameTags,
+  parseNameTagQuery,
+  parsePromoTagQuery,
+  subcategoryListingPath,
+} from '@/catalog'
+import {
+  parseListingSort,
+  parseListingSpecFilters,
+} from '@/catalog/listing-filters-url'
+import { siteBrand } from '@/components/siteContacts'
 
 export function generateStaticParams() {
   return catalogCategories.flatMap((category) =>
@@ -23,26 +38,74 @@ export async function generateMetadata({
   const match = getSubcategory(categorySlug, subcategorySlug)
 
   if (!match) {
-    return { title: 'Каталог — Green Market' }
+    return { title: `Каталог — ${siteBrand}` }
+  }
+
+  if (isFlatCatalogCategory(match.category)) {
+    return {
+      title: `${match.category.label} — ${siteBrand}`,
+      description: `${match.category.label} садового центра ${siteBrand}.`,
+    }
   }
 
   return {
-    title: `${match.subcategory.label} — Green Market`,
-    description: `${match.subcategory.label} садового центра Green Market.`,
+    title: `${match.subcategory.label} — ${siteBrand}`,
+    description: `${match.subcategory.label} садового центра ${siteBrand}.`,
   }
+}
+
+function searchParamsToQuery(query: Record<string, string | string[] | undefined>) {
+  const params = new URLSearchParams()
+
+  for (const [key, value] of Object.entries(query)) {
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        params.append(key, item)
+      }
+      continue
+    }
+
+    if (typeof value === 'string') {
+      params.set(key, value)
+    }
+  }
+
+  const serialized = params.toString()
+  return serialized ? `?${serialized}` : ''
 }
 
 export default async function SubcategoryPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ category: string; subcategory: string }>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
   const { category: categorySlug, subcategory: subcategorySlug } = await params
+  const query = await searchParams
   const match = getSubcategory(categorySlug, subcategorySlug)
 
   if (!match) {
     notFound()
   }
+
+  if (isFlatCatalogCategory(match.category)) {
+    redirect(`${categoryListingPath(match.category.slug)}${searchParamsToQuery(query)}`)
+  }
+
+  const listingPath = subcategoryListingPath(categorySlug, subcategorySlug)
+  const products = getProductCardsForSubcategory(categorySlug, subcategorySlug)
+  const showFilters = match.category.label !== 'Сопутствующие товары'
+  const activeNameTags = parseNameTagQuery(
+    listSubcategoryNameTags(categorySlug, subcategorySlug),
+    query.tag,
+  )
+  const activePromoTags = parsePromoTagQuery(query.promo)
+  const specGroups = showFilters
+    ? collectSpecFilters(products.map((product) => ({ specs: product.specs ?? [] })))
+    : []
+  const initialSpecFilters = showFilters ? parseListingSpecFilters(specGroups, query) : []
+  const initialSort = parseListingSort(query.sort)
 
   return (
     <main className="page">
@@ -57,7 +120,13 @@ export default async function SubcategoryPage({
         />
         <SubcategoryProducts
           title={match.subcategory.label}
-          products={buildLayoutProducts(match.subcategory.label)}
+          products={products}
+          listingPath={listingPath}
+          activeNameTags={activeNameTags}
+          activePromoTags={activePromoTags}
+          initialSpecFilters={initialSpecFilters}
+          initialSort={initialSort}
+          showFilters={showFilters}
         />
       </div>
     </main>

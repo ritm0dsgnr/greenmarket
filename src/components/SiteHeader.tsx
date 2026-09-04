@@ -6,8 +6,9 @@ import { useEffect, useRef, useState } from 'react'
 import { Icon } from '@/components/Icon'
 import { useLayoutCart } from '@/components/LayoutCartProvider'
 import { Logo } from '@/components/Logo'
-import { catalogGroups } from '@/components/catalogCategories'
-import { sitePhoneDisplay, sitePhoneHref, siteTelegramHref, siteVkHref } from '@/components/siteContacts'
+import { catalogGroups, listCatalogGroupNavEntries } from '@/catalog'
+import { sitePhoneDisplay, sitePhoneHref, siteTelegramHref, siteVkHref, siteBrand } from '@/components/siteContacts'
+import { siteBlogRoute, siteInfoRoutes } from '@/components/siteNav'
 
 const dropdownNav = [
   {
@@ -21,24 +22,11 @@ const dropdownNav = [
     groups: [
       {
         items: [
-          { href: '/', label: 'Доставка' },
-          { href: '/', label: 'Сертификаты' },
-          { href: '/bonus-program', label: 'Бонусная программа' },
-          { href: '/', label: 'Прайс' },
-          { href: '/', label: 'Отзывы' },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'blog',
-    label: 'Блог',
-    groups: [
-      {
-        items: [
-          { href: '/', label: 'Мероприятия' },
-          { href: '/', label: 'Статьи' },
-          { href: '/', label: 'Новости' },
+          { href: siteInfoRoutes.delivery, label: 'Доставка' },
+          { href: siteInfoRoutes.certificates, label: 'Сертификаты' },
+          { href: siteInfoRoutes.bonusProgram, label: 'Бонусная программа' },
+          { href: siteInfoRoutes.price, label: 'Прайс' },
+          { href: siteInfoRoutes.reviews, label: 'Отзывы' },
         ],
       },
     ],
@@ -227,8 +215,8 @@ export function SiteHeader() {
                             className="header__wrapper-dropdown-list"
                             aria-labelledby={title ? titleId : undefined}
                           >
-                            {group.items.map((entry) => (
-                              <li key={entry.label}>
+                            {listCatalogGroupNavEntries(group).map((entry) => (
+                              <li key={`${entry.href}-${entry.label}`}>
                                 <Link className="header__wrapper-dropdown-link" href={entry.href} onClick={closeNav}>
                                   {entry.label}
                                   <Icon name="arrow-right" className="header__wrapper-dropdown-arrow" />
@@ -243,6 +231,9 @@ export function SiteHeader() {
                 </div>
               )
             })}
+            <Link className="header__wrapper-link" href={siteBlogRoute} onClick={closeNav}>
+              Журнал
+            </Link>
             <Link className="header__wrapper-link" href="/contacts" onClick={closeNav}>
               Контакты
             </Link>
@@ -272,7 +263,7 @@ export function SiteHeader() {
               </div>
             </div>
           </nav>
-          <Link className="header__wrapper-logo" href="/" aria-label="Green Market" onClick={closeNav}>
+          <Link className="header__wrapper-logo" href="/" aria-label={siteBrand} onClick={closeNav}>
             <Logo />
           </Link>
           <div className="header__wrapper-aside">

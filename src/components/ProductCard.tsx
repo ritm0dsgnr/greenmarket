@@ -6,16 +6,13 @@ import { useEffect, useRef, useState, type TransitionEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@/components/Icon'
 import { useLayoutCart } from '@/components/LayoutCartProvider'
+import { formatLayoutPrice, layoutSaleOldPrice } from '@/components/productCardSizes'
 import {
-  defaultLayoutSizeId,
-  emptySizeQuantities,
-  formatLayoutPrice,
-  hasLayoutSizeVariants,
-  layoutCardSizes,
-  layoutLinePrice,
-  layoutSaleOldPrice,
-  type LayoutSizeId,
-} from '@/components/productCardSizes'
+  minOfferPrice,
+  offerPricesVary,
+  offerSizesHaveChoices,
+  type ProductOfferSize,
+} from '@/import/greenmarket-price/offer-sizes'
 import { visibleProductSpecs, type ProductSpec } from '@/components/productSpecs'
 
 export const cardTagLabels = {
@@ -31,11 +28,13 @@ export type ProductCardData = {
   tag: ProductCardTag | null
   available: boolean
   name: string
+  nameTag?: string
   latin?: string
   href?: string
   specs?: ProductSpec[]
   priceRubles?: number
   oldPriceRubles?: number
+  sizes?: ProductOfferSize[]
 }
 
 const cardSpecs: ProductSpec[] = [
@@ -44,33 +43,50 @@ const cardSpecs: ProductSpec[] = [
   { label: 'Посадка', value: 'солнце' },
 ]
 
-export function ProductCard({ card }: { card: ProductCardData }) {
+function emptyQuantities(sizes: ProductOfferSize[]) {
+  return Object.fromEntries(sizes.map((size) => [size.id, 0])) as Record<string, number>
+}
+
+function lineTotal(sizes: ProductOfferSize[], quantities: Record<string, number>) {
+  return sizes.reduce((sum, size) => sum + size.priceRubles * (quantities[size.id] ?? 0), 0)
+}
+
+export function ProductCard({
+  card,
+  variant = 'full',
+}: {
+  card: ProductCardData
+  variant?: 'full' | 'name-only'
+}) {
   const [open, setOpen] = useState(false)
   const [shown, setShown] = useState(false)
   const shownRef = useRef(false)
   const closingRef = useRef(false)
-  const [quantities, setQuantities] = useState(emptySizeQuantities)
+  const [quantities, setQuantities] = useState<Record<string, number>>({})
   const { addItems } = useLayoutCart()
   const specs = card.specs ?? cardSpecs
   const visibleSpecs = visibleProductSpecs(specs)
   const simple = visibleSpecs.length === 0
-  const priceRubles = card.priceRubles ?? 2800
+  const nameOnly = variant === 'name-only'
+  const sizes = card.sizes ?? []
+  const hasVariants = offerSizesHaveChoices(sizes)
+  const priceRubles = minOfferPrice(sizes, card.priceRubles ?? 2800)
   const oldPriceRubles = layoutSaleOldPrice(priceRubles, card.tag, card.oldPriceRubles)
-  const hasVariants = hasLayoutSizeVariants(card.specs)
-  const sizes = layoutCardSizes(priceRubles, card.specs)
-  const oldSizes = oldPriceRubles ? layoutCardSizes(oldPriceRubles, card.specs) : []
-  const linePrice = layoutLinePrice(sizes, quantities)
-  const oldLinePrice = oldPriceRubles
-    ? hasVariants
-      ? layoutLinePrice(oldSizes, quantities)
+  const showFromPrice = offerPricesVary(sizes)
+  const linePrice = lineTotal(sizes, quantities)
+  const oldLinePrice =
+    oldPriceRubles && hasVariants
+      ? sizes.reduce((sum, size) => {
+          const oldSizePrice = oldPriceRubles + (size.priceRubles - priceRubles)
+          return sum + oldSizePrice * (quantities[size.id] ?? 0)
+        }, 0)
       : oldPriceRubles
-    : undefined
   const hasItems = linePrice > 0
 
   shownRef.current = shown
 
   useEffect(() => {
-    if (!open) {
+    if (!open || nameOnly) {
       closingRef.current = false
       return
     }
@@ -93,10 +109,10 @@ export function ProductCard({ card }: { card: ProductCardData }) {
       cancelAnimationFrame(innerFrame)
       document.removeEventListener('keydown', onKeyDown)
     }
-  }, [open])
+  }, [open, nameOnly])
 
   useEffect(() => {
-    if (!open || shown || !closingRef.current) {
+    if (!open || shown || !closingRef.current || nameOnly) {
       return
     }
 
@@ -105,7 +121,7 @@ export function ProductCard({ card }: { card: ProductCardData }) {
       setOpen(false)
     }, 700)
     return () => window.clearTimeout(timeout)
-  }, [open, shown])
+  }, [open, shown, nameOnly])
 
   function closePicker() {
     if (!shownRef.current) {
@@ -151,14 +167,22 @@ export function ProductCard({ card }: { card: ProductCardData }) {
       return
     }
 
-    const next = emptySizeQuantities()
-    next[defaultLayoutSizeId(card.specs)] = 1
+    const next = emptyQuantities(sizes)
+    const firstAvailable = sizes.find((size) => size.available) ?? sizes[0]
+    if (firstAvailable) {
+      next[firstAvailable.id] = 1
+    }
     closingRef.current = false
     setQuantities(next)
     setOpen(true)
   }
 
-  function changeQuantity(id: LayoutSizeId, delta: number) {
+  function changeQuantity(id: string, delta: number) {
+    const size = sizes.find((item) => item.id === id)
+    if (size && !size.available) {
+      return
+    }
+
     setQuantities((current) => ({
       ...current,
       [id]: Math.max(0, (current[id] ?? 0) + delta),
@@ -168,7 +192,7 @@ export function ProductCard({ card }: { card: ProductCardData }) {
   function confirmAdd() {
     addItems(
       sizes
-        .filter((size) => (quantities[size.id] ?? 0) > 0)
+        .filter((size) => size.available && (quantities[size.id] ?? 0) > 0)
         .map((size) => ({
           id: `${card.id}:${size.id}`,
           productId: card.id,
@@ -182,6 +206,33 @@ export function ProductCard({ card }: { card: ProductCardData }) {
         })),
     )
     closePicker()
+  }
+
+  if (nameOnly) {
+    return (
+      <article
+        className={[
+          'product-card',
+          'product-card--name-only',
+          card.available ? '' : 'is-unavailable',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
+        <div className="product-card__media">
+          <Image src="/img/placeholder.svg" alt="" width={309} height={220} />
+        </div>
+        <div className="product-card__body">
+          <div className="product-card__names">
+            <h3 className="product-card__name">
+              <Link className="product-card__link" href={card.href ?? '/product'}>
+                {card.name}
+              </Link>
+            </h3>
+          </div>
+        </div>
+      </article>
+    )
   }
 
   return (
@@ -229,7 +280,7 @@ export function ProductCard({ card }: { card: ProductCardData }) {
                   <del className="product-card__price-old">{formatLayoutPrice(oldPriceRubles)}</del>
                 ) : null}
                 <span className="product-card__price-current">
-                  {hasVariants ? `от${'\u00a0'}` : null}
+                  {showFromPrice ? `от${'\u00a0'}` : null}
                   {formatLayoutPrice(priceRubles)}
                 </span>
               </p>
@@ -291,23 +342,37 @@ export function ProductCard({ card }: { card: ProductCardData }) {
                   <div className="product-card__sizes">
                     {sizes.map((size) => {
                       const quantity = quantities[size.id] ?? 0
-                      const oldSizePrice = oldSizes.find((entry) => entry.id === size.id)?.priceRubles
+                      const oldSizePrice = oldPriceRubles
+                        ? oldPriceRubles + (size.priceRubles - priceRubles)
+                        : undefined
+                      const sizeAvailable = size.available !== false
 
                       return (
-                        <div className="product-card__size" key={size.id}>
+                        <div
+                          className={[
+                            'product-card__size',
+                            sizeAvailable ? '' : 'is-unavailable',
+                          ]
+                            .filter(Boolean)
+                            .join(' ')}
+                          key={size.id}
+                        >
                           <span className="product-card__size-name">{size.label}</span>
                           <span className="product-card__size-price">
-                            {oldSizePrice ? (
+                            {oldSizePrice && oldSizePrice > size.priceRubles ? (
                               <del className="product-card__price-old">{formatLayoutPrice(oldSizePrice)}</del>
                             ) : null}
                             <span className="product-card__price-current">{formatLayoutPrice(size.priceRubles)}</span>
+                            {sizeAvailable || size.label.toLowerCase() === 'нет в наличии' ? null : (
+                              <span className="product-card__size-status">Нет в наличии</span>
+                            )}
                           </span>
                           <div className="product-card__qty">
                             <button
                               className="product-card__qty-button"
                               type="button"
                               aria-label={`Меньше, ${size.label}`}
-                              disabled={quantity <= 0}
+                              disabled={!sizeAvailable || quantity <= 0}
                               onClick={() => changeQuantity(size.id, -1)}
                             >
                               −
@@ -317,6 +382,7 @@ export function ProductCard({ card }: { card: ProductCardData }) {
                               className="product-card__qty-button"
                               type="button"
                               aria-label={`Больше, ${size.label}`}
+                              disabled={!sizeAvailable}
                               onClick={() => changeQuantity(size.id, 1)}
                             >
                               +

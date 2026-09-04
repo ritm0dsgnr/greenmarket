@@ -1,4 +1,5 @@
 import type { ProductSpec } from './productSpecs'
+import { normalizeContainerValue } from '../import/greenmarket-price/normalize-container'
 
 export const layoutSizeIds = ['C3', 'C5', 'C7', 'C10'] as const
 
@@ -32,7 +33,7 @@ export function layoutSaleOldPrice(
 }
 
 function isLayoutSizeId(value: string): value is LayoutSizeId {
-  return (layoutSizeIds as readonly string[]).includes(value)
+  return (layoutSizeIds as readonly string[]).includes(normalizeContainerValue(value))
 }
 
 export function hasLayoutSizeVariants(specs: ProductSpec[] | undefined) {
@@ -73,9 +74,10 @@ export function layoutLinePrice(
 
 export function defaultLayoutSizeId(specs: ProductSpec[] | undefined): LayoutSizeId {
   const container = specs?.find((spec) => spec.label === 'Контейнер')?.value
+  const normalized = container ? normalizeContainerValue(container) : undefined
 
   for (const id of layoutSizeIds) {
-    if (container === id) {
+    if (normalized === id) {
       return id
     }
   }

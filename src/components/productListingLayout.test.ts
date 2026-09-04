@@ -1,22 +1,24 @@
 import { describe, expect, it } from 'vitest'
 import { PRODUCT_CARD_SPECS_MAX, visibleProductSpecs } from './productSpecs'
-import { buildLayoutProducts, collectNameGroupTags, collectSpecFilters, filterLayoutProducts, layoutFiltersEqual, sortLayoutProducts } from './productListingLayout'
+import { buildLayoutProducts, collectNameGroupTags, collectSpecFilters, compareSpecFilterValues, filterLayoutProducts, filterProductsByTags, layoutFiltersEqual, sortLayoutProducts } from './productListingLayout'
 
 describe('productListingLayout', () => {
-  it('keeps at most three specs on the card', () => {
+  it('keeps at most three specs on the card and hides planting and leaves', () => {
     const products = buildLayoutProducts('Яблони')
     const longSpecs = products.find((product) => product.specs && product.specs.length > 3)
+    const visible = visibleProductSpecs(longSpecs?.specs ?? [])
 
     expect(longSpecs?.specs?.length).toBeGreaterThan(PRODUCT_CARD_SPECS_MAX)
-    expect(visibleProductSpecs(longSpecs?.specs ?? [])).toHaveLength(PRODUCT_CARD_SPECS_MAX)
+    expect(visible).toHaveLength(PRODUCT_CARD_SPECS_MAX)
+    expect(visible.some((spec) => spec.label === 'Посадка')).toBe(false)
+    expect(visible.some((spec) => spec.label === 'Листья')).toBe(false)
   })
 
-  it('collects every spec value for filters, including those hidden on the card', () => {
+  it('collects filterable specs and skips leaves, planting and size', () => {
     const products = buildLayoutProducts('Яблони')
     const filters = collectSpecFilters(products.filter((product) => product.specs).map((product) => ({
       specs: product.specs ?? [],
     })))
-    const planting = filters.find((group) => group.label === 'Посадка')
     const firstProductValues = visibleProductSpecs(products[0]?.specs ?? []).map((spec) => spec.value)
 
     expect(filters.map((group) => group.label)).toEqual([
@@ -24,9 +26,10 @@ describe('productListingLayout', () => {
       'Контейнер',
       'Период цветения',
       'Цвет',
-      'Посадка',
     ])
-    expect(planting?.values).toEqual(['солнце', 'полутень', 'тень'])
+    expect(filters.find((group) => group.label === 'Посадка')).toBeUndefined()
+    expect(filters.find((group) => group.label === 'Листья')).toBeUndefined()
+    expect(filters.find((group) => group.label === 'Размер')).toBeUndefined()
     expect(products[0]?.specs?.some((spec) => spec.label === 'Посадка')).toBe(true)
     expect(firstProductValues).not.toContain('солнце')
   })
@@ -108,17 +111,17 @@ describe('productListingLayout', () => {
     ])
   })
 
-  it('turns a duplicated second word into a group tag with a count', () => {
-    const products = [
-      { name: 'Яблони карликовая зеленая' },
-      { name: 'Яблони карликовая желтая' },
-      { name: 'Яблони компактная' },
-      { name: 'Яблони штамбовая красная' },
-      { name: 'Яблони штамбовая белая' },
-    ]
+  it('groups products by the second word tag', () => {
 
-    expect(collectNameGroupTags(products, 'Яблони')).toEqual([
+    expect(collectNameGroupTags([
+      { name: 'Яблони карликовая зеленая', nameTag: 'карликовая' },
+      { name: 'Яблони карликовая желтая', nameTag: 'карликовая' },
+      { name: 'Яблони компактная', nameTag: 'компактная' },
+      { name: 'Яблони шtамбовая красная', nameTag: 'штамбовая' },
+      { name: 'Яблони шtамбовая белая', nameTag: 'штамбовая' },
+    ])).toEqual([
       { label: 'карликовая', count: 2 },
+      { label: 'компактная', count: 1 },
       { label: 'штамбовая', count: 2 },
     ])
   })
@@ -145,6 +148,101 @@ describe('productListingLayout', () => {
         { label: 'Контейнер', value: 'C3' },
         { label: 'Посадка', value: 'солнце' },
       ]).map((product) => product.name),
+    ).toEqual(['A'])
+  })
+
+  it('filters products by promo and name tags', () => {
+    const products = [
+      { name: 'Ель колючая', tag: 'new' as const, nameTag: 'колючая' },
+      { name: 'Ель обыкновенная', tag: null, nameTag: 'обыкновенная' },
+      { name: 'Ель голубая', tag: 'sale' as const, nameTag: 'голубая' },
+    ]
+
+    expect(filterProductsByTags(products, ['new'], []).map((product) => product.name)).toEqual([
+      'Ель колючая',
+    ])
+    expect(filterProductsByTags(products, [], ['колючая', 'голубая']).map((product) => product.name)).toEqual([
+      'Ель колючая',
+      'Ель голубая',
+    ])
+    expect(
+      filterProductsByTags(products, ['sale'], ['голубая']).map((product) => product.name),
+    ).toEqual(['Ель голубая'])
+  })
+
+  it('sorts spec filter values from smallest to largest', () => {
+    const filters = collectSpecFilters([
+      {
+        specs: [
+          { label: 'Контейнер', value: 'C3' },
+          { label: 'Контейнер', value: 'C20' },
+          { label: 'Контейнер', value: 'C10' },
+          { label: 'Контейнер', value: 'ком' },
+          { label: 'Контейнер', value: 'C7,5' },
+          { label: 'Высота взрослого растения', value: 'h до 2 м, d до 2 м' },
+          { label: 'Высота взрослого растения', value: 'h до 30 м, d до 10 м' },
+          { label: 'Высота взрослого растения', value: 'h до 50 см, d до 2 м' },
+          { label: 'Размер', value: '60-70' },
+          { label: 'Посадка', value: 'солнце' },
+          { label: 'Листья', value: 'зелёные' },
+        ],
+      },
+    ])
+
+    expect(filters.map((group) => group.label)).toEqual([
+      'Контейнер',
+      'Высота взрослого растения',
+    ])
+    expect(filters.find((group) => group.label === 'Контейнер')?.values).toEqual([
+      'C3',
+      'C7,5',
+      'C10',
+      'C20',
+      'ком',
+    ])
+    expect(filters.find((group) => group.label === 'Высота взрослого растения')?.values).toEqual([
+      'h до 50 см, d до 2 м',
+      'h до 2 м, d до 2 м',
+      'h до 30 м, d до 10 м',
+    ])
+    expect(compareSpecFilterValues('C3', 'C10')).toBeLessThan(0)
+    expect(compareSpecFilterValues('C10', 'C3')).toBeGreaterThan(0)
+    expect(compareSpecFilterValues('30', '60-70')).toBeLessThan(0)
+  })
+
+  it('dedupes Cyrillic and Latin container lookalikes in filters', () => {
+    const filters = collectSpecFilters([
+      {
+        specs: [
+          { label: 'Контейнер', value: 'С2' },
+          { label: 'Контейнер', value: 'C2' },
+          { label: 'Контейнер', value: 'С3' },
+          { label: 'Контейнер', value: 'C3' },
+          { label: 'Контейнер', value: 'Р9' },
+          { label: 'Контейнер', value: 'P9' },
+          { label: 'Контейнер', value: 'C10/С15' },
+          { label: 'Контейнер', value: 'С3/С5' },
+        ],
+      },
+    ])
+
+    expect(filters.find((group) => group.label === 'Контейнер')?.values).toEqual([
+      'C2',
+      'C3',
+      'C10/C15',
+      'C3/C5',
+      'P9',
+    ])
+  })
+
+  it('matches products when filter uses Latin and spec has Cyrillic container', () => {
+    const products = [
+      { name: 'A', specs: [{ label: 'Контейнер', value: 'С3' }] },
+      { name: 'B', specs: [{ label: 'Контейнер', value: 'C5' }] },
+    ]
+
+    expect(
+      filterLayoutProducts(products, [{ label: 'Контейнер', value: 'C3' }]).map((product) => product.name),
     ).toEqual(['A'])
   })
 

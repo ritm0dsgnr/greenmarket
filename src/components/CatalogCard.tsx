@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { bindHangingWords } from '@/components/bindHangingWords'
 import { Icon } from '@/components/Icon'
+import { catalogCardImageSrc } from '@/catalog/catalog-card-images'
 
 function productCountAriaLabel(count: number) {
   const mod10 = count % 10
@@ -29,6 +30,8 @@ export function CatalogCard({
   variant?: 'category' | 'sub'
   count?: number
 }) {
+  const imageSrc = catalogCardImageSrc(href)
+
   return (
     <Link
       className={variant === 'sub' ? 'catalog-card catalog-card--sub' : 'catalog-card'}
@@ -43,12 +46,12 @@ export function CatalogCard({
             <Icon name="arrow-corner" className="catalog-card__arrow" />
           </span>
           <span className="catalog-card__media">
-            <Image src="/img/placeholder.svg" alt="" width={309} height={220} />
+            <Image src={imageSrc} alt="" width={309} height={220} />
           </span>
         </span>
       ) : (
         <span className="catalog-card__media">
-          <Image src="/img/placeholder.svg" alt="" width={309} height={220} />
+          <Image src={imageSrc} alt="" width={309} height={220} />
         </span>
       )}
       <span className="catalog-card__title">

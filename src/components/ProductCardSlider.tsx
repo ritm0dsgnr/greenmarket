@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useLayoutEffect, useRef, useState, type CSSProperties, type TransitionEvent } from 'react'
 import { Icon } from '@/components/Icon'
 import { ProductCard, type ProductCardData } from '@/components/ProductCard'
@@ -17,6 +18,7 @@ function readRootRem() {
 export function ProductCardSlider({
   title,
   titleId,
+  titleHref,
   cards,
   block = 'related',
   prevLabel,
@@ -26,6 +28,7 @@ export function ProductCardSlider({
 }: {
   title: string
   titleId: string
+  titleHref?: string
   cards: ProductCardData[]
   block?: 'related' | 'novelties'
   prevLabel?: string
@@ -179,9 +182,19 @@ export function ProductCardSlider({
       <div className="container">
         <div className={`${block}__head`}>
           <h2 className={`${block}__title`} id={titleId}>
-            <Icon name="leaf" className={`${block}__mark`} />
-            {title}
-            <Icon name="leaf" className={`${block}__mark ${block}__mark--mirror`} />
+            {titleHref ? (
+              <Link className={`${block}__title-link`} href={titleHref}>
+                <Icon name="leaf" className={`${block}__mark`} />
+                <span className={`${block}__title-text`}>{title}</span>
+                <Icon name="leaf" className={`${block}__mark ${block}__mark--mirror`} />
+              </Link>
+            ) : (
+              <>
+                <Icon name="leaf" className={`${block}__mark`} />
+                <span className={`${block}__title-text`}>{title}</span>
+                <Icon name="leaf" className={`${block}__mark ${block}__mark--mirror`} />
+              </>
+            )}
           </h2>
         </div>
         <div className={`${block}__slider`}>
