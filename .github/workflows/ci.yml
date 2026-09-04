@@ -19,7 +19,7 @@ jobs:
   quality:
     name: quality
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     steps:
       - name: Check out source
@@ -51,7 +51,31 @@ jobs:
         run: npm run check
 
       - name: Audit dependencies
-        run: npm audit --audit-level=high --engine-strict
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          for attempt in 1 2 3 4 5 6; do
+            set +e
+            output="$(npm audit --audit-level=high --engine-strict 2>&1)"
+            status=$?
+            set -e
+            printf '%s\n' "$output"
+
+            if test "$status" -eq 0; then
+              exit 0
+            fi
+
+            if printf '%s\n' "$output" | grep -Eq 'audit endpoint returned an error|Service Unavailable|ECONNRESET|ETIMEDOUT|EAI_AGAIN'; then
+              if test "$attempt" -lt 6; then
+                echo "npm audit registry unavailable (attempt ${attempt}/6); retrying in 30s..." >&2
+                sleep 30
+                continue
+              fi
+            fi
+
+            exit "$status"
+          done
 
       - name: Scan committed history for secrets
         uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7
