@@ -76,6 +76,27 @@ describe('offer-sizes', () => {
       },
     ])
     expect(firstAvailableSizeId(sizes)).toBe('offer-0')
+    expect(offerSizesHaveChoices(sizes)).toBe(false)
+    expect(offerPricesVary(sizes)).toBe(false)
+  })
+
+  it('skips picker when only one offer is in stock', () => {
+    const sizes = buildOfferSizes({
+      priceRubles: 1600,
+      offers: [
+        {
+          sourceRowNumber: 51,
+          available: false,
+          availabilityRaw: 'нет в наличии',
+          priceRubles: 700,
+        },
+        { sourceRowNumber: 52, container: 'C5/C7,5', available: true, priceRubles: 1600 },
+      ],
+    })
+
+    expect(sizes.map((size) => size.available)).toEqual([false, true])
+    expect(offerSizesHaveChoices(sizes)).toBe(false)
+    expect(offerPricesVary(sizes)).toBe(false)
   })
 
   it('hides differentiating size specs from characteristics', () => {

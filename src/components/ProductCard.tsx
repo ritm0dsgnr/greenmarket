@@ -2,10 +2,10 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useRef, useState, type TransitionEvent } from 'react'
+import { useEffect, useRef, useState, type MouseEvent, type TransitionEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@/components/Icon'
-import { useLayoutCart } from '@/components/LayoutCartProvider'
+import { cartAddOriginFromEvent, useLayoutCart } from '@/components/LayoutCartProvider'
 import { formatLayoutPrice, layoutSaleOldPrice } from '@/components/productCardSizes'
 import {
   minOfferPrice,
@@ -31,6 +31,8 @@ export type ProductCardData = {
   nameTag?: string
   latin?: string
   href?: string
+  categoryLabel?: string
+  categoryHref?: string
   specs?: ProductSpec[]
   priceRubles?: number
   oldPriceRubles?: number
@@ -150,20 +152,46 @@ export function ProductCard({
     setOpen(false)
   }
 
-  function openPicker() {
+  function openPicker(event: MouseEvent<HTMLButtonElement>) {
     if (!hasVariants) {
-      addItems([
-        {
-          id: card.id,
-          productId: card.id,
-          name: card.name,
-          latin: card.latin,
-          tag: card.tag,
-          priceRubles,
-          quantity: 1,
-          href: card.href ?? '/product',
-        },
-      ])
+      const size = sizes.find((item) => item.available)
+      const origin = cartAddOriginFromEvent(event)
+
+      if (size && sizes.length > 1) {
+        addItems(
+          [
+            {
+              id: `${card.id}:${size.id}`,
+              productId: card.id,
+              name: card.name,
+              latin: card.latin,
+              sizeLabel: size.label,
+              tag: card.tag,
+              priceRubles: size.priceRubles,
+              quantity: 1,
+              href: card.href ?? '/product',
+            },
+          ],
+          origin,
+        )
+        return
+      }
+
+      addItems(
+        [
+          {
+            id: card.id,
+            productId: card.id,
+            name: card.name,
+            latin: card.latin,
+            tag: card.tag,
+            priceRubles: size?.priceRubles ?? priceRubles,
+            quantity: 1,
+            href: card.href ?? '/product',
+          },
+        ],
+        origin,
+      )
       return
     }
 
@@ -189,7 +217,7 @@ export function ProductCard({
     }))
   }
 
-  function confirmAdd() {
+  function confirmAdd(event: MouseEvent<HTMLButtonElement>) {
     addItems(
       sizes
         .filter((size) => size.available && (quantities[size.id] ?? 0) > 0)
@@ -204,6 +232,7 @@ export function ProductCard({
           quantity: quantities[size.id] ?? 0,
           href: card.href ?? '/product',
         })),
+      cartAddOriginFromEvent(event),
     )
     closePicker()
   }

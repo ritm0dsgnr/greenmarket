@@ -11191,7 +11191,7 @@ export const priceCatalogSnapshot = {
         },
         {
           "slug": "dekorativnye-kustarniki",
-          "label": "Декоративные кустарники",
+          "label": "Кустарники",
           "href": "/catalog/dekorativnye-kustarniki",
           "subcategories": [
             {
@@ -42792,7 +42792,7 @@ export const priceCatalogSnapshot = {
     },
     {
       "slug": "dekorativnye-kustarniki",
-      "label": "Декоративные кустарники",
+      "label": "Кустарники",
       "href": "/catalog/dekorativnye-kustarniki",
       "subcategories": [
         {

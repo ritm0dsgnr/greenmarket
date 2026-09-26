@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { extractNameParts, subcategoryLabelFromFirstWord } from './name-parts'
+import {
+  extractNameParts,
+  foldYo,
+  preferYoLabel,
+  subcategoryGroupKey,
+  subcategoryLabelFromFirstWord,
+} from './name-parts'
 
 describe('extractNameParts', () => {
   it('splits plant names into first word subcategory and second word tag', () => {
@@ -16,6 +22,12 @@ describe('extractNameParts', () => {
 
   it('preserves subcategory casing from the source name', () => {
     expect(subcategoryLabelFromFirstWord('ель', 'Ель колючая')).toBe('Ель')
+  })
+
+  it('treats е and ё as the same subcategory key', () => {
+    expect(foldYo('Клён')).toBe('клен')
+    expect(subcategoryGroupKey('Клен')).toBe(subcategoryGroupKey('Клён'))
+    expect(preferYoLabel(['Клен', 'Клён'])).toBe('Клён')
   })
 
   it('strips trailing punctuation from words', () => {

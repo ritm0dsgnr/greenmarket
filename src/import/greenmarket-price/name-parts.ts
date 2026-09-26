@@ -36,6 +36,19 @@ export function capitalizeWord(word: string) {
   return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
 }
 
+/** «Клен» и «Клён» — одно слово для группировки подкатегории. */
+export function foldYo(value: string) {
+  return value.toLowerCase().replaceAll('ё', 'е')
+}
+
+export function subcategoryGroupKey(firstWord: string) {
+  return foldYo(firstWord)
+}
+
+export function preferYoLabel(labels: readonly string[]) {
+  return labels.find((label) => label.toLowerCase().includes('ё')) ?? labels[0] ?? ''
+}
+
 export function subcategoryLabelFromFirstWord(firstWord: string, sampleName: string) {
   if (!firstWord) {
     return ''

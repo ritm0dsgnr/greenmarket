@@ -1,6 +1,6 @@
 import { toProductCards } from '../import/greenmarket-price/parse-workbook'
 import type { ProductCardFromPrice } from '../import/greenmarket-price/types'
-import { catalogCategories } from './generated-price-catalog'
+import { catalogCategories } from './price-catalog'
 import { withListingTagQuery } from './name-tag-url'
 
 export function selectHomeNoveltyCards(cards: readonly ProductCardFromPrice[]) {

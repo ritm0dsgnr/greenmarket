@@ -15,6 +15,6 @@ describe('bindHangingWords', () => {
   })
 
   it('leaves titles without hanging words unchanged', () => {
-    expect(bindHangingWords('Декоративные кустарники')).toBe('Декоративные кустарники')
+    expect(bindHangingWords('Кустарники')).toBe('Кустарники')
   })
 })

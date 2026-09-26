@@ -74,6 +74,7 @@
         opacity: 1
 
 .event-card
+  position: relative
   display: grid
   grid-template-columns: 14rem minmax(0, 1fr)
   gap: 1.6rem
@@ -97,13 +98,23 @@
     .event-card__more
       box-shadow: 0 0 0 rgba(10, 51, 35, 0.8)
       transform: translate(0.4rem, 0.4rem)
-  &:focus-visible
+  &:focus-visible,
+  &:focus-within:has(.event-card__hit:focus-visible)
     outline: 0.2rem solid $leaf
     outline-offset: 0.3rem
   &--event
-    cursor: default
     .event-card__more
-      cursor: pointer
+      pointer-events: none
+  &__hit
+    position: absolute
+    inset: 0
+    z-index: 2
+    border: 0
+    border-radius: inherit
+    background: transparent
+    cursor: pointer
+    &:focus
+      outline: none
   &__media
     position: relative
     overflow: hidden

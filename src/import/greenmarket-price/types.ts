@@ -59,6 +59,8 @@ export type ProductCardFromPrice = {
   nameTag?: string
   latin?: string
   href?: string
+  categoryLabel?: string
+  categoryHref?: string
   specs?: ProductSpec[]
   priceRubles?: number
   sizes?: ProductOfferSize[]

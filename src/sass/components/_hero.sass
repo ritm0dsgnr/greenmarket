@@ -4,7 +4,7 @@
 .hero
   --parallax-x: 0
   --parallax-y: 0
-  height: calc(100vh - #{$header-stack})
+  height: calc(100vh - #{$header-stack} - 1.6rem)
   &__wrapper
     display: flex
     gap: 4rem
@@ -16,6 +16,7 @@
     width: 62rem
     flex-shrink: 0
     overflow: hidden
+    background: $cream
     border: 0.4rem solid $forest
     border-radius: 4rem
     isolation: isolate
@@ -26,30 +27,69 @@
   &__image
     position: absolute
     inset: 0
-    z-index: 2
+    z-index: 0
     width: 100%
     height: 100%
     object-fit: cover
-    @include anim(transform)
-    transform: translate(calc(var(--parallax-x) * 2.4rem), calc(var(--parallax-y) * 2.4rem + 7.2rem)) scale(1.12)
+    object-position: 88% 80%
+    pointer-events: none
+    transition: transform 0.18s $anim-ease
+    transform: translate(calc(var(--parallax-x) * 0.55rem), calc(var(--parallax-y) * 0.55rem)) scale(1.05)
+  &__veil
+    position: absolute
+    inset: 0
+    z-index: 2
+    pointer-events: none
+    background: linear-gradient(180deg, $cream 0%, rgba($cream, 0.88) 42%, rgba($cream, 0) 68%), linear-gradient(90deg, $cream 0%, rgba($cream, 0.72) 16%, rgba($cream, 0) 40%)
+  &__layers
+    position: absolute
+    left: 0
+    right: 0
+    bottom: 3.2rem
+    z-index: 4
+    height: 72%
+    pointer-events: none
+  &__layer
+    position: absolute
+    inset: 0
+    width: 100%
+    height: 100%
+    object-fit: contain
+    object-position: left bottom
+    will-change: transform
+    transition: transform 0.16s $anim-ease
+    &--back
+      display: none
+    &--mid
+      z-index: 2
+      left: 6%
+      width: 128%
+      transform: translate(calc(var(--parallax-x) * 1.6rem), calc(var(--parallax-y) * 1.6rem + 0.8rem)) scale(1.36)
+    &--front
+      z-index: 4
+      left: -4%
+      width: 96%
+      transform: translate(calc(var(--parallax-x) * 2.8rem), calc(var(--parallax-y) * 2.8rem + 1.2rem)) scale(1.16)
   &__texture
     position: absolute
     inset: 0
-    z-index: 3
+    z-index: 1
     width: 100%
     height: 100%
     object-fit: cover
     pointer-events: none
     mix-blend-mode: multiply
-    opacity: 0.45
+    opacity: 0.28
+    transition: transform 0.22s $anim-ease
+    transform: translate(calc(var(--parallax-x) * -0.5rem), calc(var(--parallax-y) * -0.5rem)) scale(1.05)
   &__title
     position: absolute
     top: 9.6rem
     left: 4.6rem
-    z-index: 1
+    z-index: 3
     width: 49rem
-    @include anim(transform)
-    transform: translate(calc(var(--parallax-x) * 1.2rem), calc(var(--parallax-y) * 1.2rem))
+    transition: transform 0.2s $anim-ease
+    transform: translate(calc(var(--parallax-x) * 0.35rem), calc(var(--parallax-y) * 0.35rem))
     img
       width: 100%
       height: auto
@@ -57,7 +97,7 @@
     position: absolute
     top: 34rem
     left: 4.6rem
-    z-index: 1
+    z-index: 3
     max-width: 36rem
     @include font-display
     font-size: clamp(1.8rem, 1.5vw, 2.2rem)
@@ -65,13 +105,13 @@
     line-height: 1.25
     letter-spacing: -0.02em
     color: $forest
-    @include anim(transform)
-    transform: translate(calc(var(--parallax-x) * 1.2rem), calc(var(--parallax-y) * 1.2rem))
+    transition: transform 0.2s $anim-ease
+    transform: translate(calc(var(--parallax-x) * 0.35rem), calc(var(--parallax-y) * 0.35rem))
   &__caption
     position: absolute
     top: 4.4rem
     left: 4.6rem
-    z-index: 1
+    z-index: 3
     @include font-display
     font-size: 1.4rem
     line-height: 1.2
@@ -79,11 +119,21 @@
     letter-spacing: 0.05em
     color: $forest
     white-space: nowrap
-    @include anim(transform)
-    transform: translate(calc(var(--parallax-x) * 1.2rem), calc(var(--parallax-y) * 1.2rem))
+    transition: transform 0.2s $anim-ease
+    transform: translate(calc(var(--parallax-x) * 0.25rem), calc(var(--parallax-y) * 0.25rem))
   @media (prefers-reduced-motion: reduce)
     &__image
-      transform: translateY(7.2rem) scale(1.12)
+      transform: scale(1.05)
+    &__layer
+      filter: none
+      will-change: auto
+      &--back
+        transform: none
+      &--mid
+        transform: translateY(0.8rem) scale(1.36)
+      &--front
+        transform: translateY(1.2rem) scale(1.16)
+    &__texture,
     &__title,
     &__motto,
     &__caption
@@ -99,7 +149,7 @@
     height: 100%
     touch-action: pan-y
     user-select: none
-    border-radius: 4rem 0.4rem 0.4rem 4rem
+    border-radius: 4rem
     &.is-dragging
       touch-action: none
       cursor: grabbing
@@ -169,7 +219,7 @@
     flex-direction: column
     align-items: flex-start
     gap: 1.2rem
-    max-width: 44rem
+    max-width: 70%
     padding: 0
     color: $cream
     background: transparent
@@ -314,7 +364,7 @@
     left: 0
     right: 0
     bottom: 0
-    z-index: 4
+    z-index: 6
     overflow: hidden
     padding: 2rem 0
     background: $forest

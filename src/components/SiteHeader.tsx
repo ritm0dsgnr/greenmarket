@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { HeaderSearch } from '@/components/HeaderSearch'
 import { Icon } from '@/components/Icon'
 import { useLayoutCart } from '@/components/LayoutCartProvider'
 import { Logo } from '@/components/Logo'
@@ -22,7 +23,7 @@ const dropdownNav = [
     groups: [
       {
         items: [
-          { href: siteInfoRoutes.delivery, label: 'Доставка' },
+          { href: siteInfoRoutes.delivery, label: 'Доставка и оплата' },
           { href: siteInfoRoutes.certificates, label: 'Сертификаты' },
           { href: siteInfoRoutes.bonusProgram, label: 'Бонусная программа' },
           { href: siteInfoRoutes.price, label: 'Прайс' },
@@ -39,6 +40,8 @@ export function SiteHeader() {
   const pathname = usePathname()
   const [openId, setOpenId] = useState<string | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchPresented, setSearchPresented] = useState(false)
   const [compactNav, setCompactNav] = useState(false)
   const [navPathname, setNavPathname] = useState(pathname)
   const navRef = useRef<HTMLElement>(null)
@@ -50,11 +53,22 @@ export function SiteHeader() {
     setNavPathname(pathname)
     setOpenId(null)
     setMenuOpen(false)
+    setSearchOpen(false)
   }
 
   function closeNav() {
     setOpenId(null)
     setMenuOpen(false)
+  }
+
+  function openSearch() {
+    setOpenId(null)
+    setMenuOpen(false)
+    setSearchOpen(true)
+  }
+
+  function closeSearch() {
+    setSearchOpen(false)
   }
 
   useEffect(() => {
@@ -92,6 +106,7 @@ export function SiteHeader() {
       if (event.key === 'Escape') {
         setOpenId(null)
         setMenuOpen(false)
+        setSearchOpen(false)
         if (menuOpen) {
           toggleRef.current?.focus()
         }
@@ -153,7 +168,15 @@ export function SiteHeader() {
   }, [menuOpen])
 
   return (
-    <header className={['header', menuOpen ? 'is-menu-open' : ''].filter(Boolean).join(' ')}>
+    <header
+      className={[
+        'header',
+        menuOpen ? 'is-menu-open' : '',
+        searchOpen || searchPresented ? 'is-search-open' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
       <div className="container">
         <div className="header__wrapper">
           <button
@@ -165,6 +188,7 @@ export function SiteHeader() {
             aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
             onClick={() => {
               setOpenId(null)
+              setSearchOpen(false)
               setMenuOpen((open) => !open)
             }}
           >
@@ -264,7 +288,7 @@ export function SiteHeader() {
             </div>
           </nav>
           <Link className="header__wrapper-logo" href="/" aria-label={siteBrand} onClick={closeNav}>
-            <Logo />
+            <Logo withMark />
           </Link>
           <div className="header__wrapper-aside">
             <div className="header__wrapper-contacts">
@@ -293,19 +317,21 @@ export function SiteHeader() {
               </div>
             </div>
             <div className="header__wrapper-actions">
-              <button
-                className="header__wrapper-action header__wrapper-action--search"
-                type="button"
-                aria-label="Поиск"
-                onClick={closeNav}
-              >
-                <Icon name="search" />
-              </button>
+              <HeaderSearch
+                open={searchOpen}
+                onOpen={openSearch}
+                onClose={closeSearch}
+                onPresentedChange={setSearchPresented}
+              />
               <Link
                 className="header__wrapper-action header__wrapper-action--cart"
                 href="/cart"
+                data-cart-catch=""
                 aria-label={count > 0 ? `Корзина, ${countLabel}` : 'Корзина'}
-                onClick={closeNav}
+                onClick={() => {
+                  closeSearch()
+                  closeNav()
+                }}
               >
                 <Icon name="cart" />
                 {count > 0 ? (

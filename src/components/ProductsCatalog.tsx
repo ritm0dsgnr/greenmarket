@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation'
 import { Icon } from '@/components/Icon'
 import { ProductCard, type ProductCardData, type ProductCardTag } from '@/components/ProductCard'
 import {
-  collectNameGroupTags,
   collectSpecFilters,
   filterLayoutProducts,
   filterProductsByTags,
+  listingNameGroupTags,
   layoutFiltersEqual,
   layoutSortOptions,
   layoutTagFilters,
@@ -35,6 +35,7 @@ export function ProductsCatalog({
   activePromoTags = [],
   initialSpecFilters = [],
   initialSort = 'featured',
+  searchQuery = '',
 }: {
   products: ProductCardData[]
   children: ReactNode
@@ -44,6 +45,7 @@ export function ProductsCatalog({
   activePromoTags?: ListingPromoTag[]
   initialSpecFilters?: ListingSpecFilter[]
   initialSort?: ListingSortId
+  searchQuery?: string
 }) {
   const router = useRouter()
   const [sort, setSort] = useState<ListingSortId>(initialSort)
@@ -62,6 +64,7 @@ export function ProductsCatalog({
   const listingSyncKey = [
     listingPath,
     initialSort,
+    searchQuery,
     activePromoTags.join(','),
     activeNameTags.join(','),
     initialSpecFilters
@@ -102,17 +105,23 @@ export function ProductsCatalog({
       ),
     [products, appliedFilters, selectedPromoTags, selectedNameTags, sort],
   )
+  const showFilterRail = showFilters && specFilters.length > 0
   const showApply = Boolean(activeFilterKey) && !layoutFiltersEqual(draftFilters, appliedFilters)
-  const nameGroups = useMemo(() => {
-    const scoped = filterProductsByTags(products, selectedPromoTags, [])
-    return collectNameGroupTags(scoped)
-  }, [products, selectedPromoTags])
+  const specScoped = useMemo(
+    () => filterLayoutProducts(products, appliedFilters),
+    [products, appliedFilters],
+  )
+  const nameGroups = useMemo(
+    () => listingNameGroupTags(products, appliedFilters, selectedPromoTags, selectedNameTags),
+    [products, appliedFilters, selectedPromoTags, selectedNameTags],
+  )
   const promoTags = useMemo(
     () =>
-      layoutTagFilters.filter((tag) =>
-        products.some((product) => product.tag === tag.id),
+      layoutTagFilters.filter(
+        (tag) =>
+          selectedPromoTags.includes(tag.id) || specScoped.some((product) => product.tag === tag.id),
       ),
-    [products],
+    [specScoped, selectedPromoTags],
   )
   const currentSortLabel =
     layoutSortOptions.find((option) => option.id === sort)?.label ?? 'По умолчанию'
@@ -128,6 +137,7 @@ export function ProductsCatalog({
       promoTags: next.promoTags ?? selectedPromoTags,
       specFilters: next.specFilters ?? appliedFilters,
       sort: next.sort ?? sort,
+      search: searchQuery,
     })
   }
 
@@ -281,7 +291,7 @@ export function ProductsCatalog({
 
   return (
     <>
-      {showFilters ? (
+      {showFilterRail ? (
         <aside className="products__filters" aria-labelledby="products-filters-title" ref={filtersRef}>
           <header className="products__filters-head">
             <span className="products__filters-mark" aria-hidden="true">

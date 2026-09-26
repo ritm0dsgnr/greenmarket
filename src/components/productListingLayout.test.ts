@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { PRODUCT_CARD_SPECS_MAX, visibleProductSpecs } from './productSpecs'
-import { buildLayoutProducts, collectNameGroupTags, collectSpecFilters, compareSpecFilterValues, filterLayoutProducts, filterProductsByTags, layoutFiltersEqual, sortLayoutProducts } from './productListingLayout'
+import { buildLayoutProducts, collectNameGroupTags, collectSpecFilters, compareSpecFilterValues, filterLayoutProducts, filterProductsByTags, layoutFiltersEqual, listingNameGroupTags, sortLayoutProducts } from './productListingLayout'
 
 describe('productListingLayout', () => {
   it('keeps at most three specs on the card and hides planting and leaves', () => {
@@ -12,6 +12,21 @@ describe('productListingLayout', () => {
     expect(visible).toHaveLength(PRODUCT_CARD_SPECS_MAX)
     expect(visible.some((spec) => spec.label === 'Посадка')).toBe(false)
     expect(visible.some((spec) => spec.label === 'Листья')).toBe(false)
+  })
+
+  it('has no filter groups when only size, planting or leaves remain', () => {
+    expect(
+      collectSpecFilters([
+        {
+          specs: [
+            { label: 'Размер', value: '40-60' },
+            { label: 'Посадка', value: 'солнце' },
+            { label: 'Листья', value: 'зелёные' },
+          ],
+        },
+        { specs: [] },
+      ]),
+    ).toEqual([])
   })
 
   it('collects filterable specs and skips leaves, planting and size', () => {
@@ -119,10 +134,35 @@ describe('productListingLayout', () => {
       { name: 'Яблони компактная', nameTag: 'компактная' },
       { name: 'Яблони шtамбовая красная', nameTag: 'штамбовая' },
       { name: 'Яблони шtамбовая белая', nameTag: 'штамбовая' },
+      { name: 'Пион / красный', nameTag: '/' },
+      { name: 'Пион и белый', nameTag: 'и' },
+      { name: 'Лилейник #1', nameTag: '#1' },
+      { name: 'Лилейник #2', nameTag: '#2' },
+      { name: 'Лилейник 12', nameTag: '12' },
     ])).toEqual([
       { label: 'карликовая', count: 2 },
       { label: 'компактная', count: 1 },
       { label: 'штамбовая', count: 2 },
+    ])
+  })
+
+  it('recounts name tags after spec filters and hides a single remaining tag', () => {
+    const products = [
+      { name: 'Сосна горная A', nameTag: 'горная', tag: null, specs: [{ label: 'Контейнер', value: 'C3' }] },
+      { name: 'Сосна горная B', nameTag: 'горная', tag: null, specs: [{ label: 'Контейнер', value: 'C10' }] },
+      { name: 'Сосна горная C', nameTag: 'горная', tag: null, specs: [{ label: 'Контейнер', value: 'C3' }] },
+      { name: 'Сосна обыкновенная A', nameTag: 'обыкновенная', tag: null, specs: [{ label: 'Контейнер', value: 'C5' }] },
+      { name: 'Сосна обыкновенная B', nameTag: 'обыкновенная', tag: null, specs: [{ label: 'Контейнер', value: 'C3' }] },
+    ]
+
+    expect(listingNameGroupTags(products, [], [])).toEqual([
+      { label: 'горная', count: 3 },
+      { label: 'обыкновенная', count: 2 },
+    ])
+    expect(listingNameGroupTags(products, [{ label: 'Контейнер', value: 'C10' }], [])).toEqual([])
+    expect(listingNameGroupTags(products, [{ label: 'Контейнер', value: 'C3' }], [])).toEqual([
+      { label: 'горная', count: 2 },
+      { label: 'обыкновенная', count: 1 },
     ])
   })
 

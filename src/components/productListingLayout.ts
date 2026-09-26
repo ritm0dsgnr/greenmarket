@@ -456,13 +456,19 @@ export function collectSpecFilters(products: Array<{ specs: ProductSpec[] }>) {
   }))
 }
 
+export function isListingNameTag(value: string) {
+  const letters = value.trim().match(/\p{L}/gu) ?? []
+
+  return letters.length >= 2
+}
+
 export function collectNameGroupTags(products: Array<{ name: string; nameTag?: string }>) {
   const counts = new Map<string, number>()
 
   for (const product of products) {
     const group = product.nameTag?.trim()
 
-    if (!group) {
+    if (!group || !isListingNameTag(group)) {
       continue
     }
 
@@ -472,6 +478,31 @@ export function collectNameGroupTags(products: Array<{ name: string; nameTag?: s
   return [...counts]
     .sort(([left], [right]) => left.localeCompare(right, 'ru'))
     .map(([label, count]) => ({ label, count }))
+}
+
+/** Name tags for the listing toolbar: after spec + promo facets, not the full category. */
+export function listingNameGroupTags<
+  T extends { name: string; nameTag?: string; specs?: ProductSpec[]; tag: LayoutProductTag | null },
+>(
+  products: T[],
+  specFilters: Array<{ label: string; value: string }>,
+  promoTags: readonly LayoutProductTag[],
+  selectedNameTags: readonly string[] = [],
+) {
+  const groups = collectNameGroupTags(
+    filterProductsByTags(filterLayoutProducts(products, specFilters), promoTags, []),
+  )
+
+  if (groups.length < 2) {
+    return []
+  }
+
+  const present = new Set(groups.map((group) => group.label))
+  const selectedEmpty = selectedNameTags
+    .filter((label) => !present.has(label))
+    .map((label) => ({ label, count: 0 }))
+
+  return [...groups, ...selectedEmpty].sort((left, right) => left.label.localeCompare(right.label, 'ru'))
 }
 
 const layoutPrices = [

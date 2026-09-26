@@ -6,10 +6,11 @@ import {
   useContext,
   useMemo,
   useState,
-  type AnimationEvent,
   type ReactNode,
 } from 'react'
-import { Icon } from '@/components/Icon'
+import { CartAddFlash, type CartAddOrigin } from '@/components/CartAddFlash'
+
+export { cartAddOriginFromEvent } from '@/components/CartAddFlash'
 import {
   addLayoutCartLines,
   layoutCartCount,
@@ -18,11 +19,13 @@ import {
   type LayoutCartLine,
 } from '@/components/layoutCart'
 
+export type { CartAddOrigin }
+
 type LayoutCartValue = {
   count: number
   total: number
   items: LayoutCartLine[]
-  addItems: (lines: LayoutCartLine[]) => void
+  addItems: (lines: LayoutCartLine[], origin?: CartAddOrigin) => void
   setQuantity: (id: string, quantity: number) => void
   removeItem: (id: string) => void
 }
@@ -39,21 +42,30 @@ export function useLayoutCart() {
   return value
 }
 
+function fallbackOrigin(): CartAddOrigin {
+  if (typeof window === 'undefined') {
+    return { x: 0, y: 0 }
+  }
+
+  return { x: window.innerWidth / 2, y: window.innerHeight * 0.62 }
+}
+
 export function LayoutCartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<LayoutCartLine[]>([])
-  const [flashId, setFlashId] = useState(0)
-  const [flashing, setFlashing] = useState(false)
+  const [flash, setFlash] = useState<{ id: number; origin: CartAddOrigin } | null>(null)
   const count = layoutCartCount(items)
   const total = layoutCartTotal(items)
 
-  const addItems = useCallback((lines: LayoutCartLine[]) => {
+  const addItems = useCallback((lines: LayoutCartLine[], origin?: CartAddOrigin) => {
     if (lines.every((line) => line.quantity <= 0)) {
       return
     }
 
     setItems((current) => addLayoutCartLines(current, lines))
-    setFlashId((current) => current + 1)
-    setFlashing(true)
+    setFlash((current) => ({
+      id: (current?.id ?? 0) + 1,
+      origin: origin ?? fallbackOrigin(),
+    }))
   }, [])
 
   const setQuantity = useCallback((id: string, quantity: number) => {
@@ -62,6 +74,10 @@ export function LayoutCartProvider({ children }: { children: ReactNode }) {
 
   const removeItem = useCallback((id: string) => {
     setItems((current) => setLayoutCartQuantity(current, id, 0))
+  }, [])
+
+  const clearFlash = useCallback(() => {
+    setFlash(null)
   }, [])
 
   const value = useMemo(
@@ -76,31 +92,10 @@ export function LayoutCartProvider({ children }: { children: ReactNode }) {
     [count, total, items, addItems, setQuantity, removeItem],
   )
 
-  function onFlashEnd(event: AnimationEvent<HTMLDivElement>) {
-    if (event.target !== event.currentTarget) {
-      return
-    }
-
-    setFlashing(false)
-  }
-
   return (
     <LayoutCartContext.Provider value={value}>
       {children}
-      {flashing ? (
-        <div
-          className="cart-flash"
-          key={flashId}
-          role="status"
-          aria-live="polite"
-          onAnimationEnd={onFlashEnd}
-        >
-          <p className="visually-hidden">Добавлено</p>
-          <span className="cart-flash__wave cart-flash__wave--lg" aria-hidden="true" />
-          <span className="cart-flash__wave cart-flash__wave--sm" aria-hidden="true" />
-          <Icon name="check" />
-        </div>
-      ) : null}
+      {flash ? <CartAddFlash key={flash.id} origin={flash.origin} onDone={clearFlash} /> : null}
     </LayoutCartContext.Provider>
   )
 }

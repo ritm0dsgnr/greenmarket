@@ -2,13 +2,10 @@ import { cardTagFromLabel, toProductCards } from '@/import/greenmarket-price/par
 import type { PriceCatalogProduct } from '@/import/greenmarket-price/types'
 import {
   catalogCategories,
-  catalogGroups,
   getCategoryBySlug,
   getProductById,
   getSubcategory,
-  listProductIds,
-  priceCatalogSnapshot,
-} from '@/catalog/generated-price-catalog'
+} from './price-catalog'
 import { isFlatCatalogCategory } from '@/catalog/flat-catalog-categories'
 import { selectHomeCatalogCategories } from '@/catalog/home-catalog-categories'
 import {
@@ -23,12 +20,13 @@ import type { ProductSpec } from '@/components/productSpecs'
 export {
   catalogCategories,
   catalogGroups,
+  canonicalSubcategorySlug,
   getCategoryBySlug,
   getProductById,
   getSubcategory,
   listProductIds,
   priceCatalogSnapshot,
-}
+} from './price-catalog'
 
 export { isFlatCatalogCategory, listCatalogGroupEntries, listCatalogGroupNavEntries } from '@/catalog/flat-catalog-categories'
 
@@ -55,7 +53,15 @@ export {
   replaceListingUrl,
   withListingQuery,
 } from '@/catalog/listing-filters-url'
+export {
+  catalogSearchPath,
+  filterProductsBySearch,
+  parseSearchQuery,
+  SEARCH_QUERY_MAX_LENGTH,
+  SEARCH_QUERY_MIN_LENGTH,
+} from '@/catalog/search-catalog'
 export type { ListingSpecFilter, ListingSortId } from '@/catalog/listing-filters-url'
+export { subcategoryCardTitle } from './subcategory-card-title'
 
 export function getProductCardsForSubcategory(categorySlug: string, subcategorySlug: string) {
   const match = getSubcategory(categorySlug, subcategorySlug)
@@ -79,7 +85,13 @@ export function getProductCardsForCategory(categorySlug: string) {
 
 export function getAllProductCards() {
   return catalogCategories.flatMap((category) =>
-    toProductCards(category.subcategories.flatMap((subcategory) => subcategory.products)),
+    category.subcategories.flatMap((subcategory) =>
+      toProductCards(subcategory.products).map((card) => ({
+        ...card,
+        categoryLabel: category.label,
+        categoryHref: category.href,
+      })),
+    ),
   )
 }
 

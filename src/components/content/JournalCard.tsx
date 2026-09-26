@@ -6,15 +6,18 @@ import { useCallback, useState } from 'react'
 import { bindHangingWords } from '@/components/bindHangingWords'
 import { HeroSignupPopup } from '@/components/HeroSignupPopup'
 import { Icon } from '@/components/Icon'
+import { siteBlogRoute } from '@/components/siteNav'
 import {
   getJournalEventTags,
+  formatJournalDate,
+  journalCardHref,
   journalKindLabels,
   type JournalItem,
   type JournalKind,
 } from '@/content/journal'
 
 export function JournalCard({ item }: { item: JournalItem }) {
-  const href = item.href ?? `#${item.id}`
+  const href = item.href ?? journalCardHref(item)
   const titleId = `${item.id}-title`
   const highlights = item.highlights?.length
     ? item.highlights
@@ -85,13 +88,7 @@ export function JournalCard({ item }: { item: JournalItem }) {
             ) : null}
           </ul>
           {showEventMeta ? (
-            <button
-              className="event-card__more"
-              type="button"
-              onClick={() => setSignupOpen(true)}
-            >
-              Записаться
-            </button>
+            <span className="event-card__more">Записаться</span>
           ) : (
             <span className="event-card__more event-card__more--light">Подробнее</span>
           )}
@@ -104,6 +101,16 @@ export function JournalCard({ item }: { item: JournalItem }) {
     return (
       <>
         <article className="event-card event-card--event" id={item.id} aria-labelledby={titleId}>
+          <button
+            className="event-card__hit"
+            type="button"
+            aria-haspopup="dialog"
+            aria-expanded={signupOpen}
+            aria-labelledby={titleId}
+            onClick={() => setSignupOpen(true)}
+          >
+            <span className="visually-hidden">Открыть запись</span>
+          </button>
           {body}
         </article>
         <HeroSignupPopup
@@ -125,21 +132,10 @@ export function JournalCard({ item }: { item: JournalItem }) {
   }
 
   return (
-    <Link className="event-card" href={href} id={item.id} aria-labelledby={titleId}>
+    <Link className="event-card" href={href ?? siteBlogRoute} id={item.id} aria-labelledby={titleId}>
       {body}
     </Link>
   )
-}
-
-export function formatJournalDate(value: string) {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
-
-  if (!match) {
-    return value
-  }
-
-  const [, year, month, day] = match
-  return `${day}.${month}.${year}`
 }
 
 export type { JournalKind }
