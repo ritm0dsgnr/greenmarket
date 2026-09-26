@@ -28,7 +28,15 @@ html
         position: static
         transform: none
         justify-self: center
-        width: 12.8rem
+        width: auto
+        .logo--with-mark
+          width: auto
+          gap: 0.6rem
+          .logo__mark
+            width: 3.4rem
+            height: 3.4rem
+          .logo__word
+            font-size: 1.3rem
       &-aside
         gap: 0.8rem
       &-contacts
@@ -132,25 +140,47 @@ html
 
   .hero
     height: auto
-    min-height: calc(100vh - 10rem)
+    min-height: calc(100vh - 10rem - 1.6rem)
     &__wrapper
       flex-direction: column
       gap: 2.4rem
     &__content
       width: 100%
       min-height: 42rem
-    &__slider
-      width: 100%
-      min-height: 36rem
-      height: 42rem
+    &__title,
+    &__motto,
+    &__caption
+      z-index: 5
+    &__layers
+      height: 48%
+      bottom: 5.6rem
       overflow: hidden
+    &__layer
+      &--mid
+        left: 22%
+        width: 92%
+        transform: translateY(0.6rem) scale(1.08)
+      &--front
+        left: 8%
+        width: 78%
+        transform: translateY(0.4rem) scale(1.02)
+    &__slider
+      flex: none
+      width: 100%
+      height: 42rem
+      min-height: 42rem
+      overflow: hidden
+    &__viewport,
+    &__track
+      height: 42rem
+      min-height: 42rem
     &__viewport
-      border-radius: 4rem 0.4rem 0.4rem 4rem
+      border-radius: 4rem
     &__slide-panel
       left: 2rem
       right: 2rem
       bottom: 7.2rem
-      max-width: none
+      max-width: 70%
       gap: 1rem
     &__slide-title
       font-size: 2.4rem
@@ -359,9 +389,43 @@ html
       border-radius: 1.8rem 1.8rem 0 0
     border-radius: 1.8rem
 
+  .product-card
+    padding: 1rem
+    gap: 0.8rem
+    border-radius: 1.4rem
+    &__media
+      border-radius: 0.8rem
+    &__name
+      font-size: 1.4rem
+    &__latin
+      font-size: 1.2rem
+    &__tag
+      font-size: 1.3rem
+      padding: 0.1rem 0.8rem 0.2rem
+    &__specs
+      gap: 0.5rem
+    &__spec
+      gap: 0.2rem
+      padding-bottom: 0.5rem
+      &-label
+        font-size: 1.2rem
+      &-value
+        font-size: 1.2rem
+    &__footer
+      gap: 0.8rem
+      padding-top: 0.8rem
+    &__price
+      font-size: 1.6rem
+      &-old
+        font-size: 1.2rem
+    &__cart
+      width: 3.6rem
+      height: 3.6rem
+
   .products
     &__grid
-      grid-template-columns: 1fr
+      grid-template-columns: repeat(2, minmax(0, 1fr))
+      gap: 1.6rem 1.2rem
     &__toolbar
       flex-direction: column
       align-items: stretch
@@ -425,16 +489,24 @@ html
       left: 2rem
       white-space: normal
       max-width: calc(100% - 4rem)
+    &__layers
+      height: 40%
+      bottom: 5.2rem
     &__slider
       height: 36rem
       min-height: 36rem
       overflow: hidden
+    &__viewport,
+    &__track
+      height: 36rem
+      min-height: 36rem
     &__viewport
-      border-radius: 2.4rem 0.2rem 0.2rem 2.4rem
+      border-radius: 2.4rem
     &__slide-panel
       left: 1.6rem
       right: 1.6rem
       bottom: 6.4rem
+      max-width: 70%
     &__slide-title
       font-size: 2rem
     &__slide-text

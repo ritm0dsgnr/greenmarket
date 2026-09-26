@@ -5,6 +5,7 @@ import { SubcategoryProducts } from '@/components/SubcategoryProducts'
 import { collectSpecFilters } from '@/components/productListingLayout'
 import {
   catalogCategories,
+  canonicalSubcategorySlug,
   categoryListingPath,
   getProductCardsForSubcategory,
   getSubcategory,
@@ -87,6 +88,12 @@ export default async function SubcategoryPage({
 
   if (!match) {
     notFound()
+  }
+
+  const canonicalSlug = canonicalSubcategorySlug(categorySlug, subcategorySlug)
+
+  if (canonicalSlug !== subcategorySlug) {
+    redirect(`${subcategoryListingPath(categorySlug, canonicalSlug)}${searchParamsToQuery(query)}`)
   }
 
   if (isFlatCatalogCategory(match.category)) {

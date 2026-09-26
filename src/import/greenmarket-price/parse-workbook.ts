@@ -1,5 +1,10 @@
 import type { ProductSpec } from '@/components/productSpecs'
-import { extractNameParts, subcategoryLabelFromFirstWord } from './name-parts'
+import {
+  extractNameParts,
+  preferYoLabel,
+  subcategoryGroupKey,
+  subcategoryLabelFromFirstWord,
+} from './name-parts'
 import { normalizeContainerValue } from './normalize-container'
 import { buildOfferSizes, specsWithoutVariantAxes } from './offer-sizes'
 import { uniqueSlug } from './slugify'
@@ -454,16 +459,18 @@ function groupProductsByFirstWord(products: PriceCatalogProduct[]) {
       continue
     }
 
-    const key = firstWord.toLowerCase()
+    const key = subcategoryGroupKey(firstWord)
     const existing = groups.get(key)
+    const label = subcategoryLabelFromFirstWord(firstWord, product.name)
 
     if (existing) {
       existing.products.push(product)
+      existing.label = preferYoLabel([existing.label, label])
       continue
     }
 
     groups.set(key, {
-      label: subcategoryLabelFromFirstWord(firstWord, product.name),
+      label,
       products: [product],
     })
   }

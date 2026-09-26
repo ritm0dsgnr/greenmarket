@@ -12,6 +12,7 @@ import {
 import { createPortal } from 'react-dom'
 import { bindHangingWords } from '@/components/bindHangingWords'
 import { Icon } from '@/components/Icon'
+import { useScrollRail } from '@/components/useScrollRail'
 import {
   siteBrand,
   siteMapsHref,
@@ -43,9 +44,11 @@ export function HeroSignupPopup({
 }) {
   const titleId = useId()
   const closeRef = useRef<HTMLButtonElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false)
   const [shown, setShown] = useState(false)
   const [done, setDone] = useState(false)
+  const rail = useScrollRail(scrollRef, shown && open, done)
 
   useEffect(() => {
     if (!open) {
@@ -117,6 +120,7 @@ export function HeroSignupPopup({
         </button>
 
         <div className="hero-signup__body">
+        <div className="hero-signup__scroll" ref={scrollRef}>
         {done ? (
           <div className="hero-signup__done">
             <h2 className="hero-signup__title" id={titleId}>
@@ -203,6 +207,18 @@ export function HeroSignupPopup({
             </form>
           </>
         )}
+        </div>
+        {rail.show ? (
+          <div className="hero-signup__rail" aria-hidden="true">
+            <div
+              className="hero-signup__thumb"
+              style={{
+                height: `${rail.thumbHeight}px`,
+                transform: `translateY(${rail.thumbTop}px)`,
+              }}
+            />
+          </div>
+        ) : null}
         </div>
       </div>
     </div>,

@@ -27,7 +27,7 @@ const buyerLinks = [
 ] as const
 
 const infoLinks = [
-  { href: siteInfoRoutes.delivery, label: 'Доставка' },
+  { href: siteInfoRoutes.delivery, label: 'Доставка и оплата' },
   { href: siteInfoRoutes.certificates, label: 'Сертификаты' },
   { href: siteInfoRoutes.bonusProgram, label: 'Бонусная программа' },
   { href: siteInfoRoutes.price, label: 'Прайс' },

@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import {
+  formatJournalDate,
   getHomeJournalSliderItems,
+  getJournalEntry,
   getJournalItemById,
+  journalCardHref,
+  journalEntryBlocks,
+  journalEntryParagraphs,
+  listJournalEntryIds,
   parseJournalTypeQuery,
   withJournalTypeQuery,
   journalItems,
@@ -19,6 +25,40 @@ describe('journal filters', () => {
   it('builds filter urls', () => {
     expect(withJournalTypeQuery('/blog', [])).toBe('/blog')
     expect(withJournalTypeQuery('/blog', ['articles', 'events'])).toBe('/blog?type=articles')
+  })
+})
+
+describe('journal entry pages', () => {
+  it('opens news and articles by id and skips events', () => {
+    expect(getJournalEntry('article-soil')?.kind).toBe('articles')
+    expect(getJournalEntry('news-season')?.kind).toBe('news')
+    expect(getJournalEntry('event-botanical-relief')).toBeNull()
+    expect(getJournalEntry('news')).toBeNull()
+    expect(listJournalEntryIds()).toContain('article-soil')
+    expect(listJournalEntryIds()).not.toContain('event-open-day')
+  })
+
+  it('builds card hrefs and body copy', () => {
+    const article = getJournalItemById('article-soil')
+    const event = getJournalItemById('event-botanical-relief')
+
+    expect(article && journalCardHref(article)).toBe('/blog/article-soil')
+    expect(event && journalCardHref(event)).toBeNull()
+    expect(article && journalEntryParagraphs(article).length).toBeGreaterThan(1)
+    expect(formatJournalDate('2026-04-02')).toBe('02.04.2026')
+  })
+
+  it('keeps fruit article as gutenberg-like blocks', () => {
+    const fruit = getJournalItemById('article-fruit')
+    const types = fruit ? journalEntryBlocks(fruit).map((block) => block.type) : []
+    const paragraphs = types.filter((type) => type === 'p')
+
+    expect(types).toContain('h2')
+    expect(types).toContain('h3')
+    expect(types).toContain('quote')
+    expect(types).toContain('note')
+    expect(types).toContain('ul')
+    expect(paragraphs.length).toBeGreaterThan(types.length / 2)
   })
 })
 

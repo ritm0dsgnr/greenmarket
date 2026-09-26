@@ -153,8 +153,12 @@ export function specsWithoutVariantAxes(
   return specs.filter((spec) => !hidden.has(spec.label))
 }
 
+export function availableOfferSizes(sizes: readonly ProductOfferSize[]) {
+  return sizes.filter((size) => size.available)
+}
+
 export function offerSizesHaveChoices(sizes: readonly ProductOfferSize[]) {
-  return sizes.length > 1
+  return availableOfferSizes(sizes).length > 1
 }
 
 export function firstAvailableSizeId(sizes: readonly ProductOfferSize[]) {
@@ -166,14 +170,14 @@ export function minOfferPrice(sizes: readonly ProductOfferSize[], fallback = 0) 
     return fallback
   }
 
-  const inStock = sizes.filter((size) => size.available)
+  const inStock = availableOfferSizes(sizes)
   const source = inStock.length > 0 ? inStock : sizes
 
   return Math.min(...source.map((size) => size.priceRubles))
 }
 
 export function offerPricesVary(sizes: readonly ProductOfferSize[]) {
-  const inStock = sizes.filter((size) => size.available)
+  const inStock = availableOfferSizes(sizes)
   const source = inStock.length > 0 ? inStock : sizes
 
   if (source.length < 2) {

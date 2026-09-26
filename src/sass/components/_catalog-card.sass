@@ -33,7 +33,7 @@
       @include anim(transform)
   &__title
     display: flex
-    align-items: flex-start
+    align-items: center
     justify-content: space-between
     gap: 1.2rem
     min-width: 0
@@ -47,7 +47,7 @@
     display: grid
     grid-template-rows: 0rem minmax(0, 1fr)
     overflow: hidden
-    aspect-ratio: 4/3
+    aspect-ratio: 1/1
     min-height: 0
     @include anim(grid-template-rows)
   &__meta
@@ -61,10 +61,10 @@
     align-items: center
     justify-content: center
     flex-shrink: 0
-    height: $arrow-size
-    max-height: $arrow-size
-    min-height: $arrow-size
-    padding: 0 1.4rem
+    height: 2rem
+    max-height: 2rem
+    min-height: 2rem
+    padding: 0 1.2rem
     border: 0.3rem solid $forest
     border-radius: 999rem
     background: $cream
@@ -73,7 +73,8 @@
     line-height: 1
   &__arrow
     @include icon-arrow
-    height: $arrow-size
+    width: 2rem
+    height: 2rem
     color: $forest
     @include anim(transform)
   &--sub
@@ -94,6 +95,6 @@
     &:hover,
     &:focus-visible
       .catalog-card__visual
-        grid-template-rows: calc(#{$arrow-size} + 2.8rem) minmax(0, 1fr)
+        grid-template-rows: calc(2rem + 2.8rem) minmax(0, 1fr)
       .catalog-card__meta
         opacity: 1

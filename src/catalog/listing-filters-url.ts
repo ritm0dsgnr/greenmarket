@@ -3,6 +3,7 @@ import {
   isListingPromoTag,
   type ListingPromoTag,
 } from './name-tag-url'
+import { parseSearchQuery, SEARCH_QUERY_MIN_LENGTH } from './search-catalog'
 
 export type ListingSpecFilter = { label: string; value: string }
 
@@ -20,7 +21,7 @@ const specLabelKeys: Record<string, string> = {
   'Высота взрослого растения': 'h',
 }
 
-const reservedQueryKeys = new Set(['tag', 'promo', 'sort'])
+const reservedQueryKeys = new Set(['tag', 'promo', 'sort', 'q'])
 
 export function listingSpecParamKey(label: string) {
   return specLabelKeys[label] ?? slugify(label)
@@ -105,14 +106,21 @@ export function withListingQuery(
     promoTags = [],
     specFilters = [],
     sort = 'featured',
+    search = '',
   }: {
     nameTags?: readonly string[]
     promoTags?: readonly ListingPromoTag[]
     specFilters?: readonly ListingSpecFilter[]
     sort?: ListingSortId
+    search?: string
   },
 ) {
   const params = new URLSearchParams()
+  const searchQuery = parseSearchQuery(search)
+
+  if (searchQuery.length >= SEARCH_QUERY_MIN_LENGTH) {
+    params.set('q', searchQuery)
+  }
   const sortedPromo = [...promoTags]
     .filter((tag) => isListingPromoTag(tag))
     .sort((left, right) => left.localeCompare(right))

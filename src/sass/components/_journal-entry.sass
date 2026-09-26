@@ -1,0 +1,220 @@
+@use "../assets/vars" as *
+@use "../assets/mixin" as *
+
+.page.page--journal-entry
+  gap: 0
+
+.journal-entry
+  display: flex
+  flex-direction: column
+  gap: 3.2rem
+  max-width: 68rem
+  margin-inline: auto
+  padding-top: 1.6rem
+  padding-bottom: 10rem
+  color: $forest
+  &__meta
+    display: flex
+    flex-wrap: wrap
+    align-items: center
+    gap: 0.8rem 1.6rem
+    margin-bottom: 1.6rem
+  &__eyebrow
+    @include font-display
+    display: inline-flex
+    align-items: center
+    height: 2.9rem
+    padding: 0.7rem 0.8rem
+    font-size: 1.4rem
+    line-height: 1
+    text-transform: lowercase
+    color: $forest
+    background: $cream-muted
+    border-radius: 0.4rem
+    a
+      @include anim(color)
+      &:hover,
+      &:focus-visible
+        color: $leaf
+  &__date
+    @include font-text
+    font-size: 1.5rem
+    line-height: 1.3
+    color: rgba($forest, 0.72)
+  &__title
+    @include font-display
+    font-size: clamp(3.2rem, 4.4vw, 5.2rem)
+    line-height: 1.04
+    letter-spacing: -0.04em
+    text-transform: uppercase
+    text-wrap: balance
+  &__cover
+    overflow: hidden
+    margin: 0
+    border-radius: 1.8rem
+    background: $cream-muted
+    box-shadow: 0 0 0 0.25rem $forest
+    img
+      width: 100%
+      height: auto
+      aspect-ratio: 4 / 3
+      object-fit: cover
+      object-position: center 58%
+  &__lead
+    @include font-text
+    padding-left: 1.6rem
+    border-left: 0.4rem solid $leaf
+    font-size: 2rem
+    font-weight: 600
+    line-height: 1.45
+    text-wrap: pretty
+  &__body
+    display: flex
+    flex-direction: column
+    gap: 1.2rem
+    p
+      @include font-text
+      font-size: 1.8rem
+      line-height: 1.32
+    h2
+      @include font-display
+      margin-top: 1.6rem
+      font-size: clamp(2.4rem, 3vw, 3.2rem)
+      line-height: 1.05
+      letter-spacing: -0.03em
+      text-wrap: balance
+    h3
+      @include font-display
+      margin-top: 0.4rem
+      font-size: 2rem
+      font-weight: 700
+      line-height: 1.15
+      color: $leaf
+      text-wrap: balance
+    ul
+      display: flex
+      flex-direction: column
+      gap: 0.4rem
+      padding-left: 0
+      list-style: none
+      li
+        @include font-text
+        position: relative
+        padding-left: 2.4rem
+        font-size: 1.8rem
+        line-height: 1.32
+        &::before
+          content: ""
+          position: absolute
+          left: 0.2rem
+          top: 0.55em
+          width: 0.7rem
+          height: 0.7rem
+          border-radius: 50%
+          background: $leaf
+    blockquote
+      position: relative
+      margin: 0
+      padding: 1.4rem 2rem 1.4rem 6.4rem
+      background: $cream-muted
+      border-radius: 1.8rem
+      p
+        @include font-display
+        font-size: clamp(2rem, 2.4vw, 2.6rem)
+        font-weight: 700
+        line-height: 1.08
+        letter-spacing: -0.02em
+      cite
+        @include font-text
+        display: block
+        margin-top: 0.4rem
+        font-size: 1.4rem
+        font-style: normal
+        line-height: 1.2
+        color: rgba($forest, 0.72)
+      &::before
+        content: "«"
+        @include font-display
+        position: absolute
+        left: 1.6rem
+        top: 50%
+        font-size: 5.6rem
+        line-height: 1
+        color: $leaf
+        transform: translateY(-52%)
+    aside
+      margin: 0.4rem 0
+      padding: 2rem 2.4rem
+      background: $cream-muted
+      border-left: 0.4rem solid $leaf
+      border-radius: 1.8rem
+      p
+        font-size: 1.6rem
+        line-height: 1.5
+      .journal-entry__kicker
+        @include font-display
+        margin-bottom: 0.6rem
+        font-size: 1.2rem
+        line-height: 1.2
+        letter-spacing: 0.06em
+        text-transform: uppercase
+        color: $leaf
+  &__fixture
+    @include font-text
+    font-size: 1.4rem
+    line-height: 1.45
+    color: rgba($forest, 0.55)
+  &__back
+    @include font-display
+    font-size: 1.4rem
+    line-height: 1.2
+    text-transform: uppercase
+    a
+      color: $leaf
+      text-decoration: underline
+      text-underline-offset: 0.22em
+      @include anim(color)
+      &:hover,
+      &:focus-visible
+        color: $forest
+  &__related
+    display: flex
+    flex-direction: column
+    gap: 2.4rem
+    margin-top: 2.4rem
+  &__related-title
+    @include font-display
+    font-size: 2.4rem
+    line-height: 1.1
+    text-transform: uppercase
+  &__related-list
+    display: grid
+    grid-template-columns: 1fr
+    gap: 2.4rem
+    list-style: none
+
+@media (max-width: $bp-mobile)
+  .journal-entry
+    gap: 2.4rem
+    padding-bottom: 6rem
+    &__cover
+      border-radius: 1.8rem
+    &__lead
+      font-size: 1.8rem
+    &__body
+      p,
+      ul li
+        font-size: 1.6rem
+      h2
+        font-size: 2.2rem
+      h3
+        font-size: 1.8rem
+      blockquote
+        padding: 1.2rem 1.6rem 1.2rem 4.8rem
+        p
+          font-size: 1.8rem
+        &::before
+          left: 1.2rem
+          font-size: 4.2rem
+      aside
+        padding: 1.6rem 2rem

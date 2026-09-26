@@ -16,6 +16,7 @@ import {
   parseListingSpecFilters,
   parseNameTagQuery,
   parsePromoTagQuery,
+  subcategoryCardTitle,
 } from '@/catalog'
 import { siteBrand } from '@/components/siteContacts'
 
@@ -108,7 +109,7 @@ export default async function CategoryPage({
               <li className="catalog__item" key={subcategory.slug}>
                 <CatalogCard
                   href={`/catalog/${category.slug}/${subcategory.slug}`}
-                  title={subcategory.label}
+                  title={subcategoryCardTitle(subcategory)}
                   variant="sub"
                   count={subcategory.products.length}
                 />

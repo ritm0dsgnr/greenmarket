@@ -2,10 +2,10 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useRef, useState, type PointerEvent, type TransitionEvent } from 'react'
+import { useEffect, useRef, useState, type MouseEvent, type PointerEvent, type TransitionEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@/components/Icon'
-import { useLayoutCart } from '@/components/LayoutCartProvider'
+import { cartAddOriginFromEvent, useLayoutCart } from '@/components/LayoutCartProvider'
 import { bindHangingWords } from '@/components/bindHangingWords'
 import { formatLayoutPrice, layoutSaleOldPrice } from '@/components/productCardSizes'
 import type { ProductCardTag } from '@/components/ProductCard'
@@ -13,6 +13,7 @@ import type { ProductSpec } from '@/components/productSpecs'
 import { useSwipePager } from '@/components/useSwipePager'
 import {
   firstAvailableSizeId,
+  offerSizesHaveChoices,
   type ProductOfferSize,
 } from '@/import/greenmarket-price/offer-sizes'
 
@@ -203,7 +204,7 @@ function ProductThumbs({
     }
 
     const scroller = event.currentTarget
-    const blockClick = (clickEvent: MouseEvent) => {
+    const blockClick = (clickEvent: Event) => {
       clickEvent.preventDefault()
       clickEvent.stopPropagation()
       scroller.removeEventListener('click', blockClick, true)
@@ -287,6 +288,7 @@ export function ProductView({ product }: { product: ProductViewModel }) {
     setSlideIndex(0)
   }
 
+  const hasVariants = offerSizesHaveChoices(sizes)
   const selected = sizes.find((size) => size.id === sizeId) ?? sizes[0]
   const selectedAvailable = selected?.available !== false
   const unitPrice = selected?.priceRubles ?? product.priceRubles
@@ -378,24 +380,27 @@ export function ProductView({ product }: { product: ProductViewModel }) {
     setLightboxOpen(false)
   }
 
-  function buy() {
+  function buy(event: MouseEvent<HTMLButtonElement>) {
     if (quantity <= 0 || !selected || !selectedAvailable) {
       return
     }
 
-    addItems([
-      {
-        id: `${product.id}:${selected.id}`,
-        productId: product.id,
-        name: product.name,
-        latin: product.latin,
-        sizeLabel: selected.label,
-        tag: product.tag,
-        priceRubles: unitPrice,
-        quantity,
-        href: `/product/${product.id}`,
-      },
-    ])
+    addItems(
+      [
+        {
+          id: `${product.id}:${selected.id}`,
+          productId: product.id,
+          name: product.name,
+          latin: product.latin,
+          sizeLabel: selected.label,
+          tag: product.tag,
+          priceRubles: unitPrice,
+          quantity,
+          href: `/product/${product.id}`,
+        },
+      ],
+      cartAddOriginFromEvent(event),
+    )
   }
 
   return (
@@ -466,6 +471,7 @@ export function ProductView({ product }: { product: ProductViewModel }) {
             {product.latin ? <p className="product__latin">{product.latin}</p> : null}
           </div>
             <div className="product__offer">
+              {hasVariants ? (
               <div className="product__choose">
                   <div className="product__sizes">
                     {sizes.map((size) => {
@@ -527,6 +533,7 @@ export function ProductView({ product }: { product: ProductViewModel }) {
                     })}
                   </div>
                 </div>
+              ) : null}
               <div className="product__checkout">
                 <div className="product__qty">
                   <button

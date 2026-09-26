@@ -6,7 +6,6 @@
   top: 1.6rem
   z-index: 20
   width: 100%
-  background: $cream
   color: $forest
   &__wrapper
     position: relative
@@ -17,6 +16,7 @@
     justify-content: space-between
     gap: 1rem
     padding: 1.6rem 2.2rem 1.6rem 3.4rem
+    background: $cream
     &-nav
       display: flex
       align-items: center
@@ -133,6 +133,8 @@
       gap: 1.6rem
       z-index: 22
     &-contacts
+      position: relative
+      z-index: 1
       display: flex
       align-items: center
       gap: 1.6rem
@@ -199,8 +201,8 @@
         justify-content: center
         font-size: 1.2rem
         line-height: 1
-        color: $blush
-        background: $cream
+        color: $cream
+        background: $forest
         border: 0.15rem solid $forest
         border-radius: 10rem
         pointer-events: none
@@ -212,7 +214,7 @@
       left: 50%
       transform: translateX(-50%)
       display: flex
-      width: 16.8rem
+      width: auto
       color: inherit
       z-index: 22
       &:hover,
@@ -220,7 +222,6 @@
         .logo
           transform: scale(1.06)
       .logo
-        width: 100%
         transform-origin: center
         @include anim(transform)
 
@@ -230,6 +231,8 @@ body.is-nav-open
 
 @keyframes header-count-in
   0%
-    transform: scale(0.7)
+    transform: scale(0.4)
+  58%
+    transform: scale(1.22)
   100%
     transform: scale(1)

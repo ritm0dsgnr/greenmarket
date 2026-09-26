@@ -1,5 +1,6 @@
 import { slugify } from '../import/greenmarket-price/slugify'
-import { getCategoryBySlug, getSubcategory } from './generated-price-catalog'
+import { isListingNameTag } from '../components/productListingLayout'
+import { getCategoryBySlug, getSubcategory } from './price-catalog'
 
 export const listingPromoTags = ['new', 'sale', 'hit'] as const
 
@@ -131,7 +132,7 @@ function collectNameTags(products: Array<{ nameTag?: string }>) {
   for (const product of products) {
     const tag = product.nameTag?.trim()
 
-    if (tag) {
+    if (tag && isListingNameTag(tag)) {
       labels.add(tag)
     }
   }

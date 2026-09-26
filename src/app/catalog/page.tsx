@@ -2,18 +2,22 @@ import type { Metadata } from 'next'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { CatalogCard } from '@/components/CatalogCard'
 import { SubcategoryProducts } from '@/components/SubcategoryProducts'
-import { collectSpecFilters } from '@/components/productListingLayout'
+import { collectSpecFilters, isListingNameTag } from '@/components/productListingLayout'
 import {
   buildPromoCatalogListing,
   catalogGroups,
+  filterProductsBySearch,
   getAllProductCards,
   listCatalogGroupEntries,
   parseListingSort,
   parseListingSpecFilters,
   parseNameTagQuery,
   parsePromoTagQuery,
+  parseSearchQuery,
+  SEARCH_QUERY_MIN_LENGTH,
 } from '@/catalog'
 import type { ListingPromoTag } from '@/catalog'
+import type { ProductCardData } from '@/components/ProductCard'
 import { siteBrand } from '@/components/siteContacts'
 
 export const metadata: Metadata = {
@@ -37,6 +41,10 @@ function catalogPromoListingTitle(promoTags: readonly ListingPromoTag[]) {
   return 'Каталог'
 }
 
+function catalogSearchTitle(query: string) {
+  return query ? `По вашему запросу: ${query}` : 'Поиск'
+}
+
 export default async function CatalogPage({
   searchParams,
 }: {
@@ -44,19 +52,30 @@ export default async function CatalogPage({
 }) {
   const query = await searchParams
   const activePromoTags = parsePromoTagQuery(query.promo)
+  const searchQuery = parseSearchQuery(query.q)
+  const hasSearch = searchQuery.length >= SEARCH_QUERY_MIN_LENGTH
 
-  if (activePromoTags.length > 0) {
-    const products = buildPromoCatalogListing(getAllProductCards(), activePromoTags)
+  if (hasSearch || activePromoTags.length > 0) {
+    let products: ProductCardData[] =
+      activePromoTags.length > 0
+        ? buildPromoCatalogListing(getAllProductCards(), activePromoTags)
+        : getAllProductCards()
+
+    if (hasSearch) {
+      products = filterProductsBySearch(products, searchQuery)
+    }
+
     const availableNameTags = [
       ...new Set(
         products
           .map((product) => product.nameTag?.trim())
-          .filter((tag): tag is string => Boolean(tag)),
+          .filter((tag): tag is string => typeof tag === 'string' && isListingNameTag(tag)),
       ),
     ].sort((left, right) => left.localeCompare(right, 'ru'))
     const activeNameTags = parseNameTagQuery(availableNameTags, query.tag)
     const listingPath = '/catalog'
-    const title = catalogPromoListingTitle(activePromoTags)
+    const title = hasSearch ? catalogSearchTitle(searchQuery) : catalogPromoListingTitle(activePromoTags)
+    const crumb = hasSearch ? 'Поиск' : title
     const specGroups = collectSpecFilters(products.map((product) => ({ specs: product.specs ?? [] })))
     const initialSpecFilters = parseListingSpecFilters(specGroups, query)
     const initialSort = parseListingSort(query.sort)
@@ -68,7 +87,7 @@ export default async function CatalogPage({
             items={[
               { href: '/', label: 'Главная' },
               { href: '/catalog', label: 'Каталог' },
-              { label: title },
+              { label: crumb },
             ]}
           />
           <SubcategoryProducts
@@ -79,6 +98,7 @@ export default async function CatalogPage({
             activePromoTags={activePromoTags}
             initialSpecFilters={initialSpecFilters}
             initialSort={initialSort}
+            searchQuery={hasSearch ? searchQuery : ''}
           />
         </div>
       </main>

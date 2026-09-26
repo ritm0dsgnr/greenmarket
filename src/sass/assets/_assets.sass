@@ -11,6 +11,9 @@
 
 html
   font-size: clamp(8px, calc(100vw / #{$rem-scale}), #{$rem-base}px)
+  scroll-behavior: smooth
+  @media (prefers-reduced-motion: reduce)
+    scroll-behavior: auto
 
 body
   @include font-text

@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useCallback, useState } from 'react'
+import { useCallback, useState, type MouseEvent } from 'react'
 import { bindHangingWords } from '@/components/bindHangingWords'
 import { HeroSignupPopup } from '@/components/HeroSignupPopup'
 import { Icon } from '@/components/Icon'
@@ -24,7 +24,6 @@ function HeroSlideCta({
     return (
       <button className="hero__slide-cta" type="button" onClick={() => onSignup(slide)}>
         {slide.cta.label}
-        <Icon name="arrow-right" className="hero__slide-cta-arrow" />
       </button>
     )
   }
@@ -32,7 +31,6 @@ function HeroSlideCta({
   return (
     <Link className="hero__slide-cta" href={slide.cta.href}>
       {slide.cta.label}
-      <Icon name="arrow-right" className="hero__slide-cta-arrow" />
     </Link>
   )
 }
@@ -67,6 +65,17 @@ export function HeroSlider() {
   const swipe = useSwipePager((direction) => goTo(index + direction))
   const closeSignup = useCallback(() => setSignupSlide(null), [])
 
+  function onViewportClick(event: MouseEvent<HTMLDivElement>) {
+    const target = event.target
+
+    if (!(target instanceof Element) || target.closest('a, button, .hero__slide-panel')) {
+      return
+    }
+
+    const mid = event.currentTarget.getBoundingClientRect().left + event.currentTarget.clientWidth / 2
+    goTo(index + (event.clientX < mid ? -1 : 1))
+  }
+
   if (slides.length === 0) {
     return null
   }
@@ -79,6 +88,7 @@ export function HeroSlider() {
             .filter(Boolean)
             .join(' ')}
           {...swipe.bind}
+          onClick={onViewportClick}
         >
           <ul className="hero__track hero__track--fade">
             {slides.map((slide, slideIndex) => {

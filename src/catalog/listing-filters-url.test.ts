@@ -56,4 +56,14 @@ describe('listing-filters-url', () => {
 
     expect(withListingQuery('/catalog/hvoynye/el', {})).toBe('/catalog/hvoynye/el')
   })
+
+  it('keeps the search query when filters change', () => {
+    expect(
+      withListingQuery('/catalog', {
+        search: 'ябланя',
+        sort: 'cheap',
+        promoTags: ['sale'],
+      }),
+    ).toBe('/catalog?q=%D1%8F%D0%B1%D0%BB%D0%B0%D0%BD%D1%8F&promo=sale&sort=cheap')
+  })
 })

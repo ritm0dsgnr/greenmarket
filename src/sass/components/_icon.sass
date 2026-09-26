@@ -1,4 +1,5 @@
 @use "../assets/vars" as *
+@use "../assets/mixin" as *
 
 .icon
   width: 2.4rem
@@ -17,3 +18,24 @@
   width: 16.8rem
   height: auto
   overflow: visible
+  &__mark
+    width: 4.4rem
+    height: 4.4rem
+    flex-shrink: 0
+    object-fit: contain
+  &__word
+    @include font-display
+    flex: 1
+    min-width: 0
+    font-size: 1.6rem
+    font-weight: 700
+    line-height: 1.05
+    letter-spacing: 0.02em
+    text-transform: uppercase
+    white-space: nowrap
+  &--with-mark
+    display: flex
+    align-items: center
+    gap: 0.8rem
+    width: auto
+    max-width: 28rem

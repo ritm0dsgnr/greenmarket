@@ -4,70 +4,75 @@
 .cart-flash
   position: fixed
   inset: 0
-  z-index: 40
-  display: flex
-  align-items: center
-  justify-content: center
+  z-index: 50
   pointer-events: none
-  animation: cart-flash-hold 0.7s linear both
-  &__wave
+  overflow: hidden
+  &__burst
+    position: fixed
+    top: 0
+    left: 0
+    width: 12rem
+    height: 12rem
+    will-change: transform, opacity
+  &__glow
     position: absolute
-    top: 50%
     left: 50%
+    top: 50%
+    width: 11rem
+    height: 11rem
     border-radius: 50%
-    background: radial-gradient(circle, rgb(from $leaf r g b / 0.45) 0 52%, rgb(from $leaf r g b / 0) 78%)
-    transform: translate(-50%, -50%) scale(0.4)
-    animation: cart-flash-wave 0.7s ease-out both
-    &--sm
-      width: 28rem
-      height: 28rem
-    &--lg
-      width: 52rem
-      height: 52rem
-  .icon
-    position: relative
-    z-index: 1
-    width: 8rem
-    height: 8rem
-    color: $forest
-    overflow: visible
-    stroke-width: 0.4rem
-    animation: cart-flash-check 0.7s $anim-ease both
-  @media (prefers-reduced-motion: reduce)
-    animation-duration: 0.2s
-    &__wave,
+    transform: translate(-50%, -50%)
+    background: radial-gradient(circle, rgba($cream, 1) 0%, rgba($cream, 0.92) 22%, rgba($cream, 0.42) 48%, rgba($cream, 0) 70%)
+  &__wreath
+    position: absolute
+    inset: 0
+  &__leaf
+    position: absolute
+    left: 50%
+    top: 50%
+    width: 2.8rem
+    height: 3.4rem
+    color: $leaf
+    transform: translate(-50%, -50%) rotate(calc(360deg / var(--n) * var(--i))) translateY(-4.8rem)
     .icon
-      animation: none
-      opacity: 0
+      width: 100%
+      height: 100%
+    &--forest
+      color: $forest
+    &--blush
+      color: $blush
+  &__check
+    position: absolute
+    left: 50%
+    top: 50%
+    display: flex
+    align-items: center
+    justify-content: center
+    width: 4.2rem
+    height: 4.2rem
+    z-index: 1
+    color: $forest
+    transform: translate(-50%, -50%)
+  &__check-mark
+    display: flex
+    width: 100%
+    height: 100%
+    .icon
+      width: 100%
+      height: 100%
+      overflow: visible
+      stroke-width: 0.32rem
 
-@keyframes cart-flash-hold
-  0%,
-  100%
-    visibility: visible
+.header__wrapper-action--cart.is-catching
+  background: $leaf
+  animation: header-cart-catch 0.32s $anim-ease
+  @media (prefers-reduced-motion: reduce)
+    animation: none
 
-@keyframes cart-flash-wave
+@keyframes header-cart-catch
   0%
-    opacity: 1
-    transform: translate(-50%, -50%) scale(0.4)
-  62%
-    opacity: 1
-    transform: translate(-50%, -50%) scale(1.12)
-  100%
-    opacity: 0
-    transform: translate(-50%, -50%) scale(1.35)
-
-@keyframes cart-flash-check
-  0%
-    opacity: 0
-    transform: scale(0.7)
-  18%
-    opacity: 1
-    transform: scale(1.08)
-  36%
     transform: scale(1)
-  58%
-    opacity: 1
-    transform: scale(1)
+  40%
+    transform: scale(1.12)
   100%
-    opacity: 0
-    transform: scale(0.94)
+    transform: scale(1)

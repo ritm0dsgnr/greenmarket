@@ -1,3 +1,5 @@
+export const siteSearchRoute = '/search'
+
 export const siteInfoRoutes = {
   delivery: '/delivery',
   certificates: '/certificates',
