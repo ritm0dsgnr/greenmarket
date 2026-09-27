@@ -1,7 +1,8 @@
 @use "../assets/vars" as *
 @use "../assets/mixin" as *
 
-html
+html,
+body
   overflow-x: clip
 
 @include below($bp-tablet)
@@ -16,12 +17,19 @@ html
     gap: 8rem
 
   .header
+    left: 0
+    right: 0
+    width: 100%
+    max-width: 100%
+    overflow-x: clip
     top: max(0.8rem, env(safe-area-inset-top))
     &__wrapper
       display: grid
       grid-template-columns: auto minmax(0, 1fr) auto
       gap: 0.8rem
       padding: 0.8rem 1rem
+      min-width: 0
+      max-width: 100%
       &-burger
         display: flex
       &-logo
@@ -29,8 +37,11 @@ html
         transform: none
         justify-self: center
         width: auto
+        max-width: 100%
+        min-width: 0
         .logo--with-mark
           width: auto
+          max-width: 100%
           gap: 0.6rem
           .logo__mark
             width: 3.4rem
@@ -96,6 +107,26 @@ html
       &-phone
         font-size: 2rem
 
+  .header-search
+    // container + border + pad + burger + 0.2rem | form | 0.2rem + cart + pad + border + container
+    $search-to-menu-width: calc(100vw - 16.2rem)
+    &.is-open:not(.is-closing) &__form
+      width: $search-to-menu-width
+      min-width: 0
+      max-width: $search-to-menu-width
+      animation: header-search-form-in-mobile 0.42s $anim-ease
+      @media (prefers-reduced-motion: reduce)
+        animation: none
+
+  .header-search-layer
+    &__dock
+      left: 2.4rem
+      right: 2.4rem
+      width: auto
+      max-width: none
+    &__panel
+      transform-origin: top center
+
   .header.is-menu-open
     z-index: 40
     .header__wrapper-nav
@@ -148,23 +179,46 @@ html
       width: 100%
       height: calc(100vh - 10rem - 1.6rem)
       min-height: calc(100vh - 10rem - 1.6rem)
-    &__title,
-    &__motto,
+    &__copy,
     &__caption
       z-index: 5
+    &__caption
+      top: 3.6rem
+      left: 2.4rem
+      max-width: calc(100% - 4.8rem)
+    &__copy
+      top: 7.2rem
+      left: 2.4rem
+      width: calc(100% - 4.8rem)
+    &__motto
+      max-width: none
     &__layers
-      height: 48%
+      height: 58%
       bottom: 5.6rem
       overflow: hidden
+    &__image
+      transition: none
+      animation: hero-image-drift 14s ease-in-out infinite
     &__layer
+      transition: none
       &--mid
-        left: 22%
-        width: 92%
-        transform: translateY(0.6rem) scale(1.08)
+        left: -4%
+        width: 118%
+        animation: hero-layer-mid-drift 11s ease-in-out infinite
       &--front
-        left: 8%
-        width: 78%
-        transform: translateY(0.4rem) scale(1.02)
+        left: -10%
+        width: 104%
+        animation: hero-layer-front-drift 8.5s ease-in-out infinite
+    @media (prefers-reduced-motion: reduce)
+      &__image,
+      &__layer--mid,
+      &__layer--front
+        animation: none
+      &__layer
+        &--mid
+          transform: translateY(0.6rem) scale(1.22)
+        &--front
+          transform: translateY(0.4rem) scale(1.14)
     &__slider
       flex: none
       width: 100%
@@ -193,13 +247,17 @@ html
   .catalog
     &__grid
       grid-template-columns: repeat(3, minmax(0, 1fr))
+    &__item--extra
+      display: list-item
     &__head
-      grid-template-columns: 1fr
-      justify-items: center
-      gap: 1.6rem
+      display: flex
+      align-items: center
+      justify-content: space-between
+      gap: 1.2rem
+      .catalog__title
+        text-align: left
       .catalog__more
-        grid-column: 1
-        justify-self: center
+        justify-self: auto
 
   .catalog-card
     &__title
@@ -209,30 +267,107 @@ html
   .products
     &__layout
       flex-direction: column
+    &__filters-toggle
+      display: flex
     &__filters
+      position: fixed
+      inset: 0
+      z-index: 30
       flex: none
       width: 100%
-      position: static
+      max-width: none
       max-height: none
+      margin: 0
+      padding: calc(2.4rem + env(safe-area-inset-top, 0px)) 0 2.4rem
+      border-radius: 0
+      overflow: hidden
+      visibility: hidden
+      pointer-events: none
+      opacity: 0
+      transform: translateY($anim-shift)
+      transition: opacity $anim-duration $anim-ease, transform $anim-duration $anim-ease, visibility 0s linear $anim-duration
+      @media (prefers-reduced-motion: reduce)
+        transform: none
+        transition: none
+      &.is-open
+        visibility: visible
+        pointer-events: auto
+        opacity: 1
+        transform: none
+        transition-delay: 0s
+    &__filters-head
+      position: relative
+      z-index: 1
+      align-items: center
+      gap: 0.8rem
+      margin: 0 0 2rem
+      padding: 0.8rem 2.4rem 1.6rem
+      border-bottom: 0.15rem solid rgb(from $forest r g b / 0.32)
+    &__filters-title
+      flex: 1 1 auto
+      min-width: 0
+    &__filters-close
+      @include popup-close
+      position: static
+      top: auto
+      right: auto
+      flex-shrink: 0
+      margin-left: auto
+      padding: 0
+      font-size: 0
+      line-height: 0
+      background: $cream
+      .icon
+        display: block
+        overflow: hidden
+    &__filters-body
+      padding: 0 2.4rem
     &__filters-scroll
-      overflow: visible
+      overflow-y: auto
       max-height: none
       padding-right: 0
     &__filters-rail
       display: none
     &__grid
       grid-template-columns: repeat(2, minmax(0, 1fr))
+    &--no-filters .products__grid
+      grid-template-columns: repeat(2, minmax(0, 1fr))
     &__lead
       max-width: none
+    &__toolbar
+      display: grid
+      grid-template-columns: minmax(0, 1fr) auto
+      grid-template-areas: "sort toggle" "tags tags"
+      align-items: center
+      column-gap: 1.2rem
+      row-gap: 1.2rem
+    &__sort
+      grid-area: sort
+      margin-left: 0
+      justify-self: start
+    &__filters-toggle
+      grid-area: toggle
+      justify-self: end
+    &__tags
+      grid-area: tags
+      min-width: 0
     &__apply
+      position: sticky
       left: auto
-      right: 0
-      transform: translateY(0.8rem)
+      right: auto
+      bottom: calc(2.4rem + env(safe-area-inset-bottom, 0px))
+      top: auto
+      align-self: center
+      margin-top: auto
+      margin-inline: 2.4rem
+      transform: none
+      &::before
+        display: none
       &.is-visible
-        transform: translateY(0.8rem)
+        transform: none
       &:hover,
       &:focus-visible
-        transform: translate(0.4rem, 1.2rem)
+        transform: translate(0.4rem, 0.4rem)
 
   .product
     &__layout
@@ -308,6 +443,8 @@ html
   .product-card
     &__overlay
       padding: 2.4rem
+      &--sheet
+        padding: 0
     &__popup
       grid-template-columns: 1fr
       width: min(96rem, 100%)
@@ -354,12 +491,31 @@ html
     &__wrapper
       border-radius: 2.4rem
       &-logo
-        width: 11.2rem
+        width: auto
+        max-width: 100%
       &-nav
         padding-left: 1.6rem
         padding-right: 1.6rem
       &-link
         font-size: 1.6rem
+      &-aside
+        gap: 0.4rem
+      &-actions
+        gap: 0.2rem
+
+  .header-search
+    // container 1.6 + border 0.4 + pad 1 + burger 4 + gap 0.2 | form | gap 0.2 + cart 4 + pad 1 + border 0.4 + container 1.6
+    $search-to-menu-width: calc(100vw - 14.35rem)
+    &.is-open:not(.is-closing) &__form
+      width: $search-to-menu-width
+      min-width: 0
+      max-width: $search-to-menu-width
+      animation-name: header-search-form-in-mobile-sm
+
+  .header-search-layer
+    &__dock
+      left: 1.6rem
+      right: 1.6rem
 
   .footer
     &__grid
@@ -378,6 +534,13 @@ html
     &__grid
       grid-template-columns: repeat(2, minmax(0, 1fr))
       gap: 1.2rem
+    &__head
+      margin-bottom: 2.4rem
+    &__head .catalog__title
+      font-size: 2.2rem
+    &__more
+      padding: 0.6rem 0.8rem 0.6rem 1.2rem
+      font-size: 1.2rem
     &__group + &__group
       margin-top: 4.8rem
 
@@ -404,14 +567,9 @@ html
       font-size: 1.3rem
       padding: 0.1rem 0.8rem 0.2rem
     &__specs
-      gap: 0.5rem
-    &__spec
-      gap: 0.2rem
-      padding-bottom: 0.5rem
-      &-label
-        font-size: 1.2rem
-      &-value
-        font-size: 1.2rem
+      display: none
+    &__specs-toggle
+      display: flex
     &__footer
       gap: 0.8rem
       padding-top: 0.8rem
@@ -427,12 +585,11 @@ html
     &__grid
       grid-template-columns: repeat(2, minmax(0, 1fr))
       gap: 1.6rem 1.2rem
-    &__toolbar
-      flex-direction: column
-      align-items: stretch
-    &__sort
-      margin-left: 0
-      align-self: flex-end
+    &--no-filters .products__grid
+      grid-template-columns: repeat(2, minmax(0, 1fr))
+    &__filters-toggle
+      width: 3.6rem
+      height: 3.6rem
 
   .cart
     &__item
@@ -478,22 +635,39 @@ html
       height: calc(100vh - 9.6rem - 1.6rem)
       min-height: calc(100vh - 9.6rem - 1.6rem)
       border-radius: 2.4rem
-    &__title
-      width: min(49rem, calc(100% - 4rem))
-      left: 2rem
-      top: 6rem
-    &__motto
-      left: 2rem
-      top: 18rem
-      max-width: calc(100% - 4rem)
-      font-size: 1.8rem
     &__caption
-      left: 2rem
+      top: 2.8rem
+      left: 1.6rem
+      right: 1.6rem
+      max-width: none
       white-space: normal
-      max-width: calc(100% - 4rem)
+      font-size: 1.2rem
+    &__copy
+      top: 6rem
+      left: 1.6rem
+      width: calc(100% - 3.2rem)
+      gap: 1rem
+    &__motto
+      max-width: none
+      font-size: 1.6rem
     &__layers
-      height: 40%
+      height: 64%
       bottom: 5.2rem
+    &__layer
+      &--mid
+        left: -10%
+        width: 136%
+        animation: hero-layer-mid-drift-sm 11s ease-in-out infinite
+      &--front
+        left: -16%
+        width: 118%
+        animation: hero-layer-front-drift-sm 8.5s ease-in-out infinite
+    @media (prefers-reduced-motion: reduce)
+      &__layer
+        &--mid
+          transform: translateY(1rem) scale(1.32)
+        &--front
+          transform: translateY(0.8rem) scale(1.22)
     &__slider
       height: 64vh
       min-height: 64vh

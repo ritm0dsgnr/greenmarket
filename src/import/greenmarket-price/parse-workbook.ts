@@ -509,7 +509,7 @@ function buildSubcategoriesFromSections(
     })
   }
 
-  return subcategories
+  return subcategories.sort((left, right) => left.label.localeCompare(right.label, 'ru'))
 }
 
 function buildSubcategoriesFromFirstWord(sheetSlug: string, products: PriceCatalogProduct[]) {

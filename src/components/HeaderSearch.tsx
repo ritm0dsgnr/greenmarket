@@ -28,8 +28,10 @@ import {
   SEARCH_QUERY_MAX_LENGTH,
   SEARCH_QUERY_MIN_LENGTH,
 } from '@/catalog/search-catalog'
+import { tabletBreakpointPx } from '@/components/slideLayout'
 
 const RESULT_LIMIT = 12
+const compactSearchQuery = `(max-width: ${tabletBreakpointPx}px)`
 
 function subscribeNever() {
   return () => {}
@@ -271,14 +273,21 @@ export function HeaderSearch({
       }
 
       const wrap = wrapper.getBoundingClientRect()
+      dock.style.top = `${Math.round(wrap.bottom + 8)}px`
+      dock.style.right = 'auto'
+
+      if (window.matchMedia(compactSearchQuery).matches) {
+        dock.style.left = `${Math.round(wrap.left)}px`
+        dock.style.width = `${Math.round(wrap.width)}px`
+        return
+      }
+
       const form = search.querySelector<HTMLElement>('.header-search__form')
       const field = (form ?? search).getBoundingClientRect()
       const width = wrap.right - field.left
 
-      dock.style.top = `${Math.round(wrap.bottom + 8)}px`
       dock.style.left = `${Math.round(field.left)}px`
       dock.style.width = `${Math.round(width > 0 ? width : wrap.width)}px`
-      dock.style.right = 'auto'
     }
 
     placeDock()
@@ -417,7 +426,7 @@ export function HeaderSearch({
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value.slice(0, SEARCH_QUERY_MAX_LENGTH))}
-            placeholder="Яблоня, Malus…"
+            placeholder="Поиск..."
             autoComplete="off"
             autoCapitalize="none"
             spellCheck={false}

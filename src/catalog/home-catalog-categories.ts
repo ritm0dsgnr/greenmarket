@@ -7,6 +7,7 @@ export const HOME_CATALOG_PREFERRED_LABELS = [
   'Пряные травы',
   'Многолетники',
   'Хвойные',
+  'Розы',
 ] as const
 
 const PREFERRED_ALIASES: Record<string, readonly string[]> = {
@@ -15,6 +16,7 @@ const PREFERRED_ALIASES: Record<string, readonly string[]> = {
   'Пряные травы': ['Пряные травы'],
   Многолетники: ['Многолетники'],
   Хвойные: ['Хвойные'],
+  Розы: ['Розы'],
 }
 
 function findPreferred(
@@ -31,7 +33,7 @@ function findPreferred(
 
 export function selectHomeCatalogCategories(
   categories: readonly PriceCatalogCategory[],
-  limit = 5,
+  limit = 6,
 ): PriceCatalogCategory[] {
   if (limit <= 0 || categories.length === 0) {
     return []

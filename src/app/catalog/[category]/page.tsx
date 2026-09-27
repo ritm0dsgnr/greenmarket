@@ -105,16 +105,20 @@ export default async function CategoryPage({
             {bindHangingWords(category.label)}
           </h1>
           <ul className="catalog__grid">
-            {category.subcategories.map((subcategory) => (
-              <li className="catalog__item" key={subcategory.slug}>
-                <CatalogCard
-                  href={`/catalog/${category.slug}/${subcategory.slug}`}
-                  title={subcategoryCardTitle(subcategory)}
-                  variant="sub"
-                  count={subcategory.products.length}
-                />
-              </li>
-            ))}
+            {[...category.subcategories]
+              .sort((left, right) =>
+                subcategoryCardTitle(left).localeCompare(subcategoryCardTitle(right), 'ru'),
+              )
+              .map((subcategory) => (
+                <li className="catalog__item" key={subcategory.slug}>
+                  <CatalogCard
+                    href={`/catalog/${category.slug}/${subcategory.slug}`}
+                    title={subcategoryCardTitle(subcategory)}
+                    variant="sub"
+                    count={subcategory.products.length}
+                  />
+                </li>
+              ))}
           </ul>
         </div>
       </section>

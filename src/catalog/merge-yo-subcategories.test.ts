@@ -33,4 +33,14 @@ describe('mergeYoTwinSubcategories', () => {
     expect(aliases).toEqual({ 'klen-2': 'klen' })
     expect(resolveSubcategorySlug({ derevya: aliases }, 'derevya', 'klen-2')).toBe('klen')
   })
+
+  it('orders cards by Russian alphabet', () => {
+    const { items } = mergeYoTwinSubcategories([
+      { slug: 'yasen', label: 'Ясень', products: [mono] },
+      { slug: 'bereza', label: 'Берёза', products: [ginnala] },
+      { slug: 'klen', label: 'Клён', products: [mono] },
+    ])
+
+    expect(items.map((item) => item.label)).toEqual(['Берёза', 'Клён', 'Ясень'])
+  })
 })

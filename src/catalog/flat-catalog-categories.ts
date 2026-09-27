@@ -34,14 +34,16 @@ type CatalogNavGroup = {
  */
 export function listCatalogGroupEntries(group: PriceCatalogGroup): CatalogGroupEntry[] {
   if (group.title === 'Сопутствующие товары') {
-    return group.items.flatMap((category) =>
-      category.subcategories.map((subcategory) => ({
-        key: `${category.slug}/${subcategory.slug}`,
-        label: subcategory.label,
-        href: `${category.href}/${subcategory.slug}`,
-        productCount: subcategory.products.length,
-      })),
-    )
+    return group.items
+      .flatMap((category) =>
+        category.subcategories.map((subcategory) => ({
+          key: `${category.slug}/${subcategory.slug}`,
+          label: subcategory.label,
+          href: `${category.href}/${subcategory.slug}`,
+          productCount: subcategory.products.length,
+        })),
+      )
+      .sort((left, right) => left.label.localeCompare(right.label, 'ru'))
   }
 
   return group.items.map((category) => ({
@@ -58,10 +60,12 @@ export function listCatalogGroupNavEntries(group: CatalogNavGroup): Array<{ labe
         return [{ label: category.label, href: category.href }]
       }
 
-      return category.subcategories.map((subcategory) => ({
-        label: subcategory.label,
-        href: `${category.href}/${subcategory.slug}`,
-      }))
+      return [...category.subcategories]
+        .sort((left, right) => left.label.localeCompare(right.label, 'ru'))
+        .map((subcategory) => ({
+          label: subcategory.label,
+          href: `${category.href}/${subcategory.slug}`,
+        }))
     })
   }
 
