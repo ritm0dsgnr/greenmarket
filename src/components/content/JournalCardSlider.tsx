@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useLayoutEffect, useRef, useState, type CSSProperties, type TransitionEvent } from 'react'
 import { Icon } from '@/components/Icon'
 import { JournalCard } from '@/components/content/JournalCard'
-import { slideGapRem, mobileBreakpointPx } from '@/components/slideLayout'
+import { slideGapRem, tabletBreakpointPx } from '@/components/slideLayout'
 import { useSwipePager } from '@/components/useSwipePager'
 import { siteBlogRoute } from '@/components/siteNav'
 import type { JournalItem } from '@/content/journal'
@@ -22,8 +22,9 @@ function journalSlideLayout(viewportWidth: number, windowWidth: number) {
   const gap = slideGapRem * rem
   const minCard = 52 * rem
 
-  if (windowWidth <= mobileBreakpointPx) {
-    return { visible: 2, span: (viewportWidth - gap) / 2 }
+  // Journal stays 1-up on phone and tablet; product sliders keep 2-up.
+  if (windowWidth <= tabletBreakpointPx) {
+    return { visible: 1, span: viewportWidth }
   }
 
   if (viewportWidth + 0.5 >= minCard * 2 + gap) {
@@ -58,7 +59,7 @@ export function JournalCardSlider({
   const trackCards = [...cards, ...cards, ...cards]
   const [index, setIndex] = useState(loopStart)
   const [animate, setAnimate] = useState(true)
-  const [layout, setLayout] = useState({ visible: 2, span: 0, step: 0 })
+  const [layout, setLayout] = useState({ visible: 1, span: 0, step: 0 })
   const locked = useRef(false)
   const viewportRef = useRef<HTMLDivElement>(null)
   const page = cards.length === 0 ? 0 : ((index - loopStart) % cards.length + cards.length) % cards.length
@@ -229,7 +230,6 @@ export function JournalCardSlider({
               onPointerMove={swipe.bind.onPointerMove}
               onPointerUp={swipe.bind.onPointerUp}
               onPointerCancel={swipe.bind.onPointerCancel}
-              onLostPointerCapture={swipe.bind.onLostPointerCapture}
               onClickCapture={swipe.bind.onClickCapture}
             >
               <ul

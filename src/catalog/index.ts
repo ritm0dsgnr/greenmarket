@@ -30,6 +30,8 @@ export {
 
 export { isFlatCatalogCategory, listCatalogGroupEntries, listCatalogGroupNavEntries } from '@/catalog/flat-catalog-categories'
 
+export const HOME_CATALOG_DESKTOP_LIMIT = 5
+
 export const homeCatalogCategories = selectHomeCatalogCategories(catalogCategories)
 
 export {

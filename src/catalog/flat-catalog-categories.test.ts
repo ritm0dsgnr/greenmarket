@@ -33,16 +33,16 @@ describe('listCatalogGroupEntries', () => {
 
     expect(entries).toEqual([
       {
-        key: 'soputstvuyuschie-tovary/sadovyy-dekor',
-        label: 'Садовый декор',
-        href: '/catalog/soputstvuyuschie-tovary/sadovyy-dekor',
-        productCount: 3,
-      },
-      {
         key: 'soputstvuyuschie-tovary/sadovaya-odezhda',
         label: 'Садовая одежда',
         href: '/catalog/soputstvuyuschie-tovary/sadovaya-odezhda',
         productCount: 2,
+      },
+      {
+        key: 'soputstvuyuschie-tovary/sadovyy-dekor',
+        label: 'Садовый декор',
+        href: '/catalog/soputstvuyuschie-tovary/sadovyy-dekor',
+        productCount: 3,
       },
     ])
   })

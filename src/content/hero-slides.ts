@@ -34,18 +34,6 @@ export type HeroSlide = {
  */
 export const heroSlides: readonly HeroSlide[] = [
   {
-    id: 'hero-novelties',
-    title: 'Новинки сезона',
-    text: 'Свежие поступления растений — смотрите подборку новинок в каталоге.',
-    imageSrc: '/img/hero/slides/novelties.png',
-    imageAlt: 'Новые растения в контейнерах на площадке садового центра',
-    cta: {
-      kind: 'link',
-      label: 'Смотреть новинки',
-      href: homeNoveltiesListingPath,
-    },
-  },
-  {
     id: 'hero-event-botanical-relief',
     title: 'Ботанический барельеф',
     text: 'Мастер-класс 3 августа в 12:00 — живые растения, глина и гипс. Мест немного.',
@@ -58,6 +46,18 @@ export const heroSlides: readonly HeroSlide[] = [
       kind: 'signup',
       label: 'Записаться',
       journalId: 'event-botanical-relief',
+    },
+  },
+  {
+    id: 'hero-novelties',
+    title: 'Новинки сезона',
+    text: 'Свежие поступления растений — смотрите подборку новинок в каталоге.',
+    imageSrc: '/img/hero/slides/novelties.png',
+    imageAlt: 'Новые растения в контейнерах на площадке садового центра',
+    cta: {
+      kind: 'link',
+      label: 'Смотреть новинки',
+      href: homeNoveltiesListingPath,
     },
   },
   {

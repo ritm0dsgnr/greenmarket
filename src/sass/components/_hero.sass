@@ -82,22 +82,25 @@
     opacity: 0.28
     transition: transform 0.22s $anim-ease
     transform: translate(calc(var(--parallax-x) * -0.5rem), calc(var(--parallax-y) * -0.5rem)) scale(1.05)
-  &__title
+  &__copy
     position: absolute
     top: 9.6rem
     left: 4.6rem
-    z-index: 3
+    z-index: 5
     width: 49rem
+    display: flex
+    flex-direction: column
+    gap: 1.6rem
     transition: transform 0.2s $anim-ease
     transform: translate(calc(var(--parallax-x) * 0.35rem), calc(var(--parallax-y) * 0.35rem))
+  &__title
+    margin: 0
+    width: 100%
     img
       width: 100%
       height: auto
   &__motto
-    position: absolute
-    top: 34rem
-    left: 4.6rem
-    z-index: 3
+    margin: 0
     max-width: 36rem
     @include font-display
     font-size: clamp(1.8rem, 1.5vw, 2.2rem)
@@ -105,8 +108,6 @@
     line-height: 1.25
     letter-spacing: -0.02em
     color: $forest
-    transition: transform 0.2s $anim-ease
-    transform: translate(calc(var(--parallax-x) * 0.35rem), calc(var(--parallax-y) * 0.35rem))
   &__caption
     position: absolute
     top: 4.4rem
@@ -134,8 +135,7 @@
       &--front
         transform: translateY(1.2rem) scale(1.16)
     &__texture,
-    &__title,
-    &__motto,
+    &__copy,
     &__caption
       transform: none
   &__slider
@@ -613,3 +613,38 @@
     transform: translateX(0)
   to
     transform: translateX(-50%)
+
+@keyframes hero-layer-mid-drift
+  0%,
+  100%
+    transform: translate3d(0, 0.6rem, 0) scale(1.22)
+  50%
+    transform: translate3d(2.4rem, -0.8rem, 0) scale(1.24)
+
+@keyframes hero-layer-front-drift
+  0%,
+  100%
+    transform: translate3d(0, 0.4rem, 0) scale(1.14)
+  50%
+    transform: translate3d(-1.8rem, 1rem, 0) scale(1.16)
+
+@keyframes hero-layer-mid-drift-sm
+  0%,
+  100%
+    transform: translate3d(0, 1rem, 0) scale(1.32)
+  50%
+    transform: translate3d(2rem, -0.6rem, 0) scale(1.34)
+
+@keyframes hero-layer-front-drift-sm
+  0%,
+  100%
+    transform: translate3d(0, 0.8rem, 0) scale(1.22)
+  50%
+    transform: translate3d(-1.6rem, 1.2rem, 0) scale(1.24)
+
+@keyframes hero-image-drift
+  0%,
+  100%
+    transform: translate3d(0, 0, 0) scale(1.05)
+  50%
+    transform: translate3d(-1.2rem, 0.8rem, 0) scale(1.07)

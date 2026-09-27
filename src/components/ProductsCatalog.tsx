@@ -60,6 +60,7 @@ export function ProductsCatalog({
   const sortRef = useRef<HTMLDivElement>(null)
   const filtersRef = useRef<HTMLElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const [filtersOpen, setFiltersOpen] = useState(false)
   const [rail, setRail] = useState({ show: false, thumbHeight: 0, thumbTop: 0 })
   const listingSyncKey = [
     listingPath,
@@ -149,6 +150,27 @@ export function ProductsCatalog({
   }) {
     replaceListingUrl(listingUrl(next))
   }
+
+  useEffect(() => {
+    if (!filtersOpen) {
+      return
+    }
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setFiltersOpen(false)
+      }
+    }
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    document.addEventListener('keydown', onKeyDown)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [filtersOpen])
 
   useEffect(() => {
     if (!sortOpen) {
@@ -252,6 +274,7 @@ export function ProductsCatalog({
     setAppliedFilters(draftFilters)
     setActiveFilterKey(null)
     setApplyReady(false)
+    setFiltersOpen(false)
     syncListingUrl({ specFilters: draftFilters })
   }
 
@@ -292,7 +315,13 @@ export function ProductsCatalog({
   return (
     <>
       {showFilterRail ? (
-        <aside className="products__filters" aria-labelledby="products-filters-title" ref={filtersRef}>
+        <aside
+          className={['products__filters', filtersOpen ? 'is-open' : ''].filter(Boolean).join(' ')}
+          aria-labelledby="products-filters-title"
+          role={filtersOpen ? 'dialog' : undefined}
+          aria-modal={filtersOpen ? true : undefined}
+          ref={filtersRef}
+        >
           <header className="products__filters-head">
             <span className="products__filters-mark" aria-hidden="true">
               <Icon name="filter" />
@@ -300,6 +329,14 @@ export function ProductsCatalog({
             <h2 className="products__filters-title" id="products-filters-title">
               Параметры
             </h2>
+            <button
+              className="products__filters-close"
+              type="button"
+              aria-label="Закрыть фильтры"
+              onClick={() => setFiltersOpen(false)}
+            >
+              <Icon name="close" />
+            </button>
           </header>
           <div className="products__filters-body">
             <div className="products__filters-scroll" ref={scrollRef}>
@@ -370,6 +407,23 @@ export function ProductsCatalog({
       <div className="products__main">
         {children}
         <div className="products__toolbar">
+          {showFilterRail ? (
+            <button
+              className="products__filters-toggle"
+              type="button"
+              aria-label="Фильтры"
+              aria-haspopup="dialog"
+              aria-expanded={filtersOpen}
+              onClick={() => setFiltersOpen(true)}
+            >
+              <Icon name="filter" />
+              {appliedFilters.length > 0 ? (
+                <span className="products__filters-count" aria-hidden="true">
+                  {appliedFilters.length}
+                </span>
+              ) : null}
+            </button>
+          ) : null}
           <div className="products__tags" role="group" aria-label="Теги">
             {promoTags.map((tag) => (
               <label className={`products__tag products__tag--${tag.id}`} key={tag.id}>

@@ -88,8 +88,8 @@
     overflow: hidden
     touch-action: pan-y
     user-select: none
-    // Until JS measures, keep a 2-up span so SSR/first paint matches desktop layout.
-    --slide-span: calc((100% - 1.6rem) / 2)
+    // Mobile/tablet: one card. Desktop JS may set a 2-up span after measure.
+    --slide-span: 100%
     &.is-dragging
       touch-action: none
       cursor: grabbing
@@ -132,7 +132,12 @@
       opacity: 1
       color: $forest
 
-@media (max-width: $bp-mobile)
+@media (min-width: #{$bp-tablet + 1})
   .home-journal
     &__viewport
       --slide-span: calc((100% - 1.6rem) / 2)
+
+@media (max-width: $bp-mobile)
+  .home-journal
+    &__viewport
+      --slide-span: 100%

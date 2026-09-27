@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { CatalogCard } from '@/components/CatalogCard'
 import { Icon } from '@/components/Icon'
-import { homeCatalogCategories } from '@/catalog'
+import { HOME_CATALOG_DESKTOP_LIMIT, homeCatalogCategories } from '@/catalog'
 
 export function HomeCatalog() {
   return (
@@ -17,8 +17,15 @@ export function HomeCatalog() {
           </Link>
         </div>
         <ul className="catalog__grid">
-          {homeCatalogCategories.map((category) => (
-            <li className="catalog__item" key={category.label}>
+          {homeCatalogCategories.map((category, index) => (
+            <li
+              className={
+                index >= HOME_CATALOG_DESKTOP_LIMIT
+                  ? 'catalog__item catalog__item--extra'
+                  : 'catalog__item'
+              }
+              key={category.label}
+            >
               <CatalogCard href={category.href} title={category.label} />
             </li>
           ))}

@@ -110,9 +110,12 @@ export function HomeHero() {
                   unoptimized
                 />
               </div>
-              <h1 className="hero__title">
-                <Image src="/img/hero/content/title.svg" alt={siteBrand} width={496} height={217} />
-              </h1>
+              <div className="hero__copy">
+                <h1 className="hero__title">
+                  <Image src="/img/hero/content/title.svg" alt={siteBrand} width={496} height={217} />
+                </h1>
+                <p className="hero__motto">Садовый центр, где вас знают по имени</p>
+              </div>
               <p className="hero__caption">
                 Семейный садовый центр  •  Екатеринбург
               </p>

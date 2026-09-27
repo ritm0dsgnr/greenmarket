@@ -54,8 +54,8 @@ describe('selectHomeCatalogCategories', () => {
 
     expect(selectHomeCatalogCategories(categories, 5).map((item) => item.label)).toEqual([
       'Гортензии',
-      'Вересковые',
       'Розы',
+      'Вересковые',
       'Лианы',
     ])
   })
@@ -71,11 +71,12 @@ describe('selectHomeCatalogCategories', () => {
     ]
 
     expect(selectHomeCatalogCategories(categories).map((item) => item.label)).toEqual([
-      'Вересковые',
       'Розы',
+      'Вересковые',
       'Лианы',
       'Луковичные',
       'Злаки и травы',
+      'Сопутствующие товары',
     ])
   })
 })

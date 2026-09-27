@@ -217,7 +217,6 @@ export function ProductCardSlider({
             onPointerMove={swipe.bind.onPointerMove}
             onPointerUp={swipe.bind.onPointerUp}
             onPointerCancel={swipe.bind.onPointerCancel}
-            onLostPointerCapture={swipe.bind.onLostPointerCapture}
             onClickCapture={swipe.bind.onClickCapture}
           >
             <ul

@@ -46,6 +46,8 @@ export function mergeYoTwinSubcategories(subcategories: readonly PriceCatalogSub
     }
   })
 
+  items.sort((left, right) => left.label.localeCompare(right.label, 'ru'))
+
   return { items, aliases }
 }
 

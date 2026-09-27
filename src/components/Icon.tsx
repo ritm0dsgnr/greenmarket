@@ -28,7 +28,12 @@ interface IconProps {
 
 export function Icon({ name, className = '' }: IconProps) {
   return (
-    <svg className={['icon', className].filter(Boolean).join(' ')} aria-hidden="true" focusable="false">
+    <svg
+      className={['icon', className].filter(Boolean).join(' ')}
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+    >
       <use href={`#${name}`} />
     </svg>
   )

@@ -131,14 +131,37 @@
   &__footer
     display: flex
     align-items: flex-end
-    justify-content: space-between
-    gap: 1.6rem
+    justify-content: flex-start
+    gap: 1.2rem
     margin-top: auto
     padding-top: 2rem
+  &__specs-toggle
+    display: none
+    align-items: center
+    justify-content: center
+    flex-shrink: 0
+    width: 3.6rem
+    height: 3.6rem
+    margin-left: auto
+    border: 0
+    border-radius: 50%
+    color: $forest
+    background: $cream
+    cursor: pointer
+    position: relative
+    z-index: 2
+    @include anim(background-color)
+    .icon
+      width: 1.8rem
+      height: 1.8rem
+    &:hover,
+    &:focus-visible
+      background: $leaf
   &__price
     display: flex
     flex-direction: column
     align-items: flex-start
+    margin-right: auto
     gap: 0.2rem
     @include font-display
     font-size: 2rem
@@ -189,6 +212,7 @@
     align-items: center
     justify-content: center
     flex-shrink: 0
+    margin-right: auto
     pointer-events: none
     @include button-padding
     text-transform: uppercase
@@ -232,12 +256,80 @@
       @media (prefers-reduced-motion: reduce)
         transform: none
         transition: none
-    &.is-open .product-card__popup
+    &.is-open .product-card__popup,
+    &.is-open .product-card__sheet
       opacity: 1
       transform: none
       transition-delay: 0.08s
       @media (prefers-reduced-motion: reduce)
         transition-delay: 0s
+    &--sheet
+      padding: 0
+      align-items: stretch
+      justify-content: stretch
+      .product-card__sheet
+        position: relative
+        z-index: 1
+        opacity: 0
+        transform: translateY($anim-shift) scale($anim-scale)
+        transition: opacity $anim-duration $anim-ease, transform $anim-duration $anim-ease
+        @media (prefers-reduced-motion: reduce)
+          transform: none
+          transition: none
+  &__sheet
+    display: flex
+    flex-direction: column
+    width: 100%
+    height: 100%
+    min-height: 100%
+    padding: 6.4rem 2.4rem 3.2rem
+    overflow: auto
+    background: $cream
+    @include overlay-scrollbar
+    &-close
+      @include popup-close
+      background: $cream-muted
+    &-name
+      @include font-display
+      margin: 0
+      padding-right: 4.8rem
+      font-size: 2.2rem
+      line-height: 1.15
+    &-title
+      @include font-display
+      margin: 2.4rem 0 1.2rem
+      font-size: 1.4rem
+      line-height: 1.2
+      text-transform: uppercase
+    &-specs
+      display: flex
+      flex-direction: column
+      margin: 0
+      padding: 0
+      list-style: none
+      overflow: hidden
+      border-radius: 1.2rem
+    &-spec
+      display: flex
+      align-items: baseline
+      justify-content: space-between
+      gap: 1.6rem
+      padding: 1.2rem 1.6rem
+      &:nth-child(odd)
+        background: $cream-muted
+      &:nth-child(even)
+        background: $white
+      &-label
+        @include font-text
+        min-width: 0
+        font-size: 1.5rem
+        line-height: 1.3
+      &-value
+        @include font-display
+        flex-shrink: 0
+        font-size: 1.5rem
+        line-height: 1.3
+        text-align: right
   &__popup
     position: relative
     display: grid
