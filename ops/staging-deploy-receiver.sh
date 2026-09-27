@@ -71,7 +71,7 @@ fi
 
 archive_size="$(stat --format=%s -- "$incoming_archive")"
 if ((archive_size == 0 || archive_size > MAX_ARCHIVE_BYTES)); then
-  echo "Release archive size is outside the allowed limit." >&2
+  echo "Release archive size is outside the allowed limit (${archive_size} bytes, max ${MAX_ARCHIVE_BYTES})." >&2
   exit 65
 fi
 
