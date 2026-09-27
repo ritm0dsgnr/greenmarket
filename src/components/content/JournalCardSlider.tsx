@@ -23,7 +23,7 @@ function journalSlideLayout(viewportWidth: number, windowWidth: number) {
   const minCard = 52 * rem
 
   if (windowWidth <= mobileBreakpointPx) {
-    return { visible: 1, span: viewportWidth }
+    return { visible: 2, span: (viewportWidth - gap) / 2 }
   }
 
   if (viewportWidth + 0.5 >= minCard * 2 + gap) {

@@ -61,10 +61,10 @@
     align-items: center
     justify-content: center
     flex-shrink: 0
-    height: 2rem
-    max-height: 2rem
-    min-height: 2rem
-    padding: 0 1.2rem
+    height: 2.2rem
+    max-height: 2.2rem
+    min-height: 2.2rem
+    padding: 0 1.6rem
     border: 0.3rem solid $forest
     border-radius: 999rem
     background: $cream
@@ -78,10 +78,12 @@
     color: $forest
     @include anim(transform)
   &--sub
+    .catalog-card__visual
+      grid-template-rows: calc(2.2rem + 2.8rem) minmax(0, 1fr)
     .catalog-card__meta
       overflow: hidden
       min-height: 0
-      opacity: 0
+      opacity: 1
       @include anim(opacity)
     .catalog-card__media
       position: relative
@@ -91,10 +93,17 @@
       aspect-ratio: auto
     .catalog-card__arrow
       overflow: hidden
+      width: 2.2rem
+      height: 2.2rem
       transform: rotate(-90deg)
-    &:hover,
-    &:focus-visible
+    @media (min-width: $bp-mobile) and (hover: hover) and (pointer: fine)
       .catalog-card__visual
-        grid-template-rows: calc(2rem + 2.8rem) minmax(0, 1fr)
+        grid-template-rows: 0rem minmax(0, 1fr)
       .catalog-card__meta
-        opacity: 1
+        opacity: 0
+      &:hover,
+      &:focus-visible
+        .catalog-card__visual
+          grid-template-rows: calc(2.2rem + 2.8rem) minmax(0, 1fr)
+        .catalog-card__meta
+          opacity: 1
