@@ -55,6 +55,11 @@ describe('catalogCardImageSrc', () => {
     expect(catalogCardImageSrc('/catalog/dekorativnye-kustarniki/zhimolost')).toBe(
       '/img/catalog/zhimolost.20260926d.png',
     )
+    expect(catalogCardImageSrc('/catalog/derevya/vyaz')).toBe('/img/catalog/vyaz.20260927.png')
+    expect(catalogCardImageSrc('/catalog/mnogoletniki/astra')).toBe('/img/catalog/astra.20260927.png')
+    expect(catalogCardImageSrc('/catalog/soputstvuyuschie-tovary')).toBe(
+      '/img/catalog/soputstvuyuschie-tovary.20260927.png',
+    )
   })
 
   it('falls back to placeholder', () => {

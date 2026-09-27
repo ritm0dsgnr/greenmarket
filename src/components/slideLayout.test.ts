@@ -13,8 +13,8 @@ describe('slideLayout', () => {
     expect(slideLayout(720, span, gap, 900)).toEqual({ visible: 2, span: (720 - gap) / 2 })
   })
 
-  it('uses the full viewport for a single phone card', () => {
-    expect(slideLayout(343, span, gap, 390)).toEqual({ visible: 1, span: 343 })
+  it('fits two cards on a phone-width window', () => {
+    expect(slideLayout(343, span, gap, 390)).toEqual({ visible: 2, span: (343 - gap) / 2 })
   })
 
   it('falls back from four desktop cards when the measured viewport is too narrow', () => {

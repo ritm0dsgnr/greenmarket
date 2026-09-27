@@ -14,9 +14,9 @@ readonly APP_READ_GROUP="greenmarket-deploy"
 readonly NPM_BIN="/usr/local/bin/npm"
 readonly ACTIVATE_BIN="/usr/local/libexec/greenmarket-staging-activate"
 readonly CURL_BIN="/usr/bin/curl"
-readonly MAX_ARCHIVE_BYTES=$((32 * 1024 * 1024))
+readonly MAX_ARCHIVE_BYTES=$((128 * 1024 * 1024))
 readonly MAX_ARCHIVE_FILES=20000
-readonly MAX_EXTRACTED_BYTES=$((256 * 1024 * 1024))
+readonly MAX_EXTRACTED_BYTES=$((512 * 1024 * 1024))
 readonly RELEASE_RETENTION_COUNT=5
 
 export PATH="/usr/local/bin:/usr/bin:/bin"

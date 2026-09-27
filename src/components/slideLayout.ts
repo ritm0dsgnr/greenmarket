@@ -12,7 +12,7 @@ export function slideLayout(
   const pack = (count: number) => desktopSpan * count + gap * Math.max(0, count - 1)
 
   if (windowWidth <= mobileBreakpointPx) {
-    return { visible: 1, span: viewportWidth }
+    return { visible: 2, span: (viewportWidth - gap) / 2 }
   }
 
   if (windowWidth <= tabletBreakpointPx) {
