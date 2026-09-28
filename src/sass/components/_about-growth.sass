@@ -78,13 +78,22 @@
     transition: background-color $anim-duration $anim-ease, color $anim-duration $anim-ease
     @media (prefers-reduced-motion: reduce)
       transition: none
-    &:hover,
+    @media (hover: hover) and (pointer: fine)
+      &:hover
+        background: $leaf
     &:focus-visible
       background: $leaf
     &.is-active
       color: $cream
       background: $forest
       box-shadow: none
+      @media (hover: hover) and (pointer: fine)
+        &:hover
+          color: $cream
+          background: $forest
+      &:focus-visible
+        color: $cream
+        background: $forest
   &__timeline
     position: relative
     width: min(100%, 112rem)
@@ -301,6 +310,21 @@
       font-size: clamp(4.2rem, 14vw, 6.4rem)
     &__lead
       font-size: 1.6rem
+    &__years
+      top: calc(max(0.8rem, env(safe-area-inset-top, 0px)) + 6.4rem + 0.4rem)
+      flex-wrap: nowrap
+      gap: 0.4rem
+      width: 100%
+      max-width: 100%
+      margin-bottom: 3.2rem
+      padding: 0.4rem
+      border-radius: 10rem
+    &__year-chip
+      flex: 1 1 0
+      min-width: 0
+      height: 2.6rem
+      padding: 0 0.2rem
+      font-size: 1.1rem
     &__timeline
       gap: 4.8rem
     &__text

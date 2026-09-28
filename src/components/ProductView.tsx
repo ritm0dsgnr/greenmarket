@@ -4,18 +4,21 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useRef, useState, type MouseEvent, type PointerEvent, type TransitionEvent } from 'react'
 import { createPortal } from 'react-dom'
+import type { Swiper as SwiperInstance } from 'swiper'
+import { A11y } from 'swiper/modules'
+import { Swiper, SwiperSlide } from 'swiper/react'
 import { Icon } from '@/components/Icon'
 import { cartAddOriginFromEvent, useLayoutCart } from '@/components/LayoutCartProvider'
 import { bindHangingWords } from '@/components/bindHangingWords'
 import { formatLayoutPrice, layoutSaleOldPrice } from '@/components/productCardSizes'
 import type { ProductCardTag } from '@/components/ProductCard'
 import type { ProductSpec } from '@/components/productSpecs'
-import { useSwipePager } from '@/components/useSwipePager'
 import {
   firstAvailableSizeId,
   offerSizesHaveChoices,
   type ProductOfferSize,
 } from '@/import/greenmarket-price/offer-sizes'
+import 'swiper/css'
 
 const tagLabels = {
   sale: 'Sale',
@@ -63,18 +66,16 @@ function preventPhotoCopy(event: { preventDefault: () => void }) {
   event.preventDefault()
 }
 
-function wrapSlideIndex(index: number) {
-  const last = slides.length - 1
-
-  if (index < 0) {
-    return last
+function motionSpeed() {
+  if (typeof window === 'undefined') {
+    return 600
   }
 
-  if (index > last) {
-    return 0
-  }
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 600
+}
 
-  return index
+function goToSwiperSlide(instance: SwiperInstance | null, index: number, speed = motionSpeed()) {
+  instance?.slideTo(index, speed)
 }
 
 function ProductThumbs({
@@ -277,8 +278,9 @@ export function ProductView({ product }: { product: ProductViewModel }) {
   const [lightboxShown, setLightboxShown] = useState(false)
   const lightboxShownRef = useRef(false)
   const lightboxClosingRef = useRef(false)
-  const pageViewportRef = useRef<HTMLDivElement | null>(null)
-  const lightboxViewportRef = useRef<HTMLDivElement | null>(null)
+  const galleryRef = useRef<SwiperInstance | null>(null)
+  const lightboxRef = useRef<SwiperInstance | null>(null)
+  const slideIndexRef = useRef(0)
   const [sizeId, setSizeId] = useState(firstAvailableSizeId(sizes) ?? 'default')
   const [quantity, setQuantity] = useState(1)
   const [activeProductId, setActiveProductId] = useState(product.id)
@@ -299,19 +301,36 @@ export function ProductView({ product }: { product: ProductViewModel }) {
   const oldUnitPrice = layoutSaleOldPrice(unitPrice, product.tag)
   const total = unitPrice * quantity
   const oldTotal = oldUnitPrice ? oldUnitPrice * quantity : undefined
-  const swipeSlide = (direction: -1 | 1) => {
-    setSlideIndex((current) => wrapSlideIndex(current + direction))
-  }
-  const pageSwipe = useSwipePager(swipeSlide, {
-    onTap: () => setLightboxOpen(true),
-    getCommitDistance: () => pageViewportRef.current?.clientWidth ?? 0,
-  })
-  const lightboxSwipe = useSwipePager(swipeSlide, {
-    getCommitDistance: () => lightboxViewportRef.current?.clientWidth ?? 0,
-    onDismissDown: () => closeLightbox(),
-  })
-
+  const wrapGallery = slides.length > 1
+  slideIndexRef.current = slideIndex
   lightboxShownRef.current = lightboxShown
+
+  useEffect(() => {
+    galleryRef.current?.slideTo(0, 0)
+    lightboxRef.current?.slideTo(0, 0)
+  }, [product.id])
+
+  function onGallerySlideChange(instance: SwiperInstance) {
+    const next = instance.realIndex
+    if (next !== slideIndexRef.current) {
+      setSlideIndex(next)
+    }
+
+    if (lightboxRef.current && lightboxRef.current.realIndex !== next) {
+      lightboxRef.current.slideTo(next, motionSpeed())
+    }
+  }
+
+  function onLightboxSlideChange(instance: SwiperInstance) {
+    const next = instance.realIndex
+    if (next !== slideIndexRef.current) {
+      setSlideIndex(next)
+    }
+
+    if (galleryRef.current && galleryRef.current.realIndex !== next) {
+      galleryRef.current.slideTo(next, motionSpeed())
+    }
+  }
 
   useEffect(() => {
     if (!legendSizeId) {
@@ -361,13 +380,13 @@ export function ProductView({ product }: { product: ProductViewModel }) {
 
       if (event.key === 'ArrowLeft') {
         event.preventDefault()
-        setSlideIndex((current) => wrapSlideIndex(current - 1))
+        lightboxRef.current?.slidePrev(motionSpeed())
         return
       }
 
       if (event.key === 'ArrowRight') {
         event.preventDefault()
-        setSlideIndex((current) => wrapSlideIndex(current + 1))
+        lightboxRef.current?.slideNext(motionSpeed())
       }
     }
 
@@ -382,7 +401,6 @@ export function ProductView({ product }: { product: ProductViewModel }) {
 
   useEffect(() => {
     if (!lightboxOpen) {
-      lightboxSwipe.reset()
       return
     }
 
@@ -391,7 +409,7 @@ export function ProductView({ product }: { product: ProductViewModel }) {
     return () => {
       document.body.style.overflow = previousOverflow
     }
-  }, [lightboxOpen, lightboxSwipe.reset])
+  }, [lightboxOpen])
 
   useEffect(() => {
     if (!lightboxOpen || lightboxShown || !lightboxClosingRef.current) {
@@ -466,7 +484,7 @@ export function ProductView({ product }: { product: ProductViewModel }) {
         >
           <div className="product__slider">
             <div
-              className={['product__viewport', pageSwipe.dragging ? 'is-dragging' : ''].filter(Boolean).join(' ')}
+              className="product__viewport"
               role="button"
               tabIndex={0}
               aria-label="Открыть фото на весь экран"
@@ -476,26 +494,32 @@ export function ProductView({ product }: { product: ProductViewModel }) {
                   setLightboxOpen(true)
                 }
               }}
-              ref={(element) => {
-                pageViewportRef.current = element
-                pageSwipe.bind.ref(element)
-              }}
-              onPointerDown={pageSwipe.bind.onPointerDown}
-              onPointerMove={pageSwipe.bind.onPointerMove}
-              onPointerUp={pageSwipe.bind.onPointerUp}
-              onPointerCancel={pageSwipe.bind.onPointerCancel}
-              onClickCapture={pageSwipe.bind.onClickCapture}
+              onClick={() => setLightboxOpen(true)}
             >
-              <ul
-                className={['product__track', pageSwipe.dragging ? 'is-dragging' : ''].filter(Boolean).join(' ')}
-                style={{ transform: `translateX(calc(-${slideIndex * 100}% + ${pageSwipe.shift}px))` }}
+              <Swiper
+                className="product__swiper"
+                wrapperClass="product__track"
+                modules={[A11y]}
+                slidesPerView={1}
+                speed={600}
+                rewind={wrapGallery}
+                watchOverflow
+                resistanceRatio={0.65}
+                onSwiper={(instance) => {
+                  galleryRef.current = instance
+                }}
+                onSlideChange={onGallerySlideChange}
+                a11y={{
+                  enabled: true,
+                  containerMessage: 'Фото товара',
+                }}
               >
-                {slides.map((slide, index) => (
-                  <li className="product__slide" key={slide.id} aria-hidden={index !== slideIndex}>
+                {slides.map((slide) => (
+                  <SwiperSlide className="product__slide" key={slide.id}>
                     <Image src="/img/placeholder.svg" alt="" width={309} height={220} draggable={false} />
-                  </li>
+                  </SwiperSlide>
                 ))}
-              </ul>
+              </Swiper>
             </div>
           </div>
         </div>
@@ -662,27 +686,15 @@ export function ProductView({ product }: { product: ProductViewModel }) {
             </section>
           ) : null}
         </div>
-        <ProductThumbs current={slideIndex} onSelect={setSlideIndex} />
+        <ProductThumbs
+          current={slideIndex}
+          onSelect={(index) => goToSwiperSlide(galleryRef.current, index)}
+        />
       </div>
       {lightboxOpen
         ? createPortal(
             <div
-              className={[
-                'product__lightbox',
-                lightboxShown ? 'is-open' : '',
-                lightboxSwipe.dragging ? 'is-dragging' : '',
-              ]
-                .filter(Boolean)
-                .join(' ')}
-              style={
-                lightboxSwipe.shiftY > 0
-                  ? {
-                      ['--lightbox-dim' as string]: String(
-                        Math.max(0.08, 1 - lightboxSwipe.shiftY / 420),
-                      ),
-                    }
-                  : undefined
-              }
+              className={['product__lightbox', lightboxShown ? 'is-open' : ''].filter(Boolean).join(' ')}
               onClick={closeLightbox}
               onTransitionEnd={onLightboxTransitionEnd}
             >
@@ -700,49 +712,44 @@ export function ProductView({ product }: { product: ProductViewModel }) {
                 aria-modal="true"
                 aria-label="Фото товара"
                 onClick={(event) => event.stopPropagation()}
-                style={
-                  lightboxSwipe.shiftY > 0
-                    ? {
-                        transform: `translateY(${lightboxSwipe.shiftY}px) scale(${Math.max(0.88, 1 - lightboxSwipe.shiftY / 1600)})`,
-                      }
-                    : undefined
-                }
               >
                 <div
-                  className={['product__lightbox-viewport', lightboxSwipe.dragging ? 'is-dragging' : ''].filter(Boolean).join(' ')}
+                  className="product__lightbox-viewport"
                   onContextMenu={preventPhotoCopy}
                   onDragStart={preventPhotoCopy}
-                  ref={(element) => {
-                    lightboxViewportRef.current = element
-                    lightboxSwipe.bind.ref(element)
-                  }}
-                  onPointerDown={lightboxSwipe.bind.onPointerDown}
-                  onPointerMove={lightboxSwipe.bind.onPointerMove}
-                  onPointerUp={lightboxSwipe.bind.onPointerUp}
-                  onPointerCancel={lightboxSwipe.bind.onPointerCancel}
-                  onClickCapture={lightboxSwipe.bind.onClickCapture}
                 >
-                  <ul
-                    className={['product__lightbox-track', lightboxSwipe.dragging ? 'is-dragging' : ''].filter(Boolean).join(' ')}
-                    style={{ transform: `translateX(calc(-${slideIndex * 100}% + ${lightboxSwipe.shift}px))` }}
+                  <Swiper
+                    className="product__lightbox-swiper"
+                    wrapperClass="product__lightbox-track"
+                    modules={[A11y]}
+                    slidesPerView={1}
+                    speed={600}
+                    rewind={wrapGallery}
+                    watchOverflow
+                    resistanceRatio={0.65}
+                    onSwiper={(instance) => {
+                      lightboxRef.current = instance
+                      goToSwiperSlide(instance, slideIndexRef.current, 0)
+                    }}
+                    onSlideChange={onLightboxSlideChange}
+                    a11y={{
+                      enabled: true,
+                      containerMessage: 'Фото товара',
+                    }}
                   >
-                    {slides.map((slide, index) => (
-                      <li
-                        className="product__lightbox-slide"
-                        key={slide.id}
-                        aria-hidden={index !== slideIndex}
-                      >
+                    {slides.map((slide) => (
+                      <SwiperSlide className="product__lightbox-slide" key={slide.id}>
                         <Image src="/img/placeholder.svg" alt="" width={309} height={220} draggable={false} />
-                      </li>
+                      </SwiperSlide>
                     ))}
-                  </ul>
+                  </Swiper>
                 </div>
                 <div className="product__lightbox-controls">
                   <button
                     className="product__lightbox-control product__lightbox-control--prev"
                     type="button"
                     aria-label="Предыдущее фото"
-                    onClick={() => setSlideIndex((current) => wrapSlideIndex(current - 1))}
+                    onClick={() => lightboxRef.current?.slidePrev(motionSpeed())}
                   >
                     <Icon name="arrow-right" />
                   </button>
@@ -750,7 +757,7 @@ export function ProductView({ product }: { product: ProductViewModel }) {
                     className="product__lightbox-control product__lightbox-control--next"
                     type="button"
                     aria-label="Следующее фото"
-                    onClick={() => setSlideIndex((current) => wrapSlideIndex(current + 1))}
+                    onClick={() => lightboxRef.current?.slideNext(motionSpeed())}
                   >
                     <Icon name="arrow-right" />
                   </button>

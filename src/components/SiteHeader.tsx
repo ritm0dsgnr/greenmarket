@@ -297,26 +297,6 @@ export function SiteHeader() {
               <a href={sitePhoneHref} className="header__wrapper-phone">
                 {sitePhoneDisplay}
               </a>
-              <div className="header__wrapper-socials">
-                <a
-                  className="header__wrapper-social"
-                  href={siteVkHref}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="ВКонтакте"
-                >
-                  <Icon name="vk" />
-                </a>
-                <a
-                  className="header__wrapper-social"
-                  href={siteTelegramHref}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="Telegram"
-                >
-                  <Icon name="telegram" />
-                </a>
-              </div>
             </div>
             <div className="header__wrapper-actions">
               <HeaderSearch
@@ -342,6 +322,26 @@ export function SiteHeader() {
                   </span>
                 ) : null}
               </Link>
+            </div>
+            <div className="header__wrapper-socials">
+              <a
+                className="header__wrapper-social"
+                href={siteVkHref}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="ВКонтакте"
+              >
+                <Icon name="vk" />
+              </a>
+              <a
+                className="header__wrapper-social"
+                href={siteTelegramHref}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Telegram"
+              >
+                <Icon name="telegram" />
+              </a>
             </div>
           </div>
         </div>

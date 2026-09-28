@@ -23,6 +23,9 @@
   <symbol id="arrow-corner" viewBox="0 0 24 24">
     <path fill="none" stroke="currentColor" vector-effect="non-scaling-stroke" stroke-linecap="butt" stroke-linejoin="miter" d="M5 5L19 19M19 5V19H5"/>
   </symbol>
+  <symbol id="shirt" viewBox="0 0 24 24">
+    <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 5.5L12 7.5L15 5.5L20 8.5L17.5 11H16.5V19.5H7.5V11H6.5L4 8.5L9 5.5Z"/>
+  </symbol>
   <symbol id="search" viewBox="179.5 0.5 24 24">
     <path fill="none" stroke="currentColor" stroke-width="0.2rem" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" d="M190.719 17.1875C193.739 17.1875 196.188 14.7391 196.188 11.7188C196.188 8.69844 193.739 6.25 190.719 6.25C187.698 6.25 185.25 8.69844 185.25 11.7188C185.25 14.7391 187.698 17.1875 190.719 17.1875Z"/><path fill="none" stroke="currentColor" stroke-width="0.2rem" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" d="M197.75 18.75L195.016 16.0156"/>
   </symbol>
@@ -42,10 +45,13 @@
     <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M342 7C338.134 7 335 10.1342 335 14C335 17.8658 338.134 21 342 21C345.866 21 349 17.8658 349 14C349 10.1342 345.866 7 342 7ZM345.231 15.0769H342C341.857 15.0769 341.72 15.0202 341.619 14.9192C341.518 14.8182 341.462 14.6813 341.462 14.5385V9.69231C341.462 9.5495 341.518 9.41254 341.619 9.31156C341.72 9.21058 341.857 9.15385 342 9.15385C342.143 9.15385 342.28 9.21058 342.381 9.31156C342.482 9.41254 342.538 9.5495 342.538 9.69231V14H345.231C345.374 14 345.511 14.0567 345.612 14.1577C345.713 14.2587 345.769 14.3957 345.769 14.5385C345.769 14.6813 345.713 14.8182 345.612 14.9192C345.511 15.0202 345.374 15.0769 345.231 15.0769Z"/>
   </symbol>
   <symbol id="phone" viewBox="0 0 24 24">
-    <path fill="currentColor" d="M8.15 3.55c.42-.62 1.2-.84 1.9-.5l1.86 1.08c.58.34.84 1.04.62 1.68l-.52 1.54c-.14.42 0 .88.34 1.16 1.18 1 2.56 2.38 3.56 3.56.28.34.74.48 1.16.34l1.54-.52c.64-.22 1.34.04 1.68.62l1.08 1.86c.34.7.12 1.48-.5 1.9l-1.12.78c-.7.48-1.62.62-2.48.38C12.4 17.72 6.28 11.6 5.01 6.79c-.24-.86-.1-1.78.38-2.48l.76-1.12z"/>
+    <path fill="currentColor" d="M7.1 3.5h2.9c.5 0 .9.3 1 .8l.7 2.9c.1.4 0 .8-.3 1.1L9.8 10c1 1.7 2.4 3.1 4.1 4.1l1.7-1.6c.3-.3.7-.4 1.1-.3l2.9.7c.5.1.8.5.8 1v2.9c0 .8-.7 1.5-1.5 1.5C11.2 18.3 5.7 12.8 5.7 5c0-.8.6-1.5 1.4-1.5Z"/>
   </symbol>
   <symbol id="document" viewBox="0 0 24 24">
     <path fill="currentColor" fill-rule="evenodd" d="M7 3.2h7.4L18.8 7.6v13.2H7V3.2zm7.4 0v4.4h4.4M9.2 12.1h5.6v1.4H9.2v-1.4zm0 3.1h5.6v1.4H9.2v-1.4zm0 3.1h4.2v1.4H9.2v-1.4z"/>
+  </symbol>
+  <symbol id="house" viewBox="0 0 24 24">
+    <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 11L12 4.5L20 11"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6.5 10.5V19.5H17.5V10.5"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10 19.5V14.5H14V19.5"/>
   </symbol>
   <symbol id="heart" viewBox="360 1 24 24">
     <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M372 19C372 19 366.012 15.3617 366.012 10.7615C365.952 10.0596 366.112 9.35644 366.47 8.74534C366.828 8.13424 367.368 7.64412 368.017 7.34008C368.667 7.03604 369.396 6.93246 370.107 7.0431C370.819 7.15374 371.479 7.47336 372 7.95951C372.521 7.47336 373.181 7.15374 373.893 7.0431C374.604 6.93246 375.333 7.03604 375.983 7.34008C376.632 7.64412 377.172 8.13424 377.53 8.74534C377.888 9.35644 378.048 10.0596 377.988 10.7615C377.988 15.3617 372 19 372 19Z"/>

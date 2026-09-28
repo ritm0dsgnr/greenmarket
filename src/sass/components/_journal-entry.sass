@@ -66,7 +66,7 @@
     border-left: 0.4rem solid $leaf
     font-size: 2rem
     font-weight: 600
-    line-height: 1.45
+    line-height: 1.15
     text-wrap: pretty
   &__body
     display: flex
@@ -115,12 +115,12 @@
     blockquote
       position: relative
       margin: 0
-      padding: 1.4rem 2rem 1.4rem 6.4rem
+      padding: 1.4rem 2rem 1.4rem 8.4rem
       background: $cream-muted
       border-radius: 1.8rem
       p
         @include font-display
-        font-size: clamp(2rem, 2.4vw, 2.6rem)
+        font-size: clamp(1.7rem, 2vw, 2.1rem)
         font-weight: 700
         line-height: 1.08
         letter-spacing: -0.02em
@@ -137,11 +137,10 @@
         @include font-display
         position: absolute
         left: 1.6rem
-        top: 50%
+        top: 0.6rem
         font-size: 5.6rem
         line-height: 1
         color: $leaf
-        transform: translateY(-52%)
     aside
       margin: 0.4rem 0
       padding: 2rem 2.4rem
@@ -219,11 +218,12 @@
       h3
         font-size: 1.8rem
       blockquote
-        padding: 1.2rem 1.6rem 1.2rem 4.8rem
+        padding: 1.2rem 1.6rem 1.2rem 6.4rem
         p
-          font-size: 1.8rem
+          font-size: 1.6rem
         &::before
           left: 1.2rem
+          top: 0.5rem
           font-size: 4.2rem
       aside
         padding: 1.6rem 2rem

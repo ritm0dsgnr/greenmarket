@@ -23,6 +23,16 @@ function markActiveYear(chips: HTMLButtonElement[], year: number) {
   })
 }
 
+function yearsPinOffset(root: HTMLElement) {
+  const years = root.querySelector<HTMLElement>('.about-growth__years')
+  if (!years) {
+    return 0
+  }
+
+  const stickyTop = Number.parseFloat(getComputedStyle(years).top) || 0
+  return stickyTop + years.offsetHeight + 12
+}
+
 export function HomeAbout() {
   const rootRef = useRef<HTMLElement>(null)
 
@@ -40,14 +50,58 @@ export function HomeAbout() {
       const chapters = gsap.utils.toArray<HTMLElement>('.about-growth__chapter', root)
       const chips = gsap.utils.toArray<HTMLButtonElement>('.about-growth__year-chip', root)
       const cleanups: Array<() => void> = []
+      let pinYear: number | null = null
+      let pinToken = 0
 
       if (chips[0]) {
         markActiveYear(chips, Number(chips[0].dataset.year))
       }
 
+      const onChipClick = contextSafe((event: Event) => {
+        const button = event.currentTarget as HTMLButtonElement
+        const year = Number(button.dataset.year)
+        const target = root.querySelector<HTMLElement>(`.about-growth__chapter[data-year="${year}"]`)
+        if (!target || Number.isNaN(year)) {
+          return
+        }
+
+        pinToken += 1
+        const token = pinToken
+        pinYear = year
+        markActiveYear(chips, year)
+        if (!reduceMotion) {
+          gsap.to(button, { scale: 0.92, duration: 0.12, yoyo: true, repeat: 1, ease: 'power2.out' })
+        }
+
+        const top = window.scrollY + target.getBoundingClientRect().top - yearsPinOffset(root)
+        window.scrollTo({
+          top: Math.max(0, top),
+          left: 0,
+          behavior: reduceMotion ? 'auto' : 'smooth',
+        })
+
+        const unlock = () => {
+          if (token !== pinToken) {
+            return
+          }
+          pinYear = null
+        }
+        window.addEventListener('scrollend', unlock, { once: true })
+        window.setTimeout(unlock, 1000)
+      })
+
+      chips.forEach((chip) => chip.addEventListener('click', onChipClick))
+      cleanups.push(() => {
+        pinToken += 1
+        pinYear = null
+        chips.forEach((chip) => chip.removeEventListener('click', onChipClick))
+      })
+
       if (reduceMotion) {
         gsap.set([head, ...chapters, stemFill].filter(Boolean), { clearProps: 'all', opacity: 1 })
-        return
+        return () => {
+          cleanups.forEach((cleanup) => cleanup())
+        }
       }
 
       gsap.from(head?.children ?? [], {
@@ -81,7 +135,6 @@ export function HomeAbout() {
       }
 
       chapters.forEach((chapter) => {
-        const year = Number(chapter.dataset.year)
         const flipped = chapter.classList.contains('about-growth__chapter--flip')
         const copy = chapter.querySelector<HTMLElement>('.about-growth__copy')
         const bud = chapter.querySelector<HTMLElement>('.about-growth__bud')
@@ -95,8 +148,6 @@ export function HomeAbout() {
               start: 'top 78%',
               end: 'top 42%',
               toggleActions: 'play none none reverse',
-              onEnter: () => markActiveYear(chips, year),
-              onEnterBack: () => markActiveYear(chips, year),
             },
           })
           .from(
@@ -224,22 +275,33 @@ export function HomeAbout() {
         })
       })
 
-      const onChipClick = contextSafe((event: Event) => {
-        const button = event.currentTarget as HTMLButtonElement
-        const year = button.dataset.year
-        const target = root.querySelector<HTMLElement>(`.about-growth__chapter[data-year="${year}"]`)
-        if (!target) {
-          return
-        }
+      chapters.forEach((chapter, index) => {
+        const year = Number(chapter.dataset.year)
+        const next = chapters[index + 1]
 
-        markActiveYear(chips, Number(year))
-        gsap.to(button, { scale: 0.92, duration: 0.12, yoyo: true, repeat: 1, ease: 'power2.out' })
-        target.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      })
-
-      chips.forEach((chip) => chip.addEventListener('click', onChipClick))
-      cleanups.push(() => {
-        chips.forEach((chip) => chip.removeEventListener('click', onChipClick))
+        ScrollTrigger.create({
+          trigger: chapter,
+          start: () => `top ${yearsPinOffset(root)}px`,
+          ...(next
+            ? {
+                endTrigger: next,
+                end: () => `top ${yearsPinOffset(root)}px`,
+              }
+            : { end: 'bottom bottom' }),
+          invalidateOnRefresh: true,
+          onEnter: () => {
+            if (pinYear !== null) {
+              return
+            }
+            markActiveYear(chips, year)
+          },
+          onEnterBack: () => {
+            if (pinYear !== null) {
+              return
+            }
+            markActiveYear(chips, year)
+          },
+        })
       })
 
       return () => {
