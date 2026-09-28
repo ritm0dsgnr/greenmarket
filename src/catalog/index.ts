@@ -64,6 +64,7 @@ export {
 } from '@/catalog/search-catalog'
 export type { ListingSpecFilter, ListingSortId } from '@/catalog/listing-filters-url'
 export { subcategoryCardTitle } from './subcategory-card-title'
+export { getCategoryCopy } from './category-copy'
 
 export function getProductCardsForSubcategory(categorySlug: string, subcategorySlug: string) {
   const match = getSubcategory(categorySlug, subcategorySlug)

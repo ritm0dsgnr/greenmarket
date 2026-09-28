@@ -16,14 +16,21 @@
     width: 62rem
     flex-shrink: 0
     overflow: hidden
+    overflow: clip
     background: $cream
     border: 0.4rem solid $forest
     border-radius: 4rem
     isolation: isolate
+    transform: translateZ(0)
+    -webkit-mask-image: -webkit-radial-gradient(white, white)
+    mask-image: radial-gradient(white, white)
   &__stack
     position: absolute
     inset: 0
     z-index: 1
+    overflow: hidden
+    overflow: clip
+    border-radius: inherit
   &__image
     position: absolute
     inset: 0
@@ -100,6 +107,7 @@
       width: 100%
       height: auto
   &__motto
+    display: none
     margin: 0
     max-width: 36rem
     @include font-display
@@ -269,7 +277,7 @@
     justify-content: center
     gap: 0.6rem
     margin-top: 0.6rem
-    @include button-padding-with-icon
+    @include button-padding
     text-transform: uppercase
     text-decoration: none
     color: $forest
@@ -325,7 +333,9 @@
     border-radius: 50%
     background: rgba($cream, 0.35)
     cursor: pointer
-    @include anim(transform background-color)
+    transition: width $anim-duration $anim-ease, border-radius $anim-duration $anim-ease, background-color $anim-duration $anim-ease, transform $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
     &:hover,
     &:focus-visible
       background: rgba($cream, 0.7)
@@ -406,10 +416,10 @@
     inset: 0
     z-index: 0
     background: rgb(0 0 0 / 0.72)
-    backdrop-filter: blur(1.6rem)
-    -webkit-backdrop-filter: blur(1.6rem)
+    backdrop-filter: blur(0.8rem)
+    -webkit-backdrop-filter: blur(0.8rem)
     opacity: 0
-    transition: opacity $anim-duration $anim-ease
+    transition: opacity 0.45s $anim-ease
     @media (prefers-reduced-motion: reduce)
       transition: none
   &.is-open::before
@@ -427,8 +437,8 @@
     border: 0
     border-radius: 2.4rem 0.2rem 0.2rem 2.4rem
     opacity: 0
-    transform: translateY($anim-shift) scale($anim-scale)
-    transition: opacity $anim-duration $anim-ease, transform $anim-duration $anim-ease
+    transform: translateY(1.6rem)
+    transition: opacity 0.45s $anim-ease, transform 0.45s $anim-ease
     @media (prefers-reduced-motion: reduce)
       transform: none
       transition: none
@@ -440,11 +450,20 @@
   &__body
     display: flex
     flex-direction: column
+    flex: 1 1 auto
+    min-height: 0
+    overflow: hidden
+    padding: 4rem 3.2rem 3.2rem
+  &__scroll
+    display: flex
+    flex-direction: column
     gap: 1.6rem
     flex: 1 1 auto
     min-height: 0
     overflow: auto
-    padding: 4rem 3.2rem 3.2rem
+    padding-bottom: 0.8rem
+    overscroll-behavior: contain
+    overflow-anchor: none
     @include overlay-scrollbar
   &__eyebrow
     @include font-display
@@ -592,6 +611,7 @@
     justify-content: center
     align-self: center
     margin-top: 0.4rem
+    margin-bottom: 0.4rem
     @include button-padding
     text-transform: uppercase
     color: $forest

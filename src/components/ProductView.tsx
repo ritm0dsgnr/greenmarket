@@ -272,10 +272,13 @@ export function ProductView({ product }: { product: ProductViewModel }) {
           },
         ]
   const [slideIndex, setSlideIndex] = useState(0)
+  const [legendSizeId, setLegendSizeId] = useState<string | null>(null)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxShown, setLightboxShown] = useState(false)
   const lightboxShownRef = useRef(false)
   const lightboxClosingRef = useRef(false)
+  const pageViewportRef = useRef<HTMLDivElement | null>(null)
+  const lightboxViewportRef = useRef<HTMLDivElement | null>(null)
   const [sizeId, setSizeId] = useState(firstAvailableSizeId(sizes) ?? 'default')
   const [quantity, setQuantity] = useState(1)
   const [activeProductId, setActiveProductId] = useState(product.id)
@@ -286,6 +289,7 @@ export function ProductView({ product }: { product: ProductViewModel }) {
     setSizeId(firstAvailableSizeId(sizes) ?? 'default')
     setQuantity(1)
     setSlideIndex(0)
+    setLegendSizeId(null)
   }
 
   const hasVariants = offerSizesHaveChoices(sizes)
@@ -298,10 +302,45 @@ export function ProductView({ product }: { product: ProductViewModel }) {
   const swipeSlide = (direction: -1 | 1) => {
     setSlideIndex((current) => wrapSlideIndex(current + direction))
   }
-  const pageSwipe = useSwipePager(swipeSlide, { onTap: () => setLightboxOpen(true) })
-  const lightboxSwipe = useSwipePager(swipeSlide)
+  const pageSwipe = useSwipePager(swipeSlide, {
+    onTap: () => setLightboxOpen(true),
+    getCommitDistance: () => pageViewportRef.current?.clientWidth ?? 0,
+  })
+  const lightboxSwipe = useSwipePager(swipeSlide, {
+    getCommitDistance: () => lightboxViewportRef.current?.clientWidth ?? 0,
+    onDismissDown: () => closeLightbox(),
+  })
 
   lightboxShownRef.current = lightboxShown
+
+  useEffect(() => {
+    if (!legendSizeId) {
+      return
+    }
+
+    const onPointerDown = (event: Event) => {
+      const target = event.target
+      if (!(target instanceof Element)) {
+        return
+      }
+      if (target.closest('.product__size-help, .product__hint')) {
+        return
+      }
+      setLegendSizeId(null)
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setLegendSizeId(null)
+      }
+    }
+
+    document.addEventListener('pointerdown', onPointerDown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [legendSizeId])
 
   useEffect(() => {
     if (!lightboxOpen) {
@@ -340,6 +379,19 @@ export function ProductView({ product }: { product: ProductViewModel }) {
       document.removeEventListener('keydown', onKeyDown)
     }
   }, [lightboxOpen])
+
+  useEffect(() => {
+    if (!lightboxOpen) {
+      lightboxSwipe.reset()
+      return
+    }
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [lightboxOpen, lightboxSwipe.reset])
 
   useEffect(() => {
     if (!lightboxOpen || lightboxShown || !lightboxClosingRef.current) {
@@ -405,6 +457,7 @@ export function ProductView({ product }: { product: ProductViewModel }) {
 
   return (
     <article className="product">
+      {legendSizeId ? <div className="product__legend-scrim" aria-hidden="true" /> : null}
       <div className="product__layout">
         <div
           className="product__gallery"
@@ -423,7 +476,15 @@ export function ProductView({ product }: { product: ProductViewModel }) {
                   setLightboxOpen(true)
                 }
               }}
-              {...pageSwipe.bind}
+              ref={(element) => {
+                pageViewportRef.current = element
+                pageSwipe.bind.ref(element)
+              }}
+              onPointerDown={pageSwipe.bind.onPointerDown}
+              onPointerMove={pageSwipe.bind.onPointerMove}
+              onPointerUp={pageSwipe.bind.onPointerUp}
+              onPointerCancel={pageSwipe.bind.onPointerCancel}
+              onClickCapture={pageSwipe.bind.onClickCapture}
             >
               <ul
                 className={['product__track', pageSwipe.dragging ? 'is-dragging' : ''].filter(Boolean).join(' ')}
@@ -485,6 +546,7 @@ export function ProductView({ product }: { product: ProductViewModel }) {
                             'product__size',
                             selectedSize ? 'is-active' : '',
                             sizeAvailable ? '' : 'is-unavailable',
+                            legendSizeId === size.id ? 'is-legend-open' : '',
                           ]
                             .filter(Boolean)
                             .join(' ')}
@@ -523,6 +585,10 @@ export function ProductView({ product }: { product: ProductViewModel }) {
                               className="product__size-help"
                               type="button"
                               aria-label="Как читать маркировку размера"
+                              aria-expanded={legendSizeId === size.id}
+                              onClick={() => {
+                                setLegendSizeId((current) => (current === size.id ? null : size.id))
+                              }}
                             >
                               ?
                             </button>
@@ -601,7 +667,22 @@ export function ProductView({ product }: { product: ProductViewModel }) {
       {lightboxOpen
         ? createPortal(
             <div
-              className={['product__lightbox', lightboxShown ? 'is-open' : ''].filter(Boolean).join(' ')}
+              className={[
+                'product__lightbox',
+                lightboxShown ? 'is-open' : '',
+                lightboxSwipe.dragging ? 'is-dragging' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+              style={
+                lightboxSwipe.shiftY > 0
+                  ? {
+                      ['--lightbox-dim' as string]: String(
+                        Math.max(0.08, 1 - lightboxSwipe.shiftY / 420),
+                      ),
+                    }
+                  : undefined
+              }
               onClick={closeLightbox}
               onTransitionEnd={onLightboxTransitionEnd}
             >
@@ -619,12 +700,27 @@ export function ProductView({ product }: { product: ProductViewModel }) {
                 aria-modal="true"
                 aria-label="Фото товара"
                 onClick={(event) => event.stopPropagation()}
+                style={
+                  lightboxSwipe.shiftY > 0
+                    ? {
+                        transform: `translateY(${lightboxSwipe.shiftY}px) scale(${Math.max(0.88, 1 - lightboxSwipe.shiftY / 1600)})`,
+                      }
+                    : undefined
+                }
               >
                 <div
                   className={['product__lightbox-viewport', lightboxSwipe.dragging ? 'is-dragging' : ''].filter(Boolean).join(' ')}
                   onContextMenu={preventPhotoCopy}
                   onDragStart={preventPhotoCopy}
-                  {...lightboxSwipe.bind}
+                  ref={(element) => {
+                    lightboxViewportRef.current = element
+                    lightboxSwipe.bind.ref(element)
+                  }}
+                  onPointerDown={lightboxSwipe.bind.onPointerDown}
+                  onPointerMove={lightboxSwipe.bind.onPointerMove}
+                  onPointerUp={lightboxSwipe.bind.onPointerUp}
+                  onPointerCancel={lightboxSwipe.bind.onPointerCancel}
+                  onClickCapture={lightboxSwipe.bind.onClickCapture}
                 >
                   <ul
                     className={['product__lightbox-track', lightboxSwipe.dragging ? 'is-dragging' : ''].filter(Boolean).join(' ')}

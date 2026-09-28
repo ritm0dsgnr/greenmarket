@@ -111,12 +111,15 @@
     padding: 0.4rem
     color: $forest
     opacity: 0.28
-    transition: opacity $anim-duration $anim-ease, color $anim-duration $anim-ease
+    transition: opacity $anim-duration $anim-ease, color $anim-duration $anim-ease, transform $anim-duration $anim-ease
     @media (prefers-reduced-motion: reduce)
       transition: none
     .icon
       width: 1.8rem
       height: 2.2rem
+      transition: transform $anim-duration $anim-ease
+      @media (prefers-reduced-motion: reduce)
+        transition: none
     &:hover,
     &:focus-visible
       opacity: 1
@@ -124,3 +127,5 @@
     &.is-active
       opacity: 1
       color: $forest
+      .icon
+        transform: scale(1.12)

@@ -8,9 +8,9 @@
   display: flex
   flex-direction: column
   gap: 3.2rem
-  max-width: 68rem
+  max-width: 96rem
   margin-inline: auto
-  padding-top: 1.6rem
+  padding-top: 6.4rem
   padding-bottom: 10rem
   color: $forest
   &__meta
@@ -43,9 +43,9 @@
     color: rgba($forest, 0.72)
   &__title
     @include font-display
-    font-size: clamp(3.2rem, 4.4vw, 5.2rem)
-    line-height: 1.04
-    letter-spacing: -0.04em
+    font-size: clamp(2.4rem, 3vw, 3.4rem)
+    line-height: 1.1
+    letter-spacing: -0.03em
     text-transform: uppercase
     text-wrap: balance
   &__cover
@@ -57,7 +57,7 @@
     img
       width: 100%
       height: auto
-      aspect-ratio: 4 / 3
+      aspect-ratio: 16 / 9
       object-fit: cover
       object-position: center 58%
   &__lead
@@ -181,7 +181,7 @@
     display: flex
     flex-direction: column
     gap: 2.4rem
-    margin-top: 2.4rem
+    margin-top: 9.6rem
   &__related-title
     @include font-display
     font-size: 2.4rem
@@ -189,14 +189,23 @@
     text-transform: uppercase
   &__related-list
     display: grid
-    grid-template-columns: 1fr
+    grid-template-columns: repeat(2, minmax(0, 1fr))
     gap: 2.4rem
     list-style: none
+    .event-card
+      width: 100%
+      height: 100%
 
 @media (max-width: $bp-mobile)
   .journal-entry
     gap: 2.4rem
+    padding-top: 3.6rem
     padding-bottom: 6rem
+    &__related
+      margin-top: 7.2rem
+    &__related-list
+      grid-template-columns: 1fr
+      gap: 1.6rem
     &__cover
       border-radius: 1.8rem
     &__lead

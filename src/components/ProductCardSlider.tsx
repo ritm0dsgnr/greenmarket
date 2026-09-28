@@ -44,7 +44,6 @@ export function ProductCardSlider({
   const [layout, setLayout] = useState({ visible: 4, span: 0, step: 0 })
   const locked = useRef(false)
   const viewportRef = useRef<HTMLDivElement>(null)
-  const page = cards.length === 0 ? 0 : ((index - loopStart) % cards.length + cards.length) % cards.length
   const prevText = prevLabel ?? `Предыдущие, ${title}`
   const nextText = nextLabel ?? `Следующие, ${title}`
   const pagesText = pagesLabel ?? `Пагинация, ${title}`
@@ -125,17 +124,21 @@ export function ProductCardSlider({
       return
     }
 
-    if (locked.current) {
-      return
-    }
-
     locked.current = true
     setAnimate(true)
     setIndex((current) => current + step)
   }
 
   const swipe = useSwipePager((direction) => goTo(direction), {
-    isLocked: () => locked.current,
+    getCommitDistance: () => layout.step,
+    onInterrupt: () => {
+      if (!locked.current) {
+        return
+      }
+
+      locked.current = false
+      setAnimate(false)
+    },
   })
 
   const handleTransitionEnd = (event: TransitionEvent<HTMLUListElement>) => {
@@ -166,6 +169,9 @@ export function ProductCardSlider({
   }
 
   const offset = layout.step > 0 ? layout.step * index - swipe.shift : 0
+  const visualIndex = layout.step > 0 ? Math.round(offset / layout.step) : index
+  const page =
+    cards.length === 0 ? 0 : ((visualIndex - loopStart) % cards.length + cards.length) % cards.length
   const trackClass = [
     `${block}__track`,
     animate && !swipe.dragging ? '' : 'is-instant',
