@@ -2,15 +2,35 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useCallback, useState, type MouseEvent } from 'react'
+import { useCallback, useRef, useState } from 'react'
+import type { Swiper as SwiperInstance } from 'swiper'
+import { A11y, EffectFade } from 'swiper/modules'
+import { Swiper, SwiperSlide } from 'swiper/react'
 import { bindHangingWords } from '@/components/bindHangingWords'
 import { HeroSignupPopup } from '@/components/HeroSignupPopup'
 import { Icon } from '@/components/Icon'
-import { useSwipePager } from '@/components/useSwipePager'
 import { getHeroSignupDetails, heroSlides, type HeroSlide } from '@/content/hero-slides'
+import 'swiper/css'
+import 'swiper/css/effect-fade'
 
 function formatSlideIndex(value: number) {
   return String(value).padStart(2, '0')
+}
+
+function motionSpeed() {
+  if (typeof window === 'undefined') {
+    return 550
+  }
+
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 550
+}
+
+function pointerX(event: MouseEvent | TouchEvent | PointerEvent) {
+  if ('clientX' in event) {
+    return event.clientX
+  }
+
+  return event.changedTouches[0]?.clientX ?? 0
 }
 
 function HeroSlideCta({
@@ -37,43 +57,15 @@ function HeroSlideCta({
 
 export function HeroSlider() {
   const slides = heroSlides
+  const swiperRef = useRef<SwiperInstance | null>(null)
   const [index, setIndex] = useState(0)
   const [signupSlide, setSignupSlide] = useState<HeroSlide | null>(null)
-  const lastIndex = slides.length - 1
+  const wrap = slides.length > 1
 
-  const goTo = useCallback(
-    (nextIndex: number) => {
-      if (slides.length === 0) {
-        return
-      }
-
-      if (nextIndex < 0) {
-        setIndex(lastIndex)
-        return
-      }
-
-      if (nextIndex > lastIndex) {
-        setIndex(0)
-        return
-      }
-
-      setIndex(nextIndex)
-    },
-    [lastIndex, slides.length],
-  )
-
-  const swipe = useSwipePager((direction) => goTo(index + direction))
   const closeSignup = useCallback(() => setSignupSlide(null), [])
 
-  function onViewportClick(event: MouseEvent<HTMLDivElement>) {
-    const target = event.target
-
-    if (!(target instanceof Element) || target.closest('a, button, .hero__slide-panel')) {
-      return
-    }
-
-    const mid = event.currentTarget.getBoundingClientRect().left + event.currentTarget.clientWidth / 2
-    goTo(index + (event.clientX < mid ? -1 : 1))
+  function goTo(nextIndex: number) {
+    swiperRef.current?.slideTo(nextIndex, motionSpeed())
   }
 
   if (slides.length === 0) {
@@ -83,25 +75,50 @@ export function HeroSlider() {
   return (
     <>
       <div className="hero__slider">
-        <div
-          className={['hero__viewport', swipe.dragging ? 'is-dragging' : '']
-            .filter(Boolean)
-            .join(' ')}
-          {...swipe.bind}
-          onClick={onViewportClick}
-        >
-          <ul className="hero__track hero__track--fade">
+        <div className="hero__viewport">
+          <Swiper
+            className="hero__swiper"
+            wrapperClass="hero__track"
+            modules={[A11y, EffectFade]}
+            effect="fade"
+            fadeEffect={{ crossFade: true }}
+            slidesPerView={1}
+            speed={550}
+            rewind={wrap}
+            watchOverflow
+            resistanceRatio={0.65}
+            onSwiper={(instance) => {
+              swiperRef.current = instance
+              setIndex(instance.realIndex)
+            }}
+            onSlideChange={(instance) => {
+              setIndex(instance.realIndex)
+            }}
+            onClick={(swiper, event) => {
+              const target = event.target
+
+              if (!(target instanceof Element) || target.closest('a, button, .hero__slide-panel')) {
+                return
+              }
+
+              const mid = swiper.el.getBoundingClientRect().left + swiper.el.clientWidth / 2
+              if (pointerX(event) < mid) {
+                swiper.slidePrev(motionSpeed())
+                return
+              }
+
+              swiper.slideNext(motionSpeed())
+            }}
+            a11y={{
+              enabled: true,
+              containerMessage: 'Слайды',
+            }}
+          >
             {slides.map((slide, slideIndex) => {
-              const current = slideIndex === index
               const titleId = `hero-slide-title-${slide.id}`
 
               return (
-                <li
-                  className={['hero__slide', current ? 'is-active' : ''].filter(Boolean).join(' ')}
-                  key={slide.id}
-                  aria-hidden={!current}
-                  inert={!current ? true : undefined}
-                >
+                <SwiperSlide className="hero__slide" key={slide.id}>
                   <Image
                     className="hero__slide-image"
                     src={slide.imageSrc}
@@ -140,10 +157,10 @@ export function HeroSlider() {
                     <p className="hero__slide-text">{bindHangingWords(slide.text)}</p>
                     <HeroSlideCta slide={slide} onSignup={setSignupSlide} />
                   </div>
-                </li>
+                </SwiperSlide>
               )
             })}
-          </ul>
+          </Swiper>
         </div>
 
         <div className="hero__rail">
@@ -176,7 +193,7 @@ export function HeroSlider() {
               className="hero__control hero__control--prev"
               type="button"
               aria-label="Предыдущий слайд"
-              onClick={() => goTo(index - 1)}
+              onClick={() => swiperRef.current?.slidePrev(motionSpeed())}
             >
               <Icon name="arrow-right" />
             </button>
@@ -184,7 +201,7 @@ export function HeroSlider() {
               className="hero__control hero__control--next"
               type="button"
               aria-label="Следующий слайд"
-              onClick={() => goTo(index + 1)}
+              onClick={() => swiperRef.current?.slideNext(motionSpeed())}
             >
               <Icon name="arrow-right" />
             </button>

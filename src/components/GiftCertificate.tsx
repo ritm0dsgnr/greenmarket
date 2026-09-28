@@ -11,7 +11,7 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 import { bindHangingWords } from '@/components/bindHangingWords'
-import { Icon } from '@/components/Icon'
+import { Icon, type SpriteIconName } from '@/components/Icon'
 import { siteBrand } from '@/components/siteContacts'
 
 const t = bindHangingWords
@@ -19,11 +19,11 @@ const t = bindHangingWords
 const presetAmounts = [1000, 3000, 5000, 10000] as const
 
 const assortment = [
-  '🌸 Роскошные растения для сада и дома;',
-  '🏡 Стильный декор, который добавит уюта;',
-  '🧤 Удобная садовая одежда и качественные инструменты;',
-  '✨ Множество приятных мелочей для вдохновения.',
-] as const
+  { icon: 'plant', text: 'Роскошные растения для сада и дома;' },
+  { icon: 'house', text: 'Стильный декор, который добавит уюта;' },
+  { icon: 'shirt', text: 'Удобная садовая одежда и качественные инструменты;' },
+  { icon: 'heart', text: 'Множество приятных мелочей для вдохновения.' },
+] as const satisfies ReadonlyArray<{ icon: SpriteIconName; text: string }>
 
 const emptySubscribe = () => () => {}
 
@@ -64,7 +64,12 @@ export function GiftCertificate() {
         </p>
         <ul className="gift-certificate__assortment">
           {assortment.map((item) => (
-            <li key={item}>{item}</li>
+            <li key={item.text}>
+              <span className="info-mark">
+                <Icon name={item.icon} />
+              </span>
+              <span>{t(item.text)}</span>
+            </li>
           ))}
         </ul>
         <p>

@@ -26,18 +26,13 @@
     border-radius: 2.2rem
     box-shadow: 0 0 0 0.3rem $forest
     cursor: zoom-in
-    touch-action: pan-y
-    &.is-dragging
-      cursor: grabbing
-      touch-action: none
-  &__track
-    display: flex
+  &__swiper
+    width: 100%
     height: 100%
-    @include anim(transform)
-    &.is-dragging
-      transition: none
+    overflow: hidden
+  &__track
+    height: 100%
   &__slide
-    flex: 0 0 100%
     height: 100%
     background: $cream
     img
@@ -132,13 +127,6 @@
       transition-delay: 0.08s
       @media (prefers-reduced-motion: reduce)
         transition-delay: 0s
-    &.is-dragging
-      &::before,
-      .product__lightbox-close,
-      .product__lightbox-controls
-        transition: none
-      .product__lightbox-frame
-        transition: none
     &-close
       @include popup-close
       z-index: 2
@@ -166,18 +154,13 @@
       background: $cream-muted
       border-radius: 2.2rem
       cursor: grab
-      touch-action: none
-      overscroll-behavior: none
-      &.is-dragging
-        cursor: grabbing
-    &-track
-      display: flex
+    &-swiper
+      width: 100%
       height: 100%
-      @include anim(transform)
-      &.is-dragging
-        transition: none
+      overflow: hidden
+    &-track
+      height: 100%
     &-slide
-      flex: 0 0 100%
       height: 100%
       background: $cream
       img

@@ -19,6 +19,7 @@ import {
   siteVkHref,
 } from '@/components/siteContacts'
 import { siteBlogRoutes, siteInfoRoutes } from '@/components/siteNav'
+import { HOME_CATALOG_DESKTOP_LIMIT, homeCatalogCategories } from '@/catalog'
 
 const buyerLinks = [
   { href: '/', label: 'Главная' },
@@ -35,6 +36,10 @@ const infoLinks = [
   { href: siteInfoRoutes.price, label: 'Прайс' },
   { href: siteInfoRoutes.reviews, label: 'Отзывы' },
 ] as const
+
+const catalogLinks = homeCatalogCategories
+  .slice(0, HOME_CATALOG_DESKTOP_LIMIT)
+  .map((category) => ({ href: category.href, label: category.label }))
 
 export function SiteFooter() {
   return (
@@ -73,38 +78,56 @@ export function SiteFooter() {
         </div>
         <div className="footer__panel">
           <div className="footer__grid">
-            <nav className="footer__nav" aria-labelledby="footer-buyers-title">
-              <div className="footer__col-head">
-                <h2 className="footer__title" id="footer-buyers-title">
-                  Покупателям
-                </h2>
-              </div>
-              <ul className="footer__list">
-                {buyerLinks.map((item) => (
-                  <li key={item.label}>
-                    <Link className="footer__link" href={item.href}>
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-            <nav className="footer__nav" aria-labelledby="footer-info-title">
-              <div className="footer__col-head">
-                <h2 className="footer__title" id="footer-info-title">
-                  Информация
-                </h2>
-              </div>
-              <ul className="footer__list">
-                {infoLinks.map((item) => (
-                  <li key={item.label}>
-                    <Link className="footer__link" href={item.href}>
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+            <div className="footer__menus">
+              <nav className="footer__nav" aria-labelledby="footer-buyers-title">
+                <div className="footer__col-head">
+                  <h2 className="footer__title" id="footer-buyers-title">
+                    Покупателям
+                  </h2>
+                </div>
+                <ul className="footer__list">
+                  {buyerLinks.map((item) => (
+                    <li key={item.label}>
+                      <Link className="footer__link" href={item.href}>
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+              <nav className="footer__nav" aria-labelledby="footer-info-title">
+                <div className="footer__col-head">
+                  <h2 className="footer__title" id="footer-info-title">
+                    Информация
+                  </h2>
+                </div>
+                <ul className="footer__list">
+                  {infoLinks.map((item) => (
+                    <li key={item.label}>
+                      <Link className="footer__link" href={item.href}>
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+              <nav className="footer__nav" aria-labelledby="footer-catalog-title">
+                <div className="footer__col-head">
+                  <h2 className="footer__title" id="footer-catalog-title">
+                    Каталог
+                  </h2>
+                </div>
+                <ul className="footer__list">
+                  {catalogLinks.map((item) => (
+                    <li key={item.label}>
+                      <Link className="footer__link" href={item.href}>
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
             <div className="footer__contacts">
               <div className="footer__col-head">
                 <h2 className="footer__title" id="footer-contacts-title">
@@ -114,7 +137,8 @@ export function SiteFooter() {
               <div className="footer__contacts-body">
                 <div className="footer__contacts-reach">
                   <a className="footer__phone" href={sitePhoneHref}>
-                    {sitePhoneDisplay}
+                    <Icon name="phone" className="footer__phone-icon" />
+                    <span>{sitePhoneDisplay}</span>
                   </a>
                   <p className="footer__meta">
                     <Icon name="clock" className="footer__meta-icon" />
@@ -134,12 +158,12 @@ export function SiteFooter() {
           <div className="footer__bar">
             <p className="footer__legal">
               <span>{siteLegalName}</span>
-              <span>
-                ОГРНИП {siteOgrnip}
+              <span className="footer__legal-ids">
+                <span>ОГРНИП {siteOgrnip}</span>
                 <span className="footer__legal-dot" aria-hidden="true">
                   ·
                 </span>
-                ИНН {siteInn}
+                <span>ИНН {siteInn}</span>
               </span>
             </p>
             <div className="footer__credits">
@@ -150,7 +174,7 @@ export function SiteFooter() {
                 target="_blank"
                 rel="noreferrer"
               >
-                Сайт {siteCreditsLabel}
+                Сайт <span className="footer__madeby-name">{siteCreditsLabel}</span>
               </a>
             </div>
           </div>

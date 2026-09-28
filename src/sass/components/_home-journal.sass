@@ -44,7 +44,7 @@
     display: grid
     grid-template-columns: 4rem minmax(0, 1fr) 4rem
     grid-template-rows: auto auto
-    column-gap: 6rem
+    column-gap: 3.2rem
     align-items: center
     max-width: 142.8rem
     margin-inline: auto
@@ -86,25 +86,30 @@
     width: 100%
     min-width: 0
     overflow: hidden
-    touch-action: pan-y
-    user-select: none
-    // Mobile/tablet: one card. Desktop JS may set a 2-up span after measure.
-    --slide-span: 100%
-    &.is-dragging
-      touch-action: none
-      cursor: grabbing
+  &__swiper
+    width: 100%
+    overflow: hidden
+    .swiper-wrapper
+      display: flex
+      align-items: stretch
+    .swiper-slide
+      box-sizing: border-box
+      flex-shrink: 0
+      height: auto
+      display: flex
+      align-self: stretch
+      width: 100%
+      margin-right: 16px
+      @media (min-width: #{$bp-tablet + 1})
+        width: calc((100% - 16px) / 2)
   &__track
-    display: flex
-    gap: 1.6rem
-    @include anim(transform)
-    &.is-instant,
-    &.is-dragging
-      transition: none
+    box-sizing: content-box
   &__item
-    flex: 0 0 var(--slide-span)
     min-width: 0
     .event-card
       width: 100%
+      flex: 1 1 auto
+      height: 100%
   &__pages
     display: flex
     align-items: center
@@ -136,13 +141,3 @@
       color: $forest
       .icon
         transform: scale(1.12)
-
-@media (min-width: #{$bp-tablet + 1})
-  .home-journal
-    &__viewport
-      --slide-span: calc((100% - 1.6rem) / 2)
-
-@media (max-width: $bp-mobile)
-  .home-journal
-    &__viewport
-      --slide-span: 100%

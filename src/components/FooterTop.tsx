@@ -11,11 +11,15 @@ export function FooterTop() {
       onClick={(event) => {
         event.preventDefault()
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: reduceMotion ? 'auto' : 'smooth',
+        })
       }}
     >
+      <Icon name="arrow-right" className="footer__top-icon" />
       <span className="footer__top-label">Наверх</span>
-      <Icon name="arrow-corner" className="footer__top-icon" />
     </a>
   )
 }
