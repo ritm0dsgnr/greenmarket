@@ -62,7 +62,6 @@ export function JournalCardSlider({
   const [layout, setLayout] = useState({ visible: 1, span: 0, step: 0 })
   const locked = useRef(false)
   const viewportRef = useRef<HTMLDivElement>(null)
-  const page = cards.length === 0 ? 0 : ((index - loopStart) % cards.length + cards.length) % cards.length
   const prevText = prevLabel ?? `Предыдущие, ${title}`
   const nextText = nextLabel ?? `Следующие, ${title}`
   const pagesText = pagesLabel ?? `Пагинация, ${title}`
@@ -143,17 +142,21 @@ export function JournalCardSlider({
       return
     }
 
-    if (locked.current) {
-      return
-    }
-
     locked.current = true
     setAnimate(true)
     setIndex((current) => current + step)
   }
 
   const swipe = useSwipePager((direction) => goTo(direction), {
-    isLocked: () => locked.current,
+    getCommitDistance: () => layout.step,
+    onInterrupt: () => {
+      if (!locked.current) {
+        return
+      }
+
+      locked.current = false
+      setAnimate(false)
+    },
   })
 
   const handleTransitionEnd = (event: TransitionEvent<HTMLUListElement>) => {
@@ -184,6 +187,9 @@ export function JournalCardSlider({
   }
 
   const offset = layout.step > 0 ? layout.step * index - swipe.shift : 0
+  const visualIndex = layout.step > 0 ? Math.round(offset / layout.step) : index
+  const page =
+    cards.length === 0 ? 0 : ((visualIndex - loopStart) % cards.length + cards.length) % cards.length
   const trackClass = [
     'home-journal__track',
     animate && !swipe.dragging && layout.step > 0 ? '' : 'is-instant',

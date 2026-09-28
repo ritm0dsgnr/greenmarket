@@ -3,7 +3,6 @@
 
 .about-growth
   position: relative
-  overflow-x: clip
   color: $forest
   &__inner
     display: flex
@@ -60,11 +59,10 @@
     max-width: calc(100% - 2.4rem)
     margin: 0 auto 5.6rem
     padding: 0.8rem
-    background: rgba($cream, 0.92)
+    background: $cream
     border: 0.2rem solid rgba($forest, 0.08)
     border-radius: 10rem
-    backdrop-filter: blur(0.8rem)
-    box-shadow: 0 0 2rem rgba(10, 51, 35, 0.1)
+    box-shadow: 0 0.4rem 1.6rem rgba(10, 51, 35, 0.08)
   &__year-chip
     @include font-display
     min-width: 6.4rem
@@ -77,7 +75,7 @@
     border: 0
     border-radius: 10rem
     cursor: pointer
-    transition: background-color $anim-duration $anim-ease, color $anim-duration $anim-ease, box-shadow $anim-duration $anim-ease
+    transition: background-color $anim-duration $anim-ease, color $anim-duration $anim-ease
     @media (prefers-reduced-motion: reduce)
       transition: none
     &:hover,
@@ -86,7 +84,7 @@
     &.is-active
       color: $cream
       background: $forest
-      box-shadow: 0.25rem 0.25rem 0 rgba(10, 51, 35, 0.25)
+      box-shadow: none
   &__timeline
     position: relative
     width: min(100%, 112rem)

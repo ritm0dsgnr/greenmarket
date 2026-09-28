@@ -79,24 +79,40 @@ body
         font-size: 1.8rem
       &-dropdown
         position: static
-        display: none
+        display: grid
+        grid-template-rows: 0fr
         min-width: 0
         width: 100%
-        padding: 0 0 1.6rem
+        padding: 0
+        overflow: hidden
         box-shadow: none
         opacity: 1
         visibility: visible
-        pointer-events: auto
+        pointer-events: none
         transform: none
         background: transparent
+        transition: grid-template-rows $anim-duration $anim-ease, padding-bottom $anim-duration $anim-ease
+        @media (prefers-reduced-motion: reduce)
+          transition: none
         &--sm
           min-width: 0
         &::before
           display: none
+        &-inner
+          overflow: hidden
+          gap: 1.6rem
         &-arrow
           opacity: 1
       &-item.is-open .header__wrapper-dropdown
-        display: flex
+        grid-template-rows: 1fr
+        padding-bottom: 1.6rem
+        pointer-events: auto
+        opacity: 1
+        visibility: visible
+        transform: none
+        transition: grid-template-rows $anim-duration $anim-ease, padding-bottom $anim-duration $anim-ease
+        @media (prefers-reduced-motion: reduce)
+          transition: none
       &-nav-contacts
         display: flex
         flex-direction: column
@@ -150,6 +166,13 @@ body
       flex-wrap: wrap
       gap: 1.6rem
       margin-top: 3.2rem
+    &__contacts
+      grid-column: 1 / -1
+      &-body
+        display: grid
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr)
+        gap: 1.6rem 2.4rem
+        width: 100%
 
   .contacts
     padding-top: 2.4rem
@@ -178,7 +201,9 @@ body
     &__content
       width: 100%
       height: calc(100vh - 10rem - 1.6rem)
-      min-height: calc(100vh - 10rem - 1.6rem)
+      height: calc(100svh - 10rem - 1.6rem)
+      min-height: 0
+      max-height: calc(100svh - 10rem - 1.6rem)
     &__copy,
     &__caption
       z-index: 5
@@ -191,6 +216,7 @@ body
       left: 2.4rem
       width: calc(100% - 4.8rem)
     &__motto
+      display: block
       max-width: none
     &__layers
       height: 58%
@@ -243,6 +269,7 @@ body
       left: 2rem
       right: 2rem
       bottom: 1.6rem
+      align-items: flex-end
 
   .catalog
     &__grid
@@ -372,7 +399,7 @@ body
   .product
     &__layout
       grid-template-columns: minmax(0, 1fr)
-      row-gap: 1.6rem
+      row-gap: 0.8rem
     &__gallery,
     &__info,
     &__thumbs
@@ -443,11 +470,23 @@ body
   .product-card
     &__overlay
       padding: 2.4rem
-      &--sheet
-        padding: 0
+      align-items: center
     &__popup
       grid-template-columns: 1fr
       width: min(96rem, 100%)
+      max-height: calc(100svh - 4.8rem)
+      overflow: auto
+      &-media
+        aspect-ratio: 309 / 220
+        min-height: 0
+      &-body
+        padding: 2.4rem
+      &-footer
+        flex-wrap: wrap
+        gap: 1.6rem
+        padding-top: 2rem
+      &-name
+        padding-right: 4.8rem
 
   .novelties,
   .related,
@@ -473,9 +512,9 @@ body
       grid-template-areas: "clear" "list" "summary"
     &__item
       grid-template-columns: 12rem minmax(0, 1fr)
-    &__aside
-      grid-column: 2
-      align-items: flex-start
+    &__footer
+      width: calc(100% + 4rem)
+      margin-right: -4rem
     &__field-row
       grid-template-columns: 1fr
 
@@ -483,9 +522,26 @@ body
   .container
     padding: 0 1.6rem
 
+  .breadcrumbs
+    min-width: 0
+    &__list
+      flex-wrap: nowrap
+      overflow-x: auto
+      overscroll-behavior-x: contain
+      scrollbar-width: none
+      -webkit-overflow-scrolling: touch
+      &::-webkit-scrollbar
+        display: none
+    &__item
+      flex-shrink: 0
+      white-space: nowrap
+
   .page
-    gap: 5.6rem
+    gap: 9.6rem
     padding-top: 9.6rem
+
+  .related-feeds
+    margin-top: 4.8rem
 
   .header
     &__wrapper
@@ -518,17 +574,66 @@ body
       right: 1.6rem
 
   .footer
+    &__stack
+      gap: 0.8rem
+    &__panel
+      padding: 2.4rem 1.6rem 1.6rem
+      border-radius: 2.4rem
+      &--bar
+        display: grid
+        grid-template-columns: minmax(0, 1fr) auto
+        align-items: center
+        column-gap: 1.2rem
+        padding: 1.4rem 1.6rem
     &__grid
-      grid-template-columns: 1fr
-    &__panel--bar
-      align-items: flex-start
+      grid-template-columns: repeat(2, minmax(0, 1fr))
+      gap: 2rem 1.6rem
+    &__nav
+      gap: 0.6rem
+    &__list
+      gap: 0.4rem
+    &__title
+      font-size: 1.4rem
+    &__link
+      font-size: 1.3rem
+      line-height: 1.3
     &__aside
-      width: 100%
-      justify-content: space-between
+      width: auto
+      justify-content: flex-end
+      align-self: center
+      gap: 1.2rem
     &__logo
-      width: 12rem
+      width: 18rem
     &__phone
-      font-size: 2rem
+      font-size: 1.8rem
+    &__meta,
+    &__address-text
+      font-size: 1.3rem
+    &__bar
+      display: grid
+      grid-template-columns: minmax(0, 1fr) auto
+      gap: 0.6rem 1.6rem
+      align-items: start
+      margin-top: 2rem
+      padding-top: 1.6rem
+    &__legal,
+    &__copy,
+    &__madeby
+      font-size: 1.2rem
+    &__credits
+      align-items: flex-end
+      text-align: right
+    &__top
+      width: 3.2rem
+      height: 3.2rem
+      padding: 0
+      gap: 0
+      border-radius: 50%
+      &-label
+        display: none
+      &-icon
+        width: 1.4rem
+        height: 1.4rem
 
   .catalog
     &__grid
@@ -538,6 +643,16 @@ body
       margin-bottom: 2.4rem
     &__head .catalog__title
       font-size: 2.2rem
+    &__title
+      font-size: 2.2rem
+      margin-bottom: 2.4rem
+      &--with-intro
+        margin-bottom: 1.2rem
+    &__intro
+      margin-bottom: 3.2rem
+      font-size: 1.6rem
+    &__lead
+      font-size: 1.8rem
     &__more
       padding: 0.6rem 0.8rem 0.6rem 1.2rem
       font-size: 1.2rem
@@ -552,11 +667,37 @@ body
     &__media
       border-radius: 1.8rem 1.8rem 0 0
     border-radius: 1.8rem
+    &__count
+      height: 2.4rem
+      max-height: 2.4rem
+      min-height: 2.4rem
+      padding: 0.2rem 1.4rem
+    &__arrow
+      width: 2rem
+      height: 2rem
+    &--sub
+      .catalog-card__visual
+        aspect-ratio: 5 / 6
+        grid-template-rows: calc(2.4rem + 1.9rem) minmax(0, 1fr)
+      .catalog-card__meta
+        padding: 0.8rem 1.2rem 1.1rem
+      .catalog-card__arrow
+        width: 2rem
+        height: 2rem
 
   .product-card
     padding: 1rem
     gap: 0.8rem
     border-radius: 1.4rem
+    &:hover,
+    &:focus-within
+      .product-card__media img
+        transform: none
+      .product-card__name
+        color: inherit
+      .product-card__more
+        box-shadow: 0.4rem 0.4rem 0 rgba(10,51,35,0.8)
+        transform: none
     &__media
       border-radius: 0.8rem
     &__name
@@ -567,9 +708,14 @@ body
       font-size: 1.3rem
       padding: 0.1rem 0.8rem 0.2rem
     &__specs
-      display: none
-    &__specs-toggle
-      display: flex
+      gap: 0.4rem
+    &__spec
+      gap: 0.2rem
+      padding-bottom: 0.5rem
+      &-label
+        font-size: 1.2rem
+      &-value
+        font-size: 1.2rem
     &__footer
       gap: 0.8rem
       padding-top: 0.8rem
@@ -580,6 +726,58 @@ body
     &__cart
       width: 3.6rem
       height: 3.6rem
+    &__stock
+      font-size: 1.3rem
+    &__more
+      margin-right: 0
+      padding: 0.5rem 1.2rem
+      font-size: 1.2rem
+    &.is-unavailable
+      .product-card__more
+        background: $cream
+        border-color: $cream
+    &__overlay
+      padding: 1.6rem
+      padding-bottom: calc(1.6rem + env(safe-area-inset-bottom, 0px))
+    &__popup
+      max-height: calc(100svh - 3.2rem - env(safe-area-inset-bottom, 0px))
+      border-radius: 1.4rem
+      &-media
+        aspect-ratio: 4 / 3
+      &-body
+        gap: 1.2rem
+        padding: 1.6rem
+      &-name
+        font-size: 1.8rem
+        padding-right: 4rem
+      &-latin
+        font-size: 1.3rem
+      &-title
+        font-size: 1.3rem
+      &-footer
+        flex-direction: column
+        align-items: stretch
+        gap: 1.2rem
+        padding-top: 1.6rem
+      &-total-value
+        font-size: 2rem
+    &__size
+      flex-wrap: wrap
+      gap: 0.8rem 1rem
+      padding: 1rem
+      font-size: 1.3rem
+    &__qty
+      margin-left: auto
+      &-button
+        width: 2.4rem
+        height: 2.4rem
+        font-size: 1.6rem
+      &-value
+        min-width: 1.8rem
+        font-size: 1.4rem
+    &__add
+      width: 100%
+      justify-content: center
 
   .products
     &__grid
@@ -590,29 +788,121 @@ body
     &__filters-toggle
       width: 3.6rem
       height: 3.6rem
+    &__sort-button
+      height: 3.6rem
+      padding: 0 1rem 0 1.2rem
+    &__sort-sizer,
+    &__sort-value
+      font-size: 1.2rem
+      line-height: 1
+    &__sort-arrow
+      width: 1.6rem
+      height: 1.6rem
 
   .cart
     &__item
-      grid-template-columns: 1fr
-    &__aside
-      grid-column: 1
+      grid-template-columns: 9.6rem minmax(0, 1fr)
+      gap: 1.2rem
+      padding: 1.2rem 4.4rem 1.2rem 1.2rem
+    &__info
+      padding-top: 0.4rem
+      padding-bottom: 0.4rem
+      gap: 1.2rem
+    &__footer
+      width: calc(100% + 3.2rem)
+      margin-right: -3.2rem
+    &__name
+      font-size: 1.6rem
+    &__price
+      font-size: 1.6rem
+    &__qty
+      padding: 0.1rem 0.6rem
+      &-button
+        width: 2.4rem
+        height: 2.4rem
+        font-size: 1.6rem
+      &-value
+        min-width: 1.8rem
+        font-size: 1.4rem
+    &__tag
+      top: 0.8rem
+      padding: 0.1rem 0.8rem 0.2rem
+      font-size: 1.2rem
 
   .product
     &__name
       font-size: 2.4rem
+    &__offer
+      flex-wrap: wrap
+      align-items: stretch
+      gap: 1.2rem
+    &__choose
+      flex: 1 1 100%
+      width: 100%
+      min-width: 0
+    &__sizes
+      display: grid
+      grid-template-columns: repeat(2, minmax(0, 1fr))
+      gap: 0.8rem
     &__size
-      flex: 0 1 auto
-      max-width: 100%
+      flex: none
+      max-width: none
+      width: 100%
     &__size-pick
       min-width: 0
+      width: 100%
+      padding: 1.2rem 1rem 1rem
+    &__size-name
+      font-size: 1.5rem
+    &__hint
+      position: fixed
+      top: auto
+      left: 0
+      right: 0
+      bottom: 0
+      z-index: 40
+      width: 100%
+      max-width: none
+      max-height: min(72svh, 56rem)
+      overflow-y: auto
+      padding: 2rem 1.6rem calc(1.6rem + env(safe-area-inset-bottom, 0px))
+      border-radius: 1.6rem 1.6rem 0 0
+      transform-origin: 50% 100%
+    &__legend-scrim
+      display: block
+      position: fixed
+      inset: 0
+      z-index: 39
+      background: rgb(10 51 35 / 0.32)
+    &__features
+      margin-top: 2.4rem
     &__checkout
+      flex: none
       flex-direction: row
       flex-wrap: wrap
-      align-items: flex-start
-      justify-content: flex-end
+      align-items: center
+      justify-content: space-between
+      align-self: stretch
+      width: 100%
       max-width: 100%
+      margin-left: 0
+      gap: 1.2rem
+      padding: 1.2rem 1.4rem 1.6rem
+      &::before
+        display: none
     &__qty
-      align-self: flex-start
+      align-self: center
+    &__total
+      align-items: flex-end
+      min-width: 0
+      .product__price-old
+        text-align: right
+    &__total-value
+      text-align: right
+    &__buy
+      flex: 1 1 100%
+      width: 100%
+      align-self: stretch
     &__spec
       flex-direction: column
       align-items: flex-start
@@ -621,9 +911,27 @@ body
     &__spec-value
       text-align: left
     &__lightbox
-      padding: 5.6rem 1.6rem 1.6rem
+      padding: 0
+      &-close
+        top: max(1.2rem, env(safe-area-inset-top, 0px))
+        right: 1.6rem
       &-frame
-        width: min(96rem, calc(100vw - 3.2rem), calc(100vh - 10rem))
+        width: 100%
+        height: 100%
+        max-height: none
+      &-viewport
+        width: 100%
+        height: 100%
+        aspect-ratio: auto
+        border-radius: 0
+        background: transparent
+      &-slide
+        background: transparent
+        img
+          object-fit: contain
+      &-controls
+        right: 1.6rem
+        bottom: max(1.6rem, env(safe-area-inset-bottom, 0px))
 
   .not-found
     &__code
@@ -633,7 +941,9 @@ body
     min-height: 0
     &__content
       height: calc(100vh - 9.6rem - 1.6rem)
-      min-height: calc(100vh - 9.6rem - 1.6rem)
+      height: calc(100svh - 9.6rem - 1.6rem)
+      min-height: 0
+      max-height: calc(100svh - 9.6rem - 1.6rem)
       border-radius: 2.4rem
     &__caption
       top: 2.8rem
@@ -681,7 +991,7 @@ body
     &__slide-panel
       left: 1.6rem
       right: 1.6rem
-      bottom: 6.4rem
+      bottom: 8rem
       max-width: 70%
     &__slide-title
       font-size: 2rem
@@ -690,12 +1000,26 @@ body
     &__rail
       left: 1.6rem
       right: 1.6rem
-      bottom: 1.2rem
+      bottom: 2.4rem
       gap: 1rem
+      align-items: flex-end
     &__index
       display: none
+    &__controls
+      align-items: flex-end
+    &__control
+      width: 3.6rem
     &__marquee
       border-radius: 0 0 2.4rem 2.4rem
+
+  .hero-signup
+    padding: 1.6rem
+    &__dialog
+      width: 100%
+      max-height: calc(100vh - 3.2rem)
+      max-height: calc(100svh - 3.2rem)
+    &__body
+      padding: 3.2rem 2rem 2.4rem
 
   .novelties,
   .related,

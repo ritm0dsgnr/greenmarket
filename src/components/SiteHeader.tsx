@@ -224,33 +224,35 @@ export function SiteHeader() {
                     className={['header__wrapper-dropdown', item.id !== 'catalog' ? 'header__wrapper-dropdown--sm' : ''].filter(Boolean).join(' ')}
                     id={dropdownId}
                   >
-                    {item.groups.map((group, groupIndex) => {
-                      const title = 'title' in group ? group.title : undefined
-                      const titleId = `${dropdownId}-title-${groupIndex}`
+                    <div className="header__wrapper-dropdown-inner">
+                      {item.groups.map((group, groupIndex) => {
+                        const title = 'title' in group ? group.title : undefined
+                        const titleId = `${dropdownId}-title-${groupIndex}`
 
-                      return (
-                        <div className="header__wrapper-dropdown-group" key={title ?? groupIndex}>
-                          {title ? (
-                            <p className="header__wrapper-dropdown-title" id={titleId}>
-                              {title}
-                            </p>
-                          ) : null}
-                          <ul
-                            className="header__wrapper-dropdown-list"
-                            aria-labelledby={title ? titleId : undefined}
-                          >
-                            {listCatalogGroupNavEntries(group).map((entry) => (
-                              <li key={`${entry.href}-${entry.label}`}>
-                                <Link className="header__wrapper-dropdown-link" href={entry.href} onClick={closeNav}>
-                                  {entry.label}
-                                  <Icon name="arrow-right" className="header__wrapper-dropdown-arrow" />
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )
-                    })}
+                        return (
+                          <div className="header__wrapper-dropdown-group" key={title ?? groupIndex}>
+                            {title ? (
+                              <p className="header__wrapper-dropdown-title" id={titleId}>
+                                {title}
+                              </p>
+                            ) : null}
+                            <ul
+                              className="header__wrapper-dropdown-list"
+                              aria-labelledby={title ? titleId : undefined}
+                            >
+                              {listCatalogGroupNavEntries(group).map((entry) => (
+                                <li key={`${entry.href}-${entry.label}`}>
+                                  <Link className="header__wrapper-dropdown-link" href={entry.href} onClick={closeNav}>
+                                    {entry.label}
+                                    <Icon name="arrow-right" className="header__wrapper-dropdown-arrow" />
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )
+                      })}
+                    </div>
                   </div>
                 </div>
               )

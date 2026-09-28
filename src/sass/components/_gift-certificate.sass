@@ -1,0 +1,395 @@
+@use "../assets/vars" as *
+@use "../assets/mixin" as *
+
+.gift-certificate
+  display: flex
+  flex-direction: column
+  gap: 4.8rem
+  width: min(100%, 96rem)
+  margin-inline: auto
+  padding-top: 4rem
+  padding-bottom: 10rem
+  color: $forest
+  &__hero
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+    width: 100%
+  &__eyebrow
+    @include font-display
+    margin-bottom: 1.2rem
+    font-size: 1.4rem
+    line-height: 1.2
+    text-transform: uppercase
+    color: $leaf
+  &__title
+    @include font-display
+    font-size: clamp(3.6rem, 5vw, 6.4rem)
+    line-height: 0.98
+    letter-spacing: -0.04em
+    text-transform: uppercase
+    text-wrap: balance
+  &__lead
+    @include font-text
+    margin-top: 2rem
+    font-size: 2rem
+    line-height: 1.35
+    text-wrap: pretty
+  &__story
+    @include font-text
+    display: flex
+    flex-direction: column
+    gap: 1.6rem
+    width: 100%
+    font-size: 1.7rem
+    line-height: 1.5
+    text-wrap: pretty
+    p
+      margin: 0
+  &__assortment
+    display: flex
+    flex-direction: column
+    gap: 0.8rem
+    width: 100%
+    margin: 0.4rem 0
+    padding: 0
+    list-style: none
+    li
+      width: 100%
+      padding: 1.2rem 1.6rem
+      background: $cream-muted
+      border-radius: 1.4rem
+  &__order
+    display: flex
+    flex-direction: column
+    gap: 2rem
+    width: 100%
+    padding: 2.8rem
+    color: $white
+    background: $forest
+    border-radius: 2rem
+  &__order-head
+    display: flex
+    flex-direction: column
+    gap: 0.8rem
+    width: 100%
+  &__order-eyebrow
+    @include font-display
+    margin: 0
+    font-size: 1.3rem
+    line-height: 1
+    text-transform: uppercase
+    color: $leaf
+  &__order-title
+    @include font-display
+    margin: 0
+    font-size: clamp(2.4rem, 3vw, 3.4rem)
+    line-height: 1.05
+    letter-spacing: -0.03em
+    text-transform: uppercase
+    text-wrap: balance
+  &__order-note
+    @include font-text
+    margin: 0
+    font-size: 1.5rem
+    line-height: 1.4
+    color: rgba($white, 0.82)
+  &__amounts
+    display: grid
+    grid-template-columns: repeat(5, minmax(0, 1fr))
+    gap: 1rem
+    width: 100%
+  &__amount
+    @include font-display
+    width: 100%
+    min-height: 4.8rem
+    padding: 1rem 1.2rem
+    font-size: 1.5rem
+    line-height: 1.2
+    text-align: center
+    color: $white
+    background-color: rgba($white, 0)
+    border: 0.2rem solid rgba($white, 0.28)
+    border-radius: 1.2rem
+    cursor: pointer
+    transition: border-color $anim-duration $anim-ease, background-color $anim-duration $anim-ease, color $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    &:hover:not(.is-active),
+    &:focus-visible:not(.is-active)
+      color: $cream
+      background-color: rgba($white, 0.12)
+      border-color: $leaf
+      outline: none
+    &.is-active
+      color: $forest
+      background-color: $cream
+      border-color: $cream
+      &:hover,
+      &:focus-visible
+        background-color: $leaf
+        border-color: $leaf
+        outline: none
+    &--custom
+      text-transform: none
+  &__custom
+    display: flex
+    flex-direction: column
+    gap: 0.8rem
+    width: 100%
+  &__custom-label
+    @include font-display
+    font-size: 1.3rem
+    line-height: 1
+    text-transform: uppercase
+    color: rgba($white, 0.78)
+  &__custom-input
+    @include font-text
+    width: 100%
+    padding: 1.2rem 1.6rem
+    font-size: 1.7rem
+    line-height: 1.3
+    color: $forest
+    background: $cream
+    border: 0.2rem solid transparent
+    border-radius: 1.2rem
+    @include anim(border-color background-color)
+    &:hover
+      border-color: rgba($leaf, 0.7)
+    &:focus-visible
+      outline: none
+      border-color: $leaf
+  &__submit
+    @include font-display
+    display: inline-flex
+    flex-wrap: wrap
+    align-items: center
+    justify-content: center
+    gap: 1rem
+    align-self: center
+    min-height: 5.2rem
+    padding: 1.2rem 2.4rem
+    font-size: 1.5rem
+    line-height: 1.2
+    text-transform: uppercase
+    color: $forest
+    background: $leaf
+    border: 0.3rem solid $leaf
+    border-radius: 10rem
+    box-shadow: 0.4rem 0.4rem 0 rgba($cream, 0.35)
+    cursor: pointer
+    transition: background-color $anim-duration $anim-ease, color $anim-duration $anim-ease, border-color $anim-duration $anim-ease, box-shadow $anim-duration $anim-ease, transform $anim-duration $anim-ease, opacity $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    &:hover,
+    &:focus-visible
+      background: $cream
+      border-color: $cream
+      box-shadow: 0 0 0 rgba($cream, 0.35)
+      transform: translate(0.4rem, 0.4rem)
+      outline: none
+    &:disabled
+      cursor: not-allowed
+      opacity: 0.45
+      box-shadow: none
+      transform: none
+  &__submit-sum
+    @include font-text
+    padding: 0.2rem 0.8rem
+    font-size: 1.4rem
+    line-height: 1.2
+    text-transform: none
+    background: rgba($forest, 0.12)
+    border-radius: 10rem
+    @include anim(background-color)
+
+.gift-certificate-popup
+  position: fixed
+  inset: 0
+  z-index: 40
+  display: flex
+  align-items: center
+  justify-content: center
+  padding: $gutter
+  &::before
+    content: ""
+    position: absolute
+    inset: 0
+    z-index: 0
+    background: rgb(0 0 0 / 0.72)
+    backdrop-filter: blur(0.8rem)
+    -webkit-backdrop-filter: blur(0.8rem)
+    opacity: 0
+    transition: opacity 0.45s $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+  &.is-open::before
+    opacity: 1
+  &__dialog
+    position: relative
+    z-index: 1
+    display: flex
+    flex-direction: column
+    width: min(52rem, 100%)
+    max-height: min(94vh, 76rem)
+    overflow: hidden
+    color: $forest
+    background: $cream
+    border: 0
+    border-radius: 2.4rem 0.2rem 0.2rem 2.4rem
+    opacity: 0
+    transform: translateY(1.6rem)
+    transition: opacity 0.45s $anim-ease, transform 0.45s $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transform: none
+      transition: none
+  &.is-open &__dialog
+    opacity: 1
+    transform: none
+  &__close
+    @include popup-close
+    @include anim(background-color color transform)
+    &:hover,
+    &:focus-visible
+      color: $forest
+      transform: scale(1.06)
+  &__body
+    display: flex
+    flex-direction: column
+    flex: 1 1 auto
+    min-height: 0
+    overflow: hidden
+    padding: 4rem 3.2rem 3.2rem
+  &__scroll
+    display: flex
+    flex-direction: column
+    gap: 1.6rem
+    flex: 1 1 auto
+    min-height: 0
+    overflow: auto
+    padding-bottom: 0.8rem
+    overscroll-behavior: contain
+    overflow-anchor: none
+    @include overlay-scrollbar
+  &__eyebrow
+    @include font-display
+    margin: 0
+    font-size: 1.3rem
+    line-height: 1
+    text-transform: uppercase
+    color: $leaf
+  &__title
+    @include font-display
+    width: 100%
+    margin: 0
+    padding-right: 4rem
+    font-size: clamp(2.2rem, 3vw, 3rem)
+    line-height: 1.1
+    letter-spacing: -0.02em
+    text-transform: uppercase
+  &__amount
+    @include font-display
+    display: inline-flex
+    align-self: flex-start
+    margin: 0
+    padding: 0.4rem 1.2rem
+    font-size: 1.6rem
+    line-height: 1.2
+    color: $white
+    background: $leaf
+    border-radius: 1.2rem 0.2rem
+  &__lead,
+  &__note
+    @include font-text
+    margin: 0
+    font-size: 1.5rem
+    line-height: 1.4
+  &__note
+    color: rgba($forest, 0.78)
+  &__form,
+  &__done
+    display: flex
+    flex-direction: column
+    gap: 1.4rem
+  &__done
+    align-items: center
+    text-align: center
+  &__field
+    display: flex
+    flex-direction: column
+    gap: 0.6rem
+  &__label
+    @include font-display
+    font-size: 1.3rem
+    line-height: 1
+    text-transform: uppercase
+  &__input,
+  &__textarea
+    @include font-text
+    width: 100%
+    padding: 1.2rem 1.6rem
+    font-size: 1.6rem
+    line-height: 1.3
+    color: $forest
+    background: $cream
+    border: 0.3rem solid $forest
+    border-radius: 1.2rem
+    resize: vertical
+    @include anim(border-color background-color)
+    &:hover
+      border-color: $leaf
+    &:focus-visible
+      outline: none
+      border-color: $leaf
+      background: $cream-muted
+  &__submit
+    @include font-display
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    align-self: center
+    margin-top: 0.4rem
+    margin-bottom: 0.4rem
+    @include button-padding
+    text-transform: uppercase
+    color: $forest
+    background: $leaf
+    border: 0.3rem solid $leaf
+    border-radius: 10rem
+    box-shadow: 0.4rem 0.4rem 0 rgba(10, 51, 35, 0.8)
+    cursor: pointer
+    transition: box-shadow $anim-duration $anim-ease, transform $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    &:hover,
+    &:focus-visible
+      box-shadow: 0 0 0 rgba(10, 51, 35, 0.8)
+      transform: translate(0.4rem, 0.4rem)
+      outline: none
+
+@media (max-width: $bp-tablet)
+  .gift-certificate
+    &__amounts
+      grid-template-columns: repeat(3, minmax(0, 1fr))
+
+@media (max-width: $bp-mobile)
+  .gift-certificate
+    gap: 3.6rem
+    padding-top: 2rem
+    padding-bottom: 6rem
+    &__lead
+      font-size: 1.8rem
+    &__story
+      font-size: 1.6rem
+    &__order
+      padding: 2rem
+    &__amounts
+      grid-template-columns: repeat(2, minmax(0, 1fr))
+    &__amount--custom
+      grid-column: 1 / -1
+    &__submit
+      width: 100%
+  .gift-certificate-popup
+    padding: 1.6rem
+    &__body
+      padding: 3.2rem 2rem 2.4rem

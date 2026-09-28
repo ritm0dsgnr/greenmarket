@@ -21,7 +21,7 @@
       padding: 2.4rem 4.8rem
   &__grid
     display: grid
-    grid-template-columns: repeat(4, minmax(0, 1fr))
+    grid-template-columns: repeat(3, minmax(0, 1fr))
     gap: 4.8rem 4rem
     align-items: start
   &__col-head
@@ -34,12 +34,6 @@
     align-items: center
     gap: 2.4rem
     flex-shrink: 0
-  &__identity
-    display: flex
-    flex-direction: column
-    align-items: flex-start
-    gap: 0
-    min-width: 0
   &__logo
     display: flex
     width: 16.8rem
@@ -53,11 +47,6 @@
       width: 100%
       transform-origin: center
       @include anim(transform)
-  &__lead
-    @include font-text
-    margin-top: -0.4rem
-    font-size: 1.6rem
-    line-height: 1.2
   &__socials
     display: flex
     align-items: center
@@ -103,6 +92,30 @@
     flex-direction: column
     align-items: flex-start
     gap: 0.8rem
+    min-width: 0
+    &-body,
+    &-reach
+      display: flex
+      flex-direction: column
+      align-items: flex-start
+      gap: 0.8rem
+      min-width: 0
+  &__credits
+    display: flex
+    flex-direction: column
+    align-items: flex-end
+    gap: 0.4rem
+    flex-shrink: 0
+  &__madeby
+    @include font-text
+    font-size: 1.4rem
+    line-height: 1.2
+    opacity: 0.62
+    @include anim(color)
+    &:hover,
+    &:focus-visible
+      color: $leaf
+      opacity: 1
   &__phone
     @include font-display
     font-size: 2.4rem
@@ -192,7 +205,5 @@
       width: 1.25rem
       height: 1.25rem
       overflow: visible
-      stroke: currentColor
-      stroke-width: 3.6
       transform: rotate(-90deg)
       @include anim(transform)

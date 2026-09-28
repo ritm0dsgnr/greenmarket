@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
+import { bindHangingWords } from '@/components/bindHangingWords'
 import { siteBrand } from '@/components/siteContacts'
 
 export type ContentCard = {
@@ -26,6 +27,8 @@ type ContentPageProps = {
   children?: ReactNode
 }
 
+const t = bindHangingWords
+
 export function ContentPage({
   title,
   lead,
@@ -40,14 +43,14 @@ export function ContentPage({
         <div className="content-page__intro">
           <p className="content-page__eyebrow">{siteBrand}</p>
           <h1 className="content-page__title" id="content-page-title">
-            {title}
+            {t(title)}
           </h1>
-          <p className="content-page__lead">{lead}</p>
+          <p className="content-page__lead">{t(lead)}</p>
         </div>
         {highlight ? (
           <div className="content-page__highlight">
             <span className="content-page__highlight-value">{highlight.value}</span>
-            <span className="content-page__highlight-text">{highlight.text}</span>
+            <span className="content-page__highlight-text">{t(highlight.text)}</span>
           </div>
         ) : null}
       </header>
@@ -59,18 +62,18 @@ export function ContentPage({
           aria-labelledby={`${section.id}-title`}
         >
           <div className="content-page__section-head">
-            {section.eyebrow ? <p className="content-page__eyebrow">{section.eyebrow}</p> : null}
+            {section.eyebrow ? <p className="content-page__eyebrow">{t(section.eyebrow)}</p> : null}
             <h2 className="content-page__section-title" id={`${section.id}-title`}>
-              {section.title}
+              {t(section.title)}
             </h2>
-            {section.lead ? <p className="content-page__section-lead">{section.lead}</p> : null}
+            {section.lead ? <p className="content-page__section-lead">{t(section.lead)}</p> : null}
           </div>
 
           {section.paragraphs?.length ? (
             <div className="content-page__copy">
               {section.paragraphs.map((paragraph) => (
                 <p key={paragraph} className="content-page__paragraph">
-                  {paragraph}
+                  {t(paragraph)}
                 </p>
               ))}
             </div>
@@ -80,8 +83,8 @@ export function ContentPage({
             <ul className="content-page__cards">
               {section.cards.map((card) => (
                 <li key={card.title} className="content-page__card">
-                  <h3 className="content-page__card-title">{card.title}</h3>
-                  <p className="content-page__card-text">{card.text}</p>
+                  <h3 className="content-page__card-title">{t(card.title)}</h3>
+                  <p className="content-page__card-text">{t(card.text)}</p>
                 </li>
               ))}
             </ul>
@@ -91,7 +94,7 @@ export function ContentPage({
             <div className="content-page__actions">
               {section.links.map((link) => (
                 <Link key={link.href} className="content-page__action" href={link.href}>
-                  {link.label}
+                  {t(link.label)}
                 </Link>
               ))}
             </div>
@@ -103,8 +106,9 @@ export function ContentPage({
 
       {fixtureNote ? (
         <p className="content-page__fixture-note">
-          Материалы раздела показаны для приёмки вёрстки. Публикация контента будет подключена на
-          следующем этапе.
+          {t(
+            'Материалы раздела показаны для приёмки вёрстки. Публикация контента будет подключена на следующем этапе.',
+          )}
         </p>
       ) : null}
     </section>

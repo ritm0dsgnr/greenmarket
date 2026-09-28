@@ -12,7 +12,6 @@ import {
 import { createPortal } from 'react-dom'
 import { bindHangingWords } from '@/components/bindHangingWords'
 import { Icon } from '@/components/Icon'
-import { useScrollRail } from '@/components/useScrollRail'
 import {
   siteBrand,
   siteMapsHref,
@@ -44,20 +43,30 @@ export function HeroSignupPopup({
 }) {
   const titleId = useId()
   const closeRef = useRef<HTMLButtonElement>(null)
-  const scrollRef = useRef<HTMLDivElement>(null)
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false)
+  const [presented, setPresented] = useState(false)
   const [shown, setShown] = useState(false)
   const [done, setDone] = useState(false)
-  const rail = useScrollRail(scrollRef, shown && open, done)
+
+  if (open && !presented) {
+    setPresented(true)
+    setDone(false)
+  }
+
+  if (!open && shown) {
+    setShown(false)
+  }
 
   useEffect(() => {
     if (!open) {
-      return
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const hideTimer = window.setTimeout(() => setPresented(false), reduceMotion ? 0 : 450)
+
+      return () => window.clearTimeout(hideTimer)
     }
 
     let showFrame = 0
     const resetFrame = requestAnimationFrame(() => {
-      setDone(false)
       setShown(false)
       showFrame = requestAnimationFrame(() => setShown(true))
     })
@@ -81,7 +90,7 @@ export function HeroSignupPopup({
     }
   }, [open, onClose])
 
-  if (!mounted || !open) {
+  if (!mounted || !presented) {
     return null
   }
 
@@ -120,7 +129,7 @@ export function HeroSignupPopup({
         </button>
 
         <div className="hero-signup__body">
-        <div className="hero-signup__scroll" ref={scrollRef}>
+        <div className="hero-signup__scroll">
         {done ? (
           <div className="hero-signup__done">
             <h2 className="hero-signup__title" id={titleId}>
@@ -208,17 +217,6 @@ export function HeroSignupPopup({
           </>
         )}
         </div>
-        {rail.show ? (
-          <div className="hero-signup__rail" aria-hidden="true">
-            <div
-              className="hero-signup__thumb"
-              style={{
-                height: `${rail.thumbHeight}px`,
-                transform: `translateY(${rail.thumbTop}px)`,
-              }}
-            />
-          </div>
-        ) : null}
         </div>
       </div>
     </div>,

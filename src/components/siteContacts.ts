@@ -19,6 +19,8 @@ export const siteAddressShort = 'Свердловская область, г. Б
 
 export const siteVkHref = 'https://vk.ru/green_market66'
 export const siteTelegramHref = 'https://t.me/+79221456085'
+export const siteCreditsHref = 'https://ritm0dsgnr.ru/'
+export const siteCreditsLabel = 'ritm0dsgnr.ru'
 
 export const siteMapsPoint = {
   latitude: 56.90565,

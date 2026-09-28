@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -11,9 +11,20 @@ import { aboutStoryYears } from '@/content/about-story'
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
 
+function markActiveYear(chips: HTMLButtonElement[], year: number) {
+  chips.forEach((chip) => {
+    const on = Number(chip.dataset.year) === year
+    chip.classList.toggle('is-active', on)
+    if (on) {
+      chip.setAttribute('aria-current', 'true')
+    } else {
+      chip.removeAttribute('aria-current')
+    }
+  })
+}
+
 export function HomeAbout() {
   const rootRef = useRef<HTMLElement>(null)
-  const [activeYear, setActiveYear] = useState(aboutStoryYears[0]?.year ?? 2020)
 
   useGSAP(
     (_context, contextSafe) => {
@@ -23,11 +34,16 @@ export function HomeAbout() {
       }
 
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches
       const head = root.querySelector<HTMLElement>('.about-growth__head')
       const stemFill = root.querySelector<HTMLElement>('.about-growth__stem-fill')
       const chapters = gsap.utils.toArray<HTMLElement>('.about-growth__chapter', root)
       const chips = gsap.utils.toArray<HTMLButtonElement>('.about-growth__year-chip', root)
       const cleanups: Array<() => void> = []
+
+      if (chips[0]) {
+        markActiveYear(chips, Number(chips[0].dataset.year))
+      }
 
       if (reduceMotion) {
         gsap.set([head, ...chapters, stemFill].filter(Boolean), { clearProps: 'all', opacity: 1 })
@@ -58,7 +74,7 @@ export function HomeAbout() {
               trigger: root.querySelector('.about-growth__timeline'),
               start: 'top 70%',
               end: 'bottom 35%',
-              scrub: 1.1,
+              scrub: true,
             },
           },
         )
@@ -79,8 +95,8 @@ export function HomeAbout() {
               start: 'top 78%',
               end: 'top 42%',
               toggleActions: 'play none none reverse',
-              onEnter: () => setActiveYear(year),
-              onEnterBack: () => setActiveYear(year),
+              onEnter: () => markActiveYear(chips, year),
+              onEnterBack: () => markActiveYear(chips, year),
             },
           })
           .from(
@@ -126,6 +142,10 @@ export function HomeAbout() {
             },
             0.42,
           )
+
+        if (!finePointer) {
+          return
+        }
 
         const onMove = contextSafe((event: Event) => {
           const pointer = event as PointerEvent
@@ -212,6 +232,7 @@ export function HomeAbout() {
           return
         }
 
+        markActiveYear(chips, Number(year))
         gsap.to(button, { scale: 0.92, duration: 0.12, yoyo: true, repeat: 1, ease: 'power2.out' })
         target.scrollIntoView({ behavior: 'smooth', block: 'center' })
       })
@@ -227,6 +248,8 @@ export function HomeAbout() {
     },
     { scope: rootRef },
   )
+
+  const firstYear = aboutStoryYears[0]?.year
 
   return (
     <section className="about-growth" aria-labelledby="about-growth-title" ref={rootRef}>
@@ -252,14 +275,14 @@ export function HomeAbout() {
             <button
               className={[
                 'about-growth__year-chip',
-                activeYear === entry.year ? 'is-active' : '',
+                entry.year === firstYear ? 'is-active' : '',
               ]
                 .filter(Boolean)
                 .join(' ')}
               type="button"
               key={entry.year}
               data-year={entry.year}
-              aria-current={activeYear === entry.year ? 'true' : undefined}
+              aria-current={entry.year === firstYear ? 'true' : undefined}
             >
               {entry.year}
             </button>

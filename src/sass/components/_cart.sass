@@ -94,7 +94,7 @@
   &__item
     position: relative
     display: grid
-    grid-template-columns: 16rem minmax(0, 1fr) auto
+    grid-template-columns: 16rem minmax(0, 1fr)
     gap: 2.4rem
     align-items: stretch
     padding: 1.8rem 5.8rem 1.8rem 1.8rem
@@ -159,6 +159,7 @@
     text-transform: uppercase
   &__qty
     display: inline-flex
+    flex-shrink: 0
     align-items: center
     gap: 0.2rem
     width: max-content
@@ -185,17 +186,20 @@
       font-size: 1.6rem
       line-height: 1
       text-align: center
-  &__aside
+  &__footer
     display: flex
-    flex-direction: column
     align-items: flex-end
-    justify-content: center
-    align-self: stretch
+    justify-content: space-between
+    gap: 1.2rem
+    width: calc(100% + 4rem)
+    min-width: 0
+    margin-right: -4rem
   &__price
     display: flex
     flex-direction: column
     align-items: flex-start
     gap: 0.2rem
+    min-width: 0
     @include font-display
     font-size: 2rem
     line-height: 1.2

@@ -291,32 +291,32 @@ export function SiteCart() {
                       </Link>
                       {item.sizeLabel ? <p className="cart__size">{item.sizeLabel}</p> : null}
                     </div>
-                    <p className="cart__price">
-                      {oldPrice ? (
-                        <del className="cart__price-old">{formatLayoutPrice(oldPrice * item.quantity)}</del>
-                      ) : null}
-                      <span className="cart__price-current">{formatLayoutPrice(item.priceRubles * item.quantity)}</span>
-                    </p>
-                  </div>
-                  <div className="cart__aside">
-                    <div className="cart__qty">
-                      <button
-                        className="cart__qty-button"
-                        type="button"
-                        aria-label={`Меньше, ${item.name}`}
-                        onClick={() => setItems((current) => setLayoutCartQuantity(current, item.id, item.quantity - 1))}
-                      >
-                        −
-                      </button>
-                      <span className="cart__qty-value">{item.quantity}</span>
-                      <button
-                        className="cart__qty-button"
-                        type="button"
-                        aria-label={`Больше, ${item.name}`}
-                        onClick={() => setItems((current) => setLayoutCartQuantity(current, item.id, item.quantity + 1))}
-                      >
-                        +
-                      </button>
+                    <div className="cart__footer">
+                      <p className="cart__price">
+                        {oldPrice ? (
+                          <del className="cart__price-old">{formatLayoutPrice(oldPrice * item.quantity)}</del>
+                        ) : null}
+                        <span className="cart__price-current">{formatLayoutPrice(item.priceRubles * item.quantity)}</span>
+                      </p>
+                      <div className="cart__qty">
+                        <button
+                          className="cart__qty-button"
+                          type="button"
+                          aria-label={`Меньше, ${item.name}`}
+                          onClick={() => setItems((current) => setLayoutCartQuantity(current, item.id, item.quantity - 1))}
+                        >
+                          −
+                        </button>
+                        <span className="cart__qty-value">{item.quantity}</span>
+                        <button
+                          className="cart__qty-button"
+                          type="button"
+                          aria-label={`Больше, ${item.name}`}
+                          onClick={() => setItems((current) => setLayoutCartQuantity(current, item.id, item.quantity + 1))}
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </li>

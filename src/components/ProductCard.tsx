@@ -64,10 +64,6 @@ export function ProductCard({
   const [shown, setShown] = useState(false)
   const shownRef = useRef(false)
   const closingRef = useRef(false)
-  const [specsOpen, setSpecsOpen] = useState(false)
-  const [specsShown, setSpecsShown] = useState(false)
-  const specsShownRef = useRef(false)
-  const specsClosingRef = useRef(false)
   const [quantities, setQuantities] = useState<Record<string, number>>({})
   const { addItems } = useLayoutCart()
   const specs = card.specs ?? cardSpecs
@@ -90,7 +86,6 @@ export function ProductCard({
   const hasItems = linePrice > 0
 
   shownRef.current = shown
-  specsShownRef.current = specsShown
 
   useEffect(() => {
     if (!open || nameOnly) {
@@ -130,58 +125,6 @@ export function ProductCard({
     return () => window.clearTimeout(timeout)
   }, [open, shown, nameOnly])
 
-  useEffect(() => {
-    if (!specsOpen || nameOnly) {
-      specsClosingRef.current = false
-      return
-    }
-
-    let innerFrame = 0
-    const frame = requestAnimationFrame(() => {
-      innerFrame = requestAnimationFrame(() => setSpecsShown(true))
-    })
-
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        closeSpecs()
-      }
-    }
-
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    document.addEventListener('keydown', onKeyDown)
-
-    return () => {
-      cancelAnimationFrame(frame)
-      cancelAnimationFrame(innerFrame)
-      document.body.style.overflow = previousOverflow
-      document.removeEventListener('keydown', onKeyDown)
-    }
-  }, [specsOpen, nameOnly])
-
-  useEffect(() => {
-    if (!specsOpen || specsShown || !specsClosingRef.current || nameOnly) {
-      return
-    }
-
-    const timeout = window.setTimeout(() => {
-      specsClosingRef.current = false
-      setSpecsOpen(false)
-    }, 700)
-    return () => window.clearTimeout(timeout)
-  }, [specsOpen, specsShown, nameOnly])
-
-  function closeSpecs() {
-    if (!specsShownRef.current) {
-      specsClosingRef.current = false
-      setSpecsOpen(false)
-      return
-    }
-
-    specsClosingRef.current = true
-    setSpecsShown(false)
-  }
-
   function closePicker() {
     if (!shownRef.current) {
       closingRef.current = false
@@ -207,29 +150,6 @@ export function ProductCard({
 
     closingRef.current = false
     setOpen(false)
-  }
-
-  function onSpecsOverlayTransitionEnd(event: TransitionEvent<HTMLDivElement>) {
-    const target = event.target
-    if (
-      !(target instanceof Element) ||
-      !target.classList.contains('product-card__sheet') ||
-      event.propertyName !== 'opacity' ||
-      specsShownRef.current ||
-      !specsClosingRef.current
-    ) {
-      return
-    }
-
-    specsClosingRef.current = false
-    setSpecsOpen(false)
-  }
-
-  function openSpecs(event: MouseEvent<HTMLButtonElement>) {
-    event.preventDefault()
-    event.stopPropagation()
-    specsClosingRef.current = false
-    setSpecsOpen(true)
   }
 
   function openPicker(event: MouseEvent<HTMLButtonElement>) {
@@ -395,18 +315,6 @@ export function ProductCard({
           ) : (
             <span className="product-card__more">Подробнее</span>
           )}
-          {visibleSpecs.length > 0 ? (
-            <button
-              className="product-card__specs-toggle"
-              type="button"
-              aria-label="Параметры"
-              aria-haspopup="dialog"
-              aria-expanded={specsOpen}
-              onClick={openSpecs}
-            >
-              <Icon name="document" />
-            </button>
-          ) : null}
           {card.available ? (
             <button
               className="product-card__cart"
@@ -421,51 +329,6 @@ export function ProductCard({
           ) : null}
         </div>
       </div>
-      {specsOpen
-        ? createPortal(
-            <div
-              className={[
-                'product-card__overlay',
-                'product-card__overlay--sheet',
-                specsShown ? 'is-open' : '',
-              ]
-                .filter(Boolean)
-                .join(' ')}
-              onClick={closeSpecs}
-              onTransitionEnd={onSpecsOverlayTransitionEnd}
-            >
-              <div
-                className="product-card__sheet"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby={`product-specs-${card.id}`}
-                onClick={(event) => event.stopPropagation()}
-              >
-                <button
-                  className="product-card__sheet-close"
-                  type="button"
-                  aria-label="Закрыть"
-                  onClick={closeSpecs}
-                >
-                  <Icon name="close" />
-                </button>
-                <p className="product-card__sheet-name" id={`product-specs-${card.id}`}>
-                  {card.name}
-                </p>
-                <p className="product-card__sheet-title">Параметры</p>
-                <ul className="product-card__sheet-specs">
-                  {specs.map((spec, specIndex) => (
-                    <li className="product-card__sheet-spec" key={`${spec.label}-${specIndex}`}>
-                      <span className="product-card__sheet-spec-label">{spec.label}</span>
-                      <span className="product-card__sheet-spec-value">{spec.value}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>,
-            document.body,
-          )
-        : null}
       {open
         ? createPortal(
             <div

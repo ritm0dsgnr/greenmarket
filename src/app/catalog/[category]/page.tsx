@@ -10,6 +10,7 @@ import {
   categoryListingPath,
   getCategoryBySlug,
   getProductCardsForCategory,
+  getCategoryCopy,
   isFlatCatalogCategory,
   listCategoryNameTags,
   parseListingSort,
@@ -36,9 +37,11 @@ export async function generateMetadata({
     return { title: `Каталог — ${siteBrand}` }
   }
 
+  const copy = getCategoryCopy(category.slug)
+
   return {
-    title: `${category.label} — ${siteBrand}`,
-    description: `${category.label} садового центра ${siteBrand}.`,
+    title: `${copy?.heading ?? category.label} — ${siteBrand}`,
+    description: copy?.lead ?? `${category.label} садового центра ${siteBrand}.`,
   }
 }
 
@@ -56,6 +59,9 @@ export default async function CategoryPage({
   if (!category) {
     notFound()
   }
+
+  const copy = getCategoryCopy(category.slug)
+  const heading = copy?.heading ?? category.label
 
   if (isFlatCatalogCategory(category)) {
     const listingPath = categoryListingPath(category.slug)
@@ -77,7 +83,7 @@ export default async function CategoryPage({
             ]}
           />
           <SubcategoryProducts
-            title={category.label}
+            title={heading}
             products={products}
             listingPath={listingPath}
             activeNameTags={activeNameTags}
@@ -101,9 +107,27 @@ export default async function CategoryPage({
               { label: category.label },
             ]}
           />
-          <h1 className="catalog__title" id="category-title">
-            {bindHangingWords(category.label)}
+          <h1 className={['catalog__title', copy ? 'catalog__title--with-intro' : ''].filter(Boolean).join(' ')} id="category-title">
+            {bindHangingWords(heading)}
           </h1>
+          {copy ? (
+            <div className="catalog__intro">
+              {copy.lead ? <p className="catalog__lead">{bindHangingWords(copy.lead)}</p> : null}
+              {copy.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{bindHangingWords(paragraph)}</p>
+              ))}
+              {copy.points?.length ? (
+                <ul className="catalog__points">
+                  {copy.points.map((point) => (
+                    <li key={point}>{bindHangingWords(point)}</li>
+                  ))}
+                </ul>
+              ) : null}
+              {copy.afterPoints?.map((paragraph) => (
+                <p key={paragraph}>{bindHangingWords(paragraph)}</p>
+              ))}
+            </div>
+          ) : null}
           <ul className="catalog__grid">
             {[...category.subcategories]
               .sort((left, right) =>

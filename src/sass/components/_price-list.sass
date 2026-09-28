@@ -1,0 +1,141 @@
+@use "../assets/vars" as *
+@use "../assets/mixin" as *
+
+.price-list
+  display: flex
+  flex-direction: column
+  gap: 4.8rem
+  width: min(100%, 96rem)
+  margin-inline: auto
+  padding-top: 4rem
+  padding-bottom: 10rem
+  color: $forest
+  &__hero
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+    width: 100%
+  &__eyebrow
+    @include font-display
+    margin-bottom: 1.2rem
+    font-size: 1.4rem
+    line-height: 1.2
+    text-transform: uppercase
+    color: $leaf
+  &__title
+    @include font-display
+    font-size: clamp(3.6rem, 5vw, 6.4rem)
+    line-height: 0.98
+    letter-spacing: -0.04em
+    text-transform: uppercase
+    text-wrap: balance
+  &__lead
+    @include font-text
+    width: 100%
+    margin-top: 2rem
+    font-size: 2rem
+    line-height: 1.35
+    text-wrap: pretty
+  &__request
+    display: flex
+    flex-direction: column
+    gap: 2rem
+    width: 100%
+    padding: 2.8rem
+    color: $white
+    background: $forest
+    border-radius: 2rem
+  &__done
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+    gap: 1.6rem
+  &__done-title
+    @include font-display
+    margin: 0
+    font-size: clamp(2.4rem, 3vw, 3.4rem)
+    line-height: 1.05
+    letter-spacing: -0.03em
+    text-transform: uppercase
+  &__done-note
+    @include font-text
+    margin: 0
+    font-size: 1.5rem
+    line-height: 1.4
+    color: rgba($white, 0.82)
+  &__form
+    display: flex
+    flex-wrap: wrap
+    align-items: end
+    gap: 1.2rem
+    width: 100%
+  &__field
+    display: flex
+    flex-direction: column
+    gap: 0.8rem
+    flex: 1 1 28rem
+    min-width: min(100%, 28rem)
+  &__label
+    @include font-display
+    font-size: 1.3rem
+    line-height: 1
+    text-transform: uppercase
+    color: rgba($white, 0.78)
+  &__input
+    @include font-text
+    width: 100%
+    padding: 1.2rem 1.6rem
+    font-size: 1.7rem
+    line-height: 1.3
+    color: $forest
+    background: $cream
+    border: 0.2rem solid transparent
+    border-radius: 1.2rem
+    transition: border-color $anim-duration $anim-ease, background-color $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    &:hover
+      border-color: rgba($leaf, 0.7)
+    &:focus-visible
+      outline: none
+      border-color: $leaf
+  &__submit
+    @include font-display
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    min-height: 5.2rem
+    @include button-padding
+    padding-inline: 2.4rem
+    text-transform: uppercase
+    color: $forest
+    background: $leaf
+    border: 0.3rem solid $leaf
+    border-radius: 10rem
+    box-shadow: 0.4rem 0.4rem 0 rgba($cream, 0.35)
+    cursor: pointer
+    transition: background-color $anim-duration $anim-ease, border-color $anim-duration $anim-ease, box-shadow $anim-duration $anim-ease, transform $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    &:hover,
+    &:focus-visible
+      background: $cream
+      border-color: $cream
+      box-shadow: 0 0 0 rgba($cream, 0.35)
+      transform: translate(0.4rem, 0.4rem)
+      outline: none
+
+@media (max-width: $bp-mobile)
+  .price-list
+    gap: 3.6rem
+    padding-top: 2rem
+    padding-bottom: 6rem
+    &__lead
+      font-size: 1.8rem
+    &__request
+      padding: 2rem
+    &__form
+      flex-direction: column
+      align-items: stretch
+    &__submit
+      width: 100%
