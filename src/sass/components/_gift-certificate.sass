@@ -32,9 +32,27 @@
   &__lead
     @include font-text
     margin-top: 2rem
-    font-size: 2rem
-    line-height: 1.35
+    max-width: 54rem
+    font-size: 1.9rem
+    line-height: 1.55
     text-wrap: pretty
+  &__lead-phrase
+    font-weight: 600
+    padding: 0.2em 0.55em
+    background: rgba($blush, 0.38)
+    border-radius: 0.8rem
+    box-decoration-break: clone
+    -webkit-box-decoration-break: clone
+  &__visual
+    width: 100%
+    margin: 0
+    overflow: hidden
+    border-radius: 2rem
+    background: $cream-muted
+    img
+      display: block
+      width: 100%
+      height: auto
   &__story
     @include font-text
     display: flex
@@ -46,6 +64,15 @@
     text-wrap: pretty
     p
       margin: 0
+  &__story-opening
+    @include font-display
+    padding: 2rem 2.4rem
+    font-size: clamp(1.9rem, 2.2vw, 2.2rem)
+    line-height: 1.35
+    letter-spacing: -0.02em
+    background: $cream-muted
+    border-radius: 1.4rem
+    border-left: 0.4rem solid $leaf
   &__assortment
     display: flex
     flex-direction: column
@@ -381,9 +408,12 @@
     padding-top: 2rem
     padding-bottom: 6rem
     &__lead
-      font-size: 1.8rem
+      font-size: 1.7rem
     &__story
       font-size: 1.6rem
+    &__story-opening
+      padding: 1.6rem 1.8rem
+      font-size: 1.75rem
     &__order
       padding: 2rem
     &__amounts

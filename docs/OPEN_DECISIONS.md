@@ -8,8 +8,8 @@
 | Проверенная платформа hosting, staging, Node 24.x, PostgreSQL, HTTPS, backup/restore, secret storage | 2 | Владелец проекта и DevOps | Нельзя безопасно запускать приложение или миграции |
 | Git host, CI provider, branch protection и reviewer policy | 1 | Владелец проекта и tech lead | Нельзя обеспечить проверяемый delivery |
 | Утверждённые макеты, список страниц и контент первой очереди | 1 | Владелец проекта и дизайнер | Legacy UI не содержит нужной вёрстки |
-| Product and offer policy, out-of-stock, product without photo, archive status | 2 и 6 | Владелец каталога | Влияет на schema, import и public catalog |
-| Ownership descriptions and characteristics | 2 и 3 | Владелец каталога и контент-редактор | Нельзя безопасно решить, что импорт имеет право перезаписывать |
+| Product and offer policy, out-of-stock, product without photo, archive status | 2 и 6 | Владелец каталога | Этап 2 schema использует interim defaults из `docs/catalog/MIGRATION_DESIGN.md`. Финальная витрина (этап 6) и import publish rules всё ещё ждут явного product-решения |
+| Ownership descriptions and characteristics | 2 и 3 | Владелец каталога и контент-редактор | Этап 2: `description_owner` + draft. До этапа 3 нужно подтвердить, что interim устраивает, или заменить migration |
 | Модель auth, сотрудники, роли и порядок выдачи доступа | 4 | Владелец проекта | Нельзя строить admin access без threat model |
 | Media storage provider, retention, image formats и лимиты | 4 | Владелец проекта и tech lead | Влияет на персональные и коммерческие данные, затраты и CDN |
 | WordPress domain, hosting, update owner, content types и editor roles | 5 | Владелец контента | CMS должна быть отделена и поддерживаема |

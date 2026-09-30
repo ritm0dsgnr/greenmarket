@@ -1,0 +1,28 @@
+name: greenmarket-dev
+
+services:
+  postgres:
+    image: postgres:16.10-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: greenmarket
+      POSTGRES_PASSWORD: local-dev-only-change-me
+      POSTGRES_DB: greenmarket
+    ports:
+      - "127.0.0.1:55434:5432"
+    volumes:
+      - greenmarket_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U greenmarket -d greenmarket"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    command:
+      - postgres
+      - -c
+      - listen_addresses=*
+      - -c
+      - ssl=off
+
+volumes:
+  greenmarket_pg_data:

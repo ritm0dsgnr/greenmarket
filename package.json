@@ -32,6 +32,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:catalog-schema": "vitest run src/db/catalog-schema.test.ts",
     "verify:local-health": "tsx scripts/verify-local-health.ts",
     "verify:production-startup": "tsx scripts/verify-production-startup.ts",
     "db:create": "node-pg-migrate create --migrations-dir db/migrations",

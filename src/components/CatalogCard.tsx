@@ -4,6 +4,26 @@ import { bindHangingWords } from '@/components/bindHangingWords'
 import { Icon } from '@/components/Icon'
 import { catalogCardImageSrc } from '@/catalog/catalog-card-images'
 
+function CatalogCardTitleText({ title }: { title: string }) {
+  const newlineIndex = title.indexOf('\n')
+
+  if (newlineIndex === -1) {
+    return bindHangingWords(title)
+  }
+
+  const primary = title.slice(0, newlineIndex)
+  const secondary = title.slice(newlineIndex + 1).trim()
+
+  return (
+    <>
+      {bindHangingWords(primary)}
+      {secondary ? (
+        <span className="catalog-card__title-secondary">{bindHangingWords(secondary)}</span>
+      ) : null}
+    </>
+  )
+}
+
 function productCountAriaLabel(count: number) {
   const mod10 = count % 10
   const mod100 = count % 100
@@ -55,7 +75,9 @@ export function CatalogCard({
         </span>
       )}
       <span className="catalog-card__title">
-        {bindHangingWords(title)}
+        <span className="catalog-card__title-text">
+          <CatalogCardTitleText title={title} />
+        </span>
         {variant === 'category' ? (
           <Icon name="arrow-corner" className="catalog-card__arrow" />
         ) : null}

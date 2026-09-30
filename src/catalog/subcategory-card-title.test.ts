@@ -31,4 +31,13 @@ describe('subcategoryCardTitle', () => {
       }),
     ).toBe('Клён')
   })
+
+  it('prefers a multiline display label over a single product name', () => {
+    expect(
+      subcategoryCardTitle({
+        label: 'Родиола розовая\n(золотой корень)',
+        products: [{ name: 'Родиола розовая (золотой корень)' }],
+      }),
+    ).toBe('Родиола розовая\n(золотой корень)')
+  })
 })

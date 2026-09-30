@@ -1,0 +1,535 @@
+@use "../assets/vars" as *
+@use "../assets/mixin" as *
+
+.reviews
+  display: flex
+  flex-direction: column
+  gap: 5.6rem
+  width: min(100%, 96rem)
+  margin-inline: auto
+  padding-top: 4rem
+  padding-bottom: 18rem
+  color: $forest
+  &__hero
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+    width: 100%
+  &__title-row
+    display: flex
+    flex-wrap: wrap
+    align-items: center
+    justify-content: space-between
+    gap: 1.6rem 2rem
+    width: 100%
+  &__eyebrow
+    @include font-display
+    margin-bottom: 1.2rem
+    font-size: 1.4rem
+    line-height: 1.2
+    text-transform: uppercase
+    color: $leaf
+  &__title
+    @include font-display
+    margin: 0
+    font-size: clamp(3.6rem, 5vw, 6.4rem)
+    line-height: 0.98
+    letter-spacing: -0.04em
+    text-transform: uppercase
+    text-wrap: balance
+  &__lead
+    @include font-text
+    max-width: 54rem
+    margin-top: 2rem
+    font-size: 1.8rem
+    line-height: 1.45
+    text-wrap: pretty
+  &__highlight
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+    gap: 0.5rem
+    flex: 0 0 auto
+    margin-left: auto
+    min-width: 0
+    padding: 1.2rem 1.6rem 1.1rem
+    color: $forest
+    background: $leaf
+    border-radius: 1.6rem 0.3rem 1.6rem 0.3rem
+    box-shadow: 0.3rem 0.3rem 0 rgba($forest, 0.5)
+  &__highlight-stars
+    display: inline-flex
+    gap: 0.15rem
+  &__highlight-star
+    width: 1rem
+    height: 1rem
+    fill: $forest
+  &__highlight-value
+    @include font-display
+    font-size: clamp(2.4rem, 2.8vw, 3.2rem)
+    line-height: 0.9
+    letter-spacing: -0.04em
+  &__section-head
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+    gap: 0.4rem
+    margin-bottom: 2.4rem
+  &__section-title
+    @include font-display
+    margin: 0
+    font-size: clamp(2.4rem, 3vw, 3.4rem)
+    line-height: 1.05
+    letter-spacing: -0.03em
+    text-transform: uppercase
+  &__shots
+    width: 100%
+  &__shots-slider
+    display: grid
+    grid-template-columns: 4rem minmax(0, 1fr) 4rem
+    column-gap: 1.6rem
+    align-items: center
+    width: 100%
+  &__shots-control
+    display: flex
+    align-items: center
+    justify-content: center
+    flex-shrink: 0
+    width: 4rem
+    height: auto
+    aspect-ratio: 1 / 1
+    border: 0
+    border-radius: 50%
+    color: $forest
+    background: $cream-muted
+    transition: background-color $anim-duration $anim-ease, transform $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    .icon
+      @include icon-arrow
+    &--prev .icon
+      transform: rotate(90deg)
+    &--next .icon
+      transform: rotate(-90deg)
+    &:hover,
+    &:focus-visible
+      background: $leaf
+      color: $forest
+      transform: scale(1.06)
+      outline: none
+  &__shots-viewport
+    display: grid
+    min-width: 0
+    overflow: hidden
+    > *
+      grid-area: 1 / 1
+      min-width: 0
+    &.is-ready
+      .reviews__shots-fallback
+        visibility: hidden
+        pointer-events: none
+      .reviews__shots-swiper
+        visibility: visible
+        pointer-events: auto
+  &__shots-swiper
+    width: 100%
+    overflow: hidden
+    visibility: hidden
+    pointer-events: none
+    .swiper-wrapper
+      display: flex
+      align-items: stretch
+    .swiper-slide
+      box-sizing: border-box
+      flex-shrink: 0
+      height: auto
+      display: flex
+  &__shots-fallback
+    display: flex
+    gap: 1.6rem
+    width: 100%
+    overflow: hidden
+    .reviews__shot
+      flex: 0 0 calc((100% - 1.6rem) / 2)
+      max-width: calc((100% - 1.6rem) / 2)
+    @media (min-width: #{$bp-tablet + 1})
+      .reviews__shot
+        flex: 0 0 calc((100% - 3.2rem) / 3)
+        max-width: calc((100% - 3.2rem) / 3)
+  &__shots-item
+    min-width: 0
+  &__shot
+    margin: 0
+    width: 100%
+    overflow: hidden
+    border-radius: 2rem
+    background: $white
+    img
+      display: block
+      width: 100%
+      height: auto
+  &__shots-pages
+    display: flex
+    flex-wrap: wrap
+    align-items: center
+    justify-content: center
+    gap: 0.8rem
+    margin-top: 2.4rem
+  &__shots-page
+    display: flex
+    align-items: center
+    justify-content: center
+    width: 2.4rem
+    height: 2.4rem
+    color: rgba($forest, 0.28)
+    background: transparent
+    border: 0
+    border-radius: 50%
+    transition: color $anim-duration $anim-ease, transform $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    .icon
+      width: 1.6rem
+      height: 1.6rem
+    &:hover,
+    &:focus-visible
+      color: $leaf
+      outline: none
+    &.is-active
+      color: $leaf
+      transform: scale(1.12)
+  &__share
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+    gap: 1.2rem
+    width: 100%
+    padding: 2.8rem
+    background: $cream-muted
+    border-radius: 2rem
+  &__share-title
+    @include font-display
+    margin: 0
+    font-size: clamp(2.4rem, 3vw, 3.4rem)
+    line-height: 1.05
+    letter-spacing: -0.03em
+    text-transform: uppercase
+  &__share-text
+    @include font-text
+    max-width: 56rem
+    margin: 0
+    font-size: 1.7rem
+    line-height: 1.45
+  &__share-open
+    @include font-display
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    margin-top: 0.4rem
+    @include button-padding
+    text-transform: uppercase
+    color: $forest
+    background: $leaf
+    border: 0.3rem solid $leaf
+    border-radius: 10rem
+    box-shadow: 0.4rem 0.4rem 0 rgba(10, 51, 35, 0.8)
+    cursor: pointer
+    transition: box-shadow $anim-duration $anim-ease, transform $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    &:hover,
+    &:focus-visible
+      box-shadow: 0 0 0 rgba(10, 51, 35, 0.8)
+      transform: translate(0.4rem, 0.4rem)
+      outline: none
+  &__site
+    width: 100%
+  &__list
+    display: flex
+    flex-direction: column
+    gap: 4.8rem
+    width: 100%
+    margin: 0
+    padding: 0
+    list-style: none
+  &__card
+    display: flex
+    flex-direction: column
+    gap: 1.2rem
+    width: 100%
+    background: $cream
+    border-radius: 1.8rem
+  &__card-head
+    display: flex
+    align-items: center
+    gap: 1.4rem
+  &__avatar
+    @include font-display
+    display: inline-flex
+    flex: 0 0 auto
+    align-items: center
+    justify-content: center
+    width: 4.8rem
+    height: 4.8rem
+    font-size: 1.4rem
+    line-height: 1
+    letter-spacing: 0.02em
+    color: $cream
+    background: $forest
+    border-radius: 50%
+  &__card-meta
+    display: flex
+    flex-direction: column
+    gap: 0.3rem
+    min-width: 0
+  &__author
+    @include font-display
+    margin: 0
+    font-size: 1.7rem
+    line-height: 1.2
+    letter-spacing: -0.02em
+  &__source
+    @include font-text
+    margin: 0
+    font-size: 1.3rem
+    line-height: 1.2
+    color: rgba($forest, 0.62)
+  &__rating-row
+    display: flex
+    flex-wrap: wrap
+    align-items: center
+    gap: 1rem
+  &__stars
+    display: inline-flex
+    gap: 0.2rem
+  &__star
+    width: 1.6rem
+    height: 1.6rem
+    fill: rgba($forest, 0.18)
+    &.is-on
+      fill: $leaf
+  &__date
+    @include font-text
+    font-size: 1.4rem
+    line-height: 1.2
+    color: rgba($forest, 0.62)
+  &__text
+    @include font-text
+    margin: 0
+    font-size: 1.7rem
+    line-height: 1.5
+    text-wrap: pretty
+  &__reply
+    display: flex
+    flex-direction: column
+    gap: 0.6rem
+    margin-top: 0.4rem
+    padding: 1.6rem 1.8rem
+    background: $cream-muted
+    border-radius: 1.4rem
+    border-left: 0.4rem solid $leaf
+  &__reply-label
+    @include font-display
+    margin: 0
+    font-size: 1.2rem
+    line-height: 1
+    text-transform: uppercase
+    color: $leaf
+  &__reply-text
+    @include font-text
+    margin: 0
+    font-size: 1.5rem
+    line-height: 1.45
+
+.reviews-popup
+  position: fixed
+  inset: 0
+  z-index: 40
+  display: flex
+  align-items: center
+  justify-content: center
+  padding: $gutter
+  &::before
+    content: ""
+    position: absolute
+    inset: 0
+    z-index: 0
+    background: rgb(0 0 0 / 0.72)
+    backdrop-filter: blur(0.8rem)
+    -webkit-backdrop-filter: blur(0.8rem)
+    opacity: 0
+    transition: opacity 0.45s $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+  &.is-open::before
+    opacity: 1
+  &__dialog
+    position: relative
+    z-index: 1
+    display: flex
+    flex-direction: column
+    width: min(52rem, 100%)
+    max-height: min(94vh, 76rem)
+    overflow: hidden
+    color: $forest
+    background: $cream
+    border: 0
+    border-radius: 2.4rem 0.2rem 0.2rem 2.4rem
+    opacity: 0
+    transform: translateY(1.6rem)
+    transition: opacity 0.45s $anim-ease, transform 0.45s $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transform: none
+      transition: none
+  &.is-open &__dialog
+    opacity: 1
+    transform: none
+  &__close
+    @include popup-close
+    @include anim(background-color color transform)
+    &:hover,
+    &:focus-visible
+      color: $forest
+      transform: scale(1.06)
+  &__body
+    display: flex
+    flex-direction: column
+    flex: 1 1 auto
+    min-height: 0
+    overflow: hidden
+    padding: 4rem 3.2rem 3.2rem
+  &__scroll
+    display: flex
+    flex-direction: column
+    gap: 1.6rem
+    flex: 1 1 auto
+    min-height: 0
+    overflow: auto
+    padding-bottom: 0.8rem
+    overscroll-behavior: contain
+    overflow-anchor: none
+    @include overlay-scrollbar
+  &__eyebrow
+    @include font-display
+    margin: 0
+    font-size: 1.3rem
+    line-height: 1
+    text-transform: uppercase
+    color: $leaf
+  &__title
+    @include font-display
+    width: 100%
+    margin: 0
+    padding-right: 4rem
+    font-size: clamp(2.2rem, 3vw, 3rem)
+    line-height: 1.1
+    letter-spacing: -0.02em
+    text-transform: uppercase
+  &__lead,
+  &__note
+    @include font-text
+    margin: 0
+    font-size: 1.5rem
+    line-height: 1.4
+  &__note
+    color: rgba($forest, 0.78)
+  &__form,
+  &__done
+    display: flex
+    flex-direction: column
+    gap: 1.4rem
+  &__done
+    align-items: center
+    text-align: center
+  &__field
+    display: flex
+    flex-direction: column
+    gap: 0.6rem
+  &__label
+    @include font-display
+    font-size: 1.3rem
+    line-height: 1
+    text-transform: uppercase
+  &__input,
+  &__textarea
+    @include font-text
+    width: 100%
+    padding: 1.2rem 1.6rem
+    font-size: 1.6rem
+    line-height: 1.3
+    color: $forest
+    background: $cream
+    border: 0.3rem solid $forest
+    border-radius: 1.2rem
+    resize: vertical
+    @include anim(border-color background-color)
+    &:hover
+      border-color: $leaf
+    &:focus-visible
+      outline: none
+      border-color: $leaf
+      background: $cream-muted
+  &__submit
+    @include font-display
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    align-self: center
+    margin-top: 0.4rem
+    margin-bottom: 0.4rem
+    @include button-padding
+    text-transform: uppercase
+    color: $forest
+    background: $leaf
+    border: 0.3rem solid $leaf
+    border-radius: 10rem
+    box-shadow: 0.4rem 0.4rem 0 rgba(10, 51, 35, 0.8)
+    cursor: pointer
+    transition: box-shadow $anim-duration $anim-ease, transform $anim-duration $anim-ease
+    @media (prefers-reduced-motion: reduce)
+      transition: none
+    &:hover,
+    &:focus-visible
+      box-shadow: 0 0 0 rgba(10, 51, 35, 0.8)
+      transform: translate(0.4rem, 0.4rem)
+      outline: none
+
+@media (max-width: $bp-tablet)
+  .reviews
+    &__shots-slider
+      grid-template-columns: 3.6rem minmax(0, 1fr) 3.6rem
+      column-gap: 1.2rem
+
+@media (max-width: $bp-mobile)
+  .reviews
+    gap: 4rem
+    padding-top: 2rem
+    padding-bottom: 10rem
+    &__title-row
+      gap: 1.2rem 1.4rem
+    &__lead
+      font-size: 1.7rem
+    &__highlight
+      padding: 1rem 1.3rem 0.9rem
+      box-shadow: 0.25rem 0.25rem 0 rgba($forest, 0.5)
+    &__highlight-star
+      width: 0.9rem
+      height: 0.9rem
+    &__highlight-value
+      font-size: 2.4rem
+    &__shots-slider
+      grid-template-columns: 1fr
+      row-gap: 1.6rem
+    &__shots-control
+      display: none
+    &__list
+      gap: 4rem
+    &__text
+      font-size: 1.6rem
+    &__share
+      padding: 2rem
+  .reviews-popup
+    padding: 1.6rem
+    &__body
+      padding: 3.2rem 2rem 2.4rem

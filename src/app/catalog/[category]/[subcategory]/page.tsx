@@ -15,6 +15,7 @@ import {
   parsePromoTagQuery,
   subcategoryListingPath,
 } from '@/catalog'
+import { flattenCatalogLabel } from '@/catalog/subcategory-label-overrides'
 import {
   parseListingSort,
   parseListingSpecFilters,
@@ -50,8 +51,8 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${match.subcategory.label} — ${siteBrand}`,
-    description: `${match.subcategory.label} садового центра ${siteBrand}.`,
+    title: `${flattenCatalogLabel(match.subcategory.label)} — ${siteBrand}`,
+    description: `${flattenCatalogLabel(match.subcategory.label)} садового центра ${siteBrand}.`,
   }
 }
 
@@ -122,7 +123,7 @@ export default async function SubcategoryPage({
             { href: '/', label: 'Главная' },
             { href: '/catalog', label: 'Каталог' },
             { href: match.category.href, label: match.category.label },
-            { label: match.subcategory.label },
+            { label: flattenCatalogLabel(match.subcategory.label) },
           ]}
         />
         <SubcategoryProducts

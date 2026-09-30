@@ -33,16 +33,26 @@
       @include anim(transform)
   &__title
     display: flex
-    align-items: center
+    align-items: flex-start
     justify-content: space-between
     gap: 1.2rem
     min-width: 0
-    overflow-wrap: anywhere
     @include font-display
     padding: 1.6rem 1.8rem 1.6rem 2.2rem
     font-size: 1.6rem
     line-height: 1.2
     text-transform: uppercase
+    &-text
+      flex: 1
+      min-width: 0
+      overflow-wrap: anywhere
+    &-secondary
+      display: block
+      margin-top: 0.35rem
+      font-size: 0.72em
+      line-height: 1.12
+      letter-spacing: -0.02em
+      text-wrap: balance
   &__visual
     display: grid
     grid-template-rows: 0rem minmax(0, 1fr)
@@ -73,6 +83,8 @@
     line-height: 1
   &__arrow
     @include icon-arrow
+    flex-shrink: 0
+    align-self: center
     overflow: visible
     width: 2.5rem
     height: 2.5rem

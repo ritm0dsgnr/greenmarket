@@ -7,26 +7,26 @@ describe('catalogCardImageSrc', () => {
     expect(catalogCardImageSrc('/catalog/plodovo-yagodnye')).toBe(
       '/img/catalog/plodovo-yagodnye.20260926.png',
     )
-    expect(catalogCardImageSrc('/catalog/rozy')).toBe('/img/catalog/rozy.20260925c.png')
+    expect(catalogCardImageSrc('/catalog/rozy')).toBe('/img/catalog/rozy.20260929z.png')
     expect(catalogCardImageSrc('/catalog/pryanye-travy')).toBe('/img/catalog/pryanye-travy.20260925.png')
     expect(catalogCardImageSrc('/catalog/zlaki-i-travy')).toBe('/img/catalog/zlaki-i-travy.20260925.png')
     expect(catalogCardImageSrc('/catalog/vereskovye')).toBe('/img/catalog/vereskovye.20260925.png')
     expect(catalogCardImageSrc('/catalog/derevya')).toBe('/img/catalog/derevya.20260925.png')
     expect(catalogCardImageSrc('/catalog/dekorativnye-kustarniki')).toBe(
-      '/img/catalog/dekorativnye-kustarniki.20260925b.png',
+      '/img/catalog/dekorativnye-kustarniki.20260929ad.png',
     )
     expect(catalogCardImageSrc('/catalog/liany')).toBe('/img/catalog/liany.20260925.png')
     expect(catalogCardImageSrc('/catalog/vereskovye/rododendron')).toBe(
       '/img/catalog/rododendron.20260925.png',
     )
-    expect(catalogCardImageSrc('/catalog/vereskovye/erika')).toBe('/img/catalog/erika.20260925.png')
+    expect(catalogCardImageSrc('/catalog/vereskovye/erika')).toBe('/img/catalog/erika.20260929aa.png')
     expect(catalogCardImageSrc('/catalog/dekorativnye-kustarniki/spireya')).toBe(
-      '/img/catalog/spireya.20260925b.png',
+      '/img/catalog/spireya.20260929q.png',
     )
-    expect(catalogCardImageSrc('/catalog/liany/knyazhik')).toBe('/img/catalog/knyazhik.20260904.png')
+    expect(catalogCardImageSrc('/catalog/liany/knyazhik')).toBe('/img/catalog/knyazhik.20260929y.png')
     expect(catalogCardImageSrc('/catalog/mnogoletniki/pion')).toBe('/img/catalog/pion.20260904.png')
     expect(catalogCardImageSrc('/catalog/plodovo-yagodnye/grusha')).toBe('/img/catalog/grusha.20260904.png')
-    expect(catalogCardImageSrc('/catalog/hvoynye/sosna')).toBe('/img/catalog/sosna.20260926c.png')
+    expect(catalogCardImageSrc('/catalog/hvoynye/sosna')).toBe('/img/catalog/sosna.20260929j.png')
     expect(catalogCardImageSrc('/catalog/mnogoletniki/hosta')).toBe('/img/catalog/hosta.20260904.png')
     expect(catalogCardImageSrc('/catalog/plodovo-yagodnye/golubika')).toBe(
       '/img/catalog/golubika.20260926.png',
@@ -39,7 +39,7 @@ describe('catalogCardImageSrc', () => {
     expect(catalogCardImageSrc('/catalog/plodovo-yagodnye/klubnika')).toBe(
       '/img/catalog/klubnika.20260926c.png',
     )
-    expect(catalogCardImageSrc('/catalog/derevya/klen')).toBe('/img/catalog/klen.20260926c.png')
+    expect(catalogCardImageSrc('/catalog/derevya/klen')).toBe('/img/catalog/klen.20260929g.png')
     expect(catalogCardImageSrc('/catalog/lukovichnye/muskari')).toBe(
       '/img/catalog/muskari.20260926c.png',
     )
@@ -53,12 +53,28 @@ describe('catalogCardImageSrc', () => {
       '/img/catalog/sadovaya-mebel.20260926d.png',
     )
     expect(catalogCardImageSrc('/catalog/dekorativnye-kustarniki/zhimolost')).toBe(
-      '/img/catalog/zhimolost.20260926d.png',
+      '/img/catalog/zhimolost-kust.20260929o.png',
     )
     expect(catalogCardImageSrc('/catalog/derevya/vyaz')).toBe('/img/catalog/vyaz.20260927.png')
     expect(catalogCardImageSrc('/catalog/mnogoletniki/astra')).toBe('/img/catalog/astra.20260927.png')
     expect(catalogCardImageSrc('/catalog/soputstvuyuschie-tovary')).toBe(
       '/img/catalog/soputstvuyuschie-tovary.20260927.png',
+    )
+    expect(catalogCardImageSrc('/catalog/plodovo-yagodnye/yablonya')).toBe(
+      '/img/catalog/yablonya.20260926c.png',
+    )
+    expect(catalogCardImageSrc('/catalog/derevya/yablonya')).toBe('/img/catalog/yablonya.20260929m.png')
+    expect(catalogCardImageSrc('/catalog/dekorativnye-kustarniki/barbaris')).toBe(
+      '/img/catalog/barbaris-kust.20260929q.png',
+    )
+    expect(catalogCardImageSrc('/catalog/dekorativnye-kustarniki/vishnya')).toBe(
+      '/img/catalog/vishnya-kust.20260929o.png',
+    )
+    expect(catalogCardImageSrc('/catalog/dekorativnye-kustarniki/smorodina')).toBe(
+      '/img/catalog/smorodina-kust.20260929o.png',
+    )
+    expect(catalogCardImageSrc('/catalog/dekorativnye-kustarniki/siren')).toBe(
+      '/img/catalog/siren.20260929o.png',
     )
   })
 

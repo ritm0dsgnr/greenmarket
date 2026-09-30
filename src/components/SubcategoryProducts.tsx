@@ -3,6 +3,7 @@ import { ProductsCatalog } from '@/components/ProductsCatalog'
 import type { ProductCardData, ProductCardTag } from '@/components/ProductCard'
 import type { ListingSortId, ListingSpecFilter } from '@/catalog/listing-filters-url'
 import { collectSpecFilters } from '@/components/productListingLayout'
+import { flattenCatalogLabel } from '@/catalog/subcategory-label-overrides'
 import { siteBrand } from '@/components/siteContacts'
 
 function productCountLabel(count: number) {
@@ -70,7 +71,7 @@ export function SubcategoryProducts({
             ) : (
               <p className="products__lead">
                 {bindHangingWords(
-                  `${title} садового центра ${siteBrand}. Параметры и цены показаны из прайса для приёмки вёрстки. Перед заказом менеджер подтвердит наличие и стоимость.`,
+                  `${flattenCatalogLabel(title)} садового центра ${siteBrand}. Параметры и цены показаны из прайса для приёмки вёрстки. Перед заказом менеджер подтвердит наличие и стоимость.`,
                 )}
               </p>
             )}

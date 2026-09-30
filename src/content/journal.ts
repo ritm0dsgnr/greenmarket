@@ -157,6 +157,8 @@ export const journalItems: readonly JournalItem[] = [
     timeLabel: '3 августа, 12:00',
     priceLabel: '2500₽',
     address: 'Берёзовский, ул. Рассветная, 1А',
+    imageSrc: '/img/hero/slides/relief.png',
+    imageAlt: 'Глина, гипс и живые растения на столе мастер-класса',
     signup: {
       lead: 'Приглашаем вас на мастер-класс по созданию ботанического барельефа, который пройдёт 3 августа в 12:00 в садовом центре Грин Маркет.',
       points: [
@@ -178,6 +180,8 @@ export const journalItems: readonly JournalItem[] = [
     timeLabel: '13 мая, 12:00',
     priceLabel: '3500₽',
     address: 'ул. Рассветная, 1А',
+    imageSrc: '/img/about/2026-wreath-workshop.jpg',
+    imageAlt: 'Новогодние венки из хвои, шишек и сухоцветов на столе мастер-класса',
     inHomeSlider: true,
     homeSliderOrder: 2,
   },
@@ -323,7 +327,8 @@ export const journalItems: readonly JournalItem[] = [
     date: '2026-02-25',
     title: 'Хвойные в маленьком саду: компактные формы и сочетания',
     excerpt: 'Подборка низкорослых хвойных для клумбы, рокария и посадки у террасы.',
-    imageSrc: '/img/catalog/hvoynye.20260904.png',
+    imageSrc: '/img/journal/conifers-mix.jpg',
+    imageAlt: 'Композиция из разных хвойных в небольшом саду',
   },
   {
     id: 'article-roses',
@@ -331,7 +336,8 @@ export const journalItems: readonly JournalItem[] = [
     date: '2026-02-10',
     title: 'Розы для Урала: зимостойкие сорта и укрытие',
     excerpt: 'Какие группы роз лучше переносят зиму и как подготовить куст к морозам.',
-    imageSrc: '/img/catalog/rozy.20260904.png',
+    imageSrc: '/img/journal/roses-bush.jpg',
+    imageAlt: 'Пышный цветущий куст розы',
   },
   {
     id: 'article-hydrangea',
@@ -340,7 +346,8 @@ export const journalItems: readonly JournalItem[] = [
     title: 'Гортензии: кислотность почвы и цвет соцветий',
     excerpt:
       'Как влияет pH на окраску и что учесть при посадке метельчатых и крупнолистных сортов.',
-    imageSrc: '/img/catalog/gortenzii.20260904.png',
+    imageSrc: '/img/journal/hydrangea-pot.jpg',
+    imageAlt: 'Гортензия в кашпо',
   },
   {
     id: 'article-lawn',
@@ -467,7 +474,8 @@ export const journalItems: readonly JournalItem[] = [
     date: '2025-11-18',
     title: 'Контейнерный сад на террасе: грунт, дренаж и зимовка',
     excerpt: 'Что выбрать для кашпо, как поливать летом и куда убирать растения на зиму.',
-    imageSrc: '/img/catalog/pryanye-travy.20260904.png',
+    imageSrc: '/img/journal/containers-mix.jpg',
+    imageAlt: 'Пряные травы, розы и хвойные в кашпо на террасе',
   },
 ]
 
