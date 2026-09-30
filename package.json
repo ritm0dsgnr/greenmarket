@@ -10,7 +10,13 @@
   "overrides": {
     "browserslist": "4.28.8",
     "js-yaml": "4.3.2",
-    "nanoid": "3.3.18"
+    "nanoid": "3.3.18",
+    "minimatch@3.1.5": {
+      "brace-expansion": "1.1.21"
+    },
+    "minimatch@10.2.6": {
+      "brace-expansion": "5.0.12"
+    }
   },
   "scripts": {
     "predev": "tsx scripts/check-runtime.ts && tsx scripts/build-sprite.ts && tsx scripts/build-price-catalog.ts",
@@ -32,6 +38,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:catalog-schema": "vitest run src/db/catalog-schema.test.ts",
     "verify:local-health": "tsx scripts/verify-local-health.ts",
     "verify:production-startup": "tsx scripts/verify-production-startup.ts",
     "db:create": "node-pg-migrate create --migrations-dir db/migrations",

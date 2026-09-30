@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import {
   useEffect,
   useId,
@@ -48,15 +49,30 @@ export function GiftCertificate() {
         <h1 className="gift-certificate__title" id="gift-certificate-title">
           {t('Подарочный сертификат')}
         </h1>
-        <p className="gift-certificate__lead">{t('Подарок, который точно принесет радость!')}</p>
+        <p className="gift-certificate__lead">
+          <span className="gift-certificate__lead-phrase">
+            {t('Подарок, который точно принесет радость!')}
+          </span>
+        </p>
       </header>
 
+      <figure className="gift-certificate__visual">
+        <Image
+          src="/img/gift-certificate.jpg"
+          alt="Подарочный сертификат Грин Маркет"
+          width={1280}
+          height={720}
+          priority
+        />
+      </figure>
+
       <div className="gift-certificate__story">
-        <p>
+        <p className="gift-certificate__story-opening">
           {t(
-            'Знаете человека, который готов часами выбирать идеальный сорт роз или с любовью обустраивать свой сад? Мы знаем, как сделать его счастливым!',
+            'Знаете человека, который готов часами выбирать идеальный сорт роз или с любовью обустраивать свой сад?',
           )}
         </p>
+        <p>{t('Мы знаем, как сделать его счастливым!')}</p>
         <p>
           {t(
             'Подарочный сертификат в наш Садовый центр — это не просто подарок, это возможность для ваших близких выбрать именно то, о чем они мечтали. В нашем ассортименте:',

@@ -43,7 +43,8 @@ Foundation не означает готовность каталога или р
   работ и gates;
 - [UI_MIGRATION_PLAN.md](UI_MIGRATION_PLAN.md), инвентарь legacy-артефактов и
   миграция вёрстки;
-- [CATALOG_RFC.md](CATALOG_RFC.md), модель каталога до создания миграций;
+- [CATALOG_RFC.md](CATALOG_RFC.md), модель каталога; схема этапа 2 —
+  [catalog/MIGRATION_DESIGN.md](catalog/MIGRATION_DESIGN.md) и ADR-0003;
 - [LOYALTY_MVP_RFC.md](LOYALTY_MVP_RFC.md), зафиксированная граница бонусного
   MVP и Telegram-кабинета;
 - [LOYALTY_TECHNICAL_SPEC.md](LOYALTY_TECHNICAL_SPEC.md), техническое задание
@@ -62,8 +63,10 @@ Foundation не означает готовность каталога или р
   проверяемый SVG-спрайт, безопасные базовые HTTP-заголовки, health endpoint,
   проверка production-конфигурации, миграционный инструмент, lint, unit-тесты,
   production build и аудит зависимостей.
-- Подготовлено, но не подключено: PostgreSQL и будущие миграции. Реальной базы,
-  схемы каталога и production credentials в репозитории нет.
+- Подключены миграции каталога (`db/migrations`, `catalog-foundation`).
+  Локальная Postgres: `docker-compose.dev.yml` на `127.0.0.1:55434`.
+  Import apply, публичный API каталога и админка ещё не подключены.
+  Production credentials в репозитории нет.
 - Не реализовано и не должно подключаться без отдельной задачи: Excel-импорт,
   WordPress, админка, фотографии товаров, авторизация, заявки, корзина,
   wishlist, production-бонусы, Telegram и 1С. Контур L0 содержит только

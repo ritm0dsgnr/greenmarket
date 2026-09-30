@@ -1,9 +1,11 @@
 import { priceCatalogSnapshot as generatedSnapshot } from './generated-price-catalog'
 import { mergeYoTwinSnapshot, resolveSubcategorySlug } from './merge-yo-subcategories'
+import { applySubcategoryLabelOverrides } from './subcategory-label-overrides'
 
 const merged = mergeYoTwinSnapshot(generatedSnapshot)
+const withLabels = applySubcategoryLabelOverrides(merged.snapshot)
 
-export const priceCatalogSnapshot = merged.snapshot
+export const priceCatalogSnapshot = withLabels
 export const catalogGroups = priceCatalogSnapshot.groups
 export const catalogCategories = priceCatalogSnapshot.categories
 const subcategoryAliases = merged.aliases

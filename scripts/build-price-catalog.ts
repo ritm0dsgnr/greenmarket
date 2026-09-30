@@ -36,14 +36,14 @@ function resolveSourceFile() {
 
   const files = fs
     .readdirSync(importDir)
-    .filter((name) => name.toLowerCase().endsWith('.xlsx'))
+    .filter((name) => name.toLowerCase().endsWith('.xlsx') && !name.toLowerCase().includes('.bak.'))
 
   if (files.length === 0) {
     throw new Error(`No .xlsx files found in ${importDir}`)
   }
 
   if (files.length > 1) {
-    const preferred = files.find((name) => name.includes('Прайс'))
+    const preferred = files.find((name) => name.includes('Прайс') && !name.toLowerCase().includes('.bak.'))
 
     if (preferred) {
       return path.join(importDir, preferred)
@@ -73,7 +73,7 @@ function main() {
 
   const files = fs
     .readdirSync(importDir)
-    .filter((name) => name.toLowerCase().endsWith('.xlsx'))
+    .filter((name) => name.toLowerCase().endsWith('.xlsx') && !name.toLowerCase().includes('.bak.'))
 
   if (files.length === 0) {
     if (keepExistingCatalog('No .xlsx in import directory')) {

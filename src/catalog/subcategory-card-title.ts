@@ -12,6 +12,10 @@ export function subcategoryCardTitle(subcategory: {
   label: string
   products: ReadonlyArray<{ name: string }>
 }) {
+  if (subcategory.label.includes('\n')) {
+    return subcategory.label
+  }
+
   if (subcategory.products.length === 1) {
     const name = subcategory.products[0]?.name
     return (name ? stripQuotedNameParts(name) : '') || subcategory.label

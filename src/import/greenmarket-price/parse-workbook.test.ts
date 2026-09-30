@@ -42,7 +42,9 @@ describe('greenmarket price workbook', () => {
       return
     }
 
-    const files = fs.readdirSync(importDir).filter((name) => name.toLowerCase().endsWith('.xlsx'))
+    const files = fs
+      .readdirSync(importDir)
+      .filter((name) => name.toLowerCase().endsWith('.xlsx') && !name.toLowerCase().includes('.bak.'))
     expect(files.length).toBeGreaterThan(0)
 
     const sourceFile = path.join(importDir, files[0]!)

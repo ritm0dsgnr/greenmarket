@@ -2,8 +2,10 @@
 
 ## Статус
 
-Предложение для согласования. Не является разрешением создавать таблицы или
-писать import service до утверждения владельцем проекта.
+Утверждено для этапа 2 (28 сентября 2026). Таблицы и constraints —
+в миграции `catalog-foundation` и
+[catalog/MIGRATION_DESIGN.md](catalog/MIGRATION_DESIGN.md).
+Import service (этап 3) этим статусом не разрешён.
 
 ## Проблема
 
@@ -112,12 +114,18 @@ container, offers или product images.
 Manual product media editor может менять только media relation, cover, order
 и alt. Import не может эти поля перезаписывать.
 
-## Открытые детали для утверждения
+## Открытые детали (interim defaults этапа 2)
 
-- Публиковать ли товар без фото.
-- Как именно показывать `нет в наличии`, ожидаемую поставку и архивные товары.
-- Какие description and characteristics принадлежат Excel, а какие редактору.
-- Нужны ли варианты товара на public page как отдельные purchasable offers.
-- Правила slug при переименовании и допустимый redirect lifetime.
+Рабочие значения для схемы зафиксированы в
+[catalog/MIGRATION_DESIGN.md](catalog/MIGRATION_DESIGN.md). Смена политики —
+новая migration, не silent fix.
 
-Эти вопросы перечислены также в [OPEN_DECISIONS.md](OPEN_DECISIONS.md).
+| Вопрос | Interim default |
+| --- | --- |
+| Товар без фото | `published` без `product_images` допускается; фильтр витрины на этапе 6 |
+| Availability | `unknown` / `available` / `unavailable` / `expected` + `availability_note` |
+| Description | `description_owner` + `description_import_draft`; `editor` блокирует overwrite |
+| Несколько offers | Да на уровне схемы; UX витрины на этапе 6 |
+| Rename slug | Unique `public_slug`; redirect-таблица отложена |
+
+Полный список владельческих решений: [OPEN_DECISIONS.md](OPEN_DECISIONS.md).

@@ -283,8 +283,9 @@ body
       align-items: flex-end
 
   .catalog
+    --catalog-grid-cols: 3
     &__grid
-      grid-template-columns: repeat(3, minmax(0, 1fr))
+      grid-template-columns: repeat(var(--catalog-grid-cols), minmax(0, 1fr))
     &__item--extra
       display: list-item
     &__head
@@ -664,9 +665,11 @@ body
         height: 1.6rem
 
   .catalog
+    --catalog-grid-cols: 2
+    --catalog-grid-gap: 1.2rem
     &__grid
-      grid-template-columns: repeat(2, minmax(0, 1fr))
-      gap: 1.2rem
+      grid-template-columns: repeat(var(--catalog-grid-cols), minmax(0, 1fr))
+      gap: var(--catalog-grid-gap)
     &__head
       margin-bottom: 2.4rem
     &__head .catalog__title

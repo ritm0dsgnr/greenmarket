@@ -75,6 +75,10 @@
 
 ## Этап 2. Модель каталога и PostgreSQL
 
+Статус: схема `catalog-foundation` в репозитории (ADR-0003). Локально
+проверены `db:up` / `db:down` и constraint tests. Staging migrate и
+backup/restore ещё нужно прогнать на контуре перед закрытием этапа.
+
 ### Сделать
 
 - Утвердить [CATALOG_RFC.md](CATALOG_RFC.md) до создания таблиц.
