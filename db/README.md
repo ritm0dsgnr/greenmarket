@@ -37,6 +37,22 @@ Synthetic seed (optional, after migrate):
 psql "$DATABASE_URL" -f db/seeds/catalog-synthetic.sql
 ```
 
+## Staging
+
+Schema changes are applied only through the GitHub Actions workflow
+`Migrate staging` on `main`. See [DEPLOYMENT.md](../docs/DEPLOYMENT.md).
+
+Before the first run on a host:
+
+1. `ops/install-staging-postgres.sh` (root)
+2. Point `greenmarket-staging.service` at `/etc/greenmarket/staging.env`
+3. `ops/install-staging-deploy.sh` (root, updates migrate helper)
+4. `Deploy staging`, then `Migrate staging`
+
+The workflow never receives `DATABASE_URL`. The server reads it from the
+EnvironmentFile, takes a pre-migrate dump, restore-probes it, then runs
+`npm run db:up` from `/srv/greenmarket/current`.
+
 ## Commands
 
 ```bash

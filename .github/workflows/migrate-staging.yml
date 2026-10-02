@@ -1,0 +1,78 @@
+name: Migrate staging
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: staging-migrate
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    name: migrate staging database
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment:
+      name: staging
+      url: https://stage.greenmarket96.ru
+
+    steps:
+      - name: Require the main branch
+        run: |
+          test "$GITHUB_REF" = "refs/heads/main" || {
+            echo "Run this workflow from the main branch only." >&2
+            exit 1
+          }
+
+      - name: Configure restricted SSH access
+        shell: bash
+        env:
+          STAGING_DEPLOY_KEY: ${{ secrets.STAGING_DEPLOY_KEY }}
+          STAGING_SSH_KNOWN_HOSTS: ${{ vars.STAGING_SSH_KNOWN_HOSTS }}
+        run: |
+          set -Eeuo pipefail
+          umask 077
+          test -n "$STAGING_DEPLOY_KEY"
+          test -n "$STAGING_SSH_KNOWN_HOSTS"
+          printf '%s\n' "$STAGING_DEPLOY_KEY" > "$RUNNER_TEMP/staging-deploy-key"
+          printf '%s\n' "$STAGING_SSH_KNOWN_HOSTS" > "$RUNNER_TEMP/staging-known-hosts"
+
+      - name: Run staging migrate over restricted SSH
+        shell: bash
+        env:
+          STAGING_SSH_HOST: ${{ vars.STAGING_SSH_HOST }}
+          STAGING_SSH_USER: ${{ vars.STAGING_SSH_USER }}
+        run: |
+          set -Eeuo pipefail
+          test -n "$STAGING_SSH_HOST"
+          test -n "$STAGING_SSH_USER"
+
+          ssh \
+            -i "$RUNNER_TEMP/staging-deploy-key" \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile="$RUNNER_TEMP/staging-known-hosts" \
+            "$STAGING_SSH_USER@$STAGING_SSH_HOST" \
+            migrate
+
+      - name: Verify public staging health
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          for attempt in $(seq 1 10); do
+            if response="$(curl --fail --silent --show-error --max-time 15 https://stage.greenmarket96.ru/api/health)" \
+              && test "$response" = '{"status":"ok"}'; then
+              exit 0
+            fi
+
+            if test "$attempt" = 10; then
+              exit 1
+            fi
+
+            sleep 3
+          done

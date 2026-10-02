@@ -95,5 +95,48 @@ Staging deploy запускается вручную из GitHub Actions workflo
 конкретный staging service. Доступ к production-серверу, production-секретам и
 production-базе этот workflow не получает.
 
-Миграции не включаются в автоматический staging deploy. Любая миграция требует
-отдельного проверенного шага с backup и планом rollback.
+Миграции не включаются в автоматический staging deploy. Отдельный workflow
+`Migrate staging` применяет schema через ту же ограниченную SSH-учётную запись.
+
+## Staging migrate через GitHub Actions
+
+Workflow `Migrate staging` запускается вручную только из `main` и только после
+того, как на сервере установлены обновлённые ops-скрипты и доступна база.
+
+Порядок первого включения:
+
+1. На staging VPS от root один раз: `ops/install-staging-postgres.sh`.
+   Скрипт поднимает локальный PostgreSQL (если его ещё нет), создаёт роль и
+   базу `greenmarket_staging`, пишет `/etc/greenmarket/staging.env` с
+   `DATABASE_URL` и `APP_BASE_URL`. Пароль в Git и логи не попадает.
+2. В unit `greenmarket-staging.service` указать
+   `EnvironmentFile=-/etc/greenmarket/staging.env`, затем
+   `systemctl daemon-reload && systemctl restart greenmarket-staging`.
+3. От root: `ops/install-staging-deploy.sh '<deploy public key>'` — ставит
+   migrate helper и обновляет sudoers/ForceCommand dispatcher.
+4. В GitHub Actions: `Deploy staging` из `main` (в `current` должны лежать
+   `db/migrations`).
+5. В GitHub Actions: `Migrate staging` из `main`.
+
+Что делает migrate на сервере:
+
+1. Читает `DATABASE_URL` только из `/etc/greenmarket/staging.env`.
+2. Проверяет доступность PostgreSQL. Если базы нет — падает с явной ошибкой
+   и отсылкой к `install-staging-postgres.sh`.
+3. Делает `pg_dump` в `/srv/greenmarket/backups/pre-migrate-*.dump`.
+4. Проверяет restore этого dump во временную базу, затем удаляет её.
+5. Запускает `npm run db:up` от пользователя приложения из
+   `/srv/greenmarket/current`.
+6. Проверяет наличие таблиц catalog-foundation и `pgmigrations`.
+7. Не печатает connection string и не принимает произвольные remote commands:
+   SSH ForceCommand допускает только пустую команду (deploy по stdin) или
+   буквальную `migrate`.
+
+Повторный `Migrate staging` идемпотентен для уже применённых миграций.
+`db:down` через workflow не выполняется. После появления данных откат только
+forward corrective migration или восстановление из backup вручную ops-доступом.
+
+В GitHub Environment `staging` для migrate используются те же
+`STAGING_DEPLOY_KEY`, `STAGING_SSH_HOST`, `STAGING_SSH_USER`,
+`STAGING_SSH_KNOWN_HOSTS`. Отдельный `DATABASE_URL` в GitHub secrets не нужен
+и не должен туда копироваться.

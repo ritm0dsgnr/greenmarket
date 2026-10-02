@@ -5,7 +5,7 @@
 
 | Решение | Нужен до этапа | Владелец | Почему блокирует |
 | --- | ---: | --- | --- |
-| Проверенная платформа hosting, staging, Node 24.x, PostgreSQL, HTTPS, backup/restore, secret storage | 2 | Владелец проекта и DevOps | Нельзя безопасно запускать приложение или миграции |
+| Проверенная платформа hosting, staging, Node 24.x, PostgreSQL, HTTPS, backup/restore, secret storage | 2 | Владелец проекта и DevOps | App staging и Git migrate path готовы. Осталось один раз на VPS: `install-staging-postgres.sh`, EnvironmentFile в unit, `install-staging-deploy.sh`, затем `Migrate staging` |
 | Git host, CI provider, branch protection и reviewer policy | 1 | Владелец проекта и tech lead | Нельзя обеспечить проверяемый delivery |
 | Утверждённые макеты, список страниц и контент первой очереди | 1 | Владелец проекта и дизайнер | Legacy UI не содержит нужной вёрстки |
 | Product and offer policy, out-of-stock, product without photo, archive status | 2 и 6 | Владелец каталога | Этап 2 schema использует interim defaults из `docs/catalog/MIGRATION_DESIGN.md`. Финальная витрина (этап 6) и import publish rules всё ещё ждут явного product-решения |
