@@ -5,10 +5,12 @@
 Репозиторий находится в GitHub: `ritm0dsgnr/greenmarket`. Обязательные
 проверки запускает GitHub Actions workflow
 `.github/workflows/ci.yml`. Выпуск на staging запускается вручную через
-`.github/workflows/deploy-staging.yml` только из ветки `main`.
+`.github/workflows/deploy-staging.yml` только из ветки `main`. Миграции
+staging-базы — отдельный manual workflow
+`.github/workflows/migrate-staging.yml` из `main` после `Deploy staging`.
 
-Workflow deploy не выполняет миграции базы данных. Миграции требуют отдельной
-задачи, backup, проверки rollback и явного решения о порядке развёртывания.
+Workflow deploy не выполняет миграции базы данных. Миграции требуют
+`Migrate staging`, pre-migrate backup, restore probe и явного запуска.
 Production deploy намеренно не автоматизирован, пока не подготовлен отдельный
 production-контур и не получено явное одобрение владельца.
 
@@ -81,12 +83,14 @@ imports, auth или integrations добавляются отдельные:
 4. Дождаться успешного workflow `quality` в GitHub Actions и пройти review.
 5. Выполнить merge только после успешных обязательных проверок.
 6. В GitHub Actions вручную запустить `Deploy staging` для `main`.
-7. Проверить staging-сайт и `https://stage.greenmarket96.ru/api/health`,
+7. Если менялась schema: один раз подготовить staging Postgres по
+   [DEPLOYMENT.md](DEPLOYMENT.md), затем вручную запустить `Migrate staging`.
+8. Проверить staging-сайт и `https://stage.greenmarket96.ru/api/health`,
    затем провести ручную приёмку изменения.
-8. Production выпускать только отдельной будущей процедурой: на независимый
+9. Production выпускать только отдельной будущей процедурой: на независимый
    production-сервер, после явного одобрения владельца и успешной приёмки
    staging.
 
 Обычный staging deploy не выполняет миграции базы данных. Миграции, изменения
-данных и другие необратимые операции требуют отдельной задачи, резервной копии,
+данных и другие необратимые операции требуют `Migrate staging`, резервной копии,
 плана отката и явного решения о выпуске.

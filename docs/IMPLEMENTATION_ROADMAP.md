@@ -76,8 +76,10 @@
 ## Этап 2. Модель каталога и PostgreSQL
 
 Статус: схема `catalog-foundation` в репозитории (ADR-0003). Локально
-проверены `db:up` / `db:down` и constraint tests. Staging migrate и
-backup/restore ещё нужно прогнать на контуре перед закрытием этапа.
+проверены `db:up` / `db:down` и constraint tests. На staging VPS 2 октября 2026
+применена миграция через ops helper (backup + restore probe + `db:up`): таблицы
+каталога и `pgmigrations` на месте. Git-контур `Migrate staging` добавлен для
+повторных прогонов из `main`.
 
 ### Сделать
 

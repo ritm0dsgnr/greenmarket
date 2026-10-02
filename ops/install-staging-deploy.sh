@@ -17,6 +17,7 @@ readonly SSH_HARDENING_FILE="/etc/ssh/sshd_config.d/00-greenmarket-hardening.con
 readonly SSH_DEPLOY_FILE="/etc/ssh/sshd_config.d/10-greenmarket-deploy.conf"
 readonly RECEIVER_PATH="/usr/local/libexec/greenmarket-staging-deploy"
 readonly ACTIVATOR_PATH="/usr/local/libexec/greenmarket-staging-activate"
+readonly MIGRATE_PATH="/usr/local/libexec/greenmarket-staging-migrate"
 readonly SUDOERS_PATH="/etc/sudoers.d/greenmarket-staging-deploy"
 
 if (( EUID != 0 )); then
@@ -34,6 +35,7 @@ readonly DEPLOY_PUBLIC_KEY="$1"
 for required_path in \
   "${SCRIPT_DIRECTORY}/staging-deploy-receiver.sh" \
   "${SCRIPT_DIRECTORY}/greenmarket-staging-activate.sh" \
+  "${SCRIPT_DIRECTORY}/greenmarket-staging-migrate.sh" \
   "${SCRIPT_DIRECTORY}/greenmarket-staging-deploy.sudoers" \
   "${SCRIPT_DIRECTORY}/sshd-greenmarket-deploy.conf" \
   "$APP_ROOT" \
@@ -77,6 +79,9 @@ install --owner=root --group=root --mode=0755 \
 install --owner=root --group=root --mode=0755 \
   "${SCRIPT_DIRECTORY}/greenmarket-staging-activate.sh" \
   "$ACTIVATOR_PATH"
+install --owner=root --group=root --mode=0755 \
+  "${SCRIPT_DIRECTORY}/greenmarket-staging-migrate.sh" \
+  "$MIGRATE_PATH"
 install --owner=root --group=root --mode=0440 \
   "${SCRIPT_DIRECTORY}/greenmarket-staging-deploy.sudoers" \
   "$SUDOERS_PATH"
@@ -103,4 +108,4 @@ fi
 
 systemctl reload ssh.service
 
-echo "Restricted staging deploy access is installed."
+echo "Restricted staging deploy and migrate access is installed."

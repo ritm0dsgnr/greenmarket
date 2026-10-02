@@ -22,10 +22,17 @@ readonly RELEASE_RETENTION_COUNT=5
 export PATH="/usr/local/bin:/usr/bin:/bin"
 umask 027
 
-if [[ -n "${SSH_ORIGINAL_COMMAND:-}" ]]; then
-  echo "Remote commands are not permitted for this account." >&2
-  exit 64
-fi
+case "${SSH_ORIGINAL_COMMAND:-}" in
+  '')
+    ;;
+  migrate)
+    exec sudo -n /usr/local/libexec/greenmarket-staging-migrate
+    ;;
+  *)
+    echo "Remote commands are not permitted for this account." >&2
+    exit 64
+    ;;
+esac
 
 for required_path in "$APP_ROOT" "$RELEASES_DIR" "$INCOMING_DIR" "$NPM_BIN" "$ACTIVATE_BIN" "$CURL_BIN"; do
   if [[ ! -e "$required_path" ]]; then
